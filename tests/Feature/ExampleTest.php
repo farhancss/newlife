@@ -1,7 +1,13 @@
 <?php
 
-test('the application returns a successful response', function () {
-    $response = $this->get('/');
+test('the login page is accessible', function () {
+    $response = $this->get('/login');
 
-    $response->assertStatus(200);
+    $response->assertOk();
+});
+
+test('the health endpoint is accessible', function () {
+    $response = $this->get('/up');
+
+    $response->assertOk();
 });
