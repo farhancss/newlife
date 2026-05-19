@@ -50,6 +50,7 @@
 </head>
 
 <body
+    class="min-h-screen"
     x-data="{ 'loaded': true}"
     x-init="$store.sidebar.isExpanded = window.innerWidth >= 1280;
     const checkMobile = () => {
@@ -67,27 +68,32 @@
     <x-common.preloader/>
     {{-- preloader end --}}
 
-    <div class="min-h-screen xl:flex">
+    <div class="min-h-screen">
         @include('layouts.backdrop')
         @include('layouts.sidebar')
 
-        <div class="flex-1 transition-all duration-300 ease-in-out"
+        <div
+            class="flex min-h-screen min-w-0 flex-col transition-all duration-300 ease-in-out"
             :class="{
-                'xl:ml-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered,
-                'xl:ml-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered,
-                'ml-0': $store.sidebar.isMobileOpen
-            }">
-            <!-- app header start -->
-            @include('layouts.app-header')
-            <!-- app header end -->
-            <div class="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
+                'xl:ml-[290px] xl:w-[calc(100%-290px)]': $store.sidebar.isExpanded || $store.sidebar.isHovered,
+                'xl:ml-[90px] xl:w-[calc(100%-90px)]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered,
+            }"
+        >
+            @unless (!empty($hideAppHeader))
+                @include('layouts.app-header')
+            @endunless
+            <main @class([
+                'mx-auto w-full min-w-0 max-w-(--breakpoint-2xl) flex-1 p-4 md:p-5',
+            ])>
                 @yield('content')
-            </div>
-            <footer class="border-t border-gray-200 bg-white px-6 py-4">
-                <p class="text-center text-sm text-gray-500">
-                    New Life Campus Portal
-                </p>
-            </footer>
+            </main>
+            @unless (!empty($hideAppFooter))
+                <footer class="mt-auto shrink-0 border-t border-gray-200 bg-white px-6 py-4">
+                    <p class="text-center text-sm text-gray-500">
+                        &copy; {{ date('Y') }} New Life Logistix. All rights reserved.
+                    </p>
+                </footer>
+            @endunless
         </div>
 
     </div>

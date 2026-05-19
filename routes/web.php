@@ -49,6 +49,7 @@ Route::prefix('student')->name('student.')->middleware(['auth', 'role:student'])
         return view('pages.portal.student.dashboard', [
             'title' => 'Student Dashboard',
             'portal' => 'student',
+            'pageHeading' => 'Dashboard',
         ]);
     })->name('dashboard');
 
@@ -72,6 +73,13 @@ Route::prefix('student')->name('student.')->middleware(['auth', 'role:student'])
             'portal' => 'student',
         ]);
     })->name('move-tracking');
+
+    Route::get('/add-ons', function () {
+        return view('pages.portal.student.add-ons', [
+            'title' => 'Add-Ons',
+            'portal' => 'student',
+        ]);
+    })->name('add-ons');
 
     Route::get('/support', function () {
         return view('pages.portal.student.support', [
@@ -106,37 +114,50 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::get('/dashboard', function () {
         return view('pages.portal.admin.dashboard', [
             'title' => 'Admin Dashboard',
+            'pageHeading' => 'Dashboard Overview',
             'portal' => 'admin',
         ]);
     })->name('dashboard');
 
     Route::get('/customers', function () {
         return view('pages.portal.admin.customers', [
-            'title' => 'Customer Management',
+            'title' => 'Student Management',
+            'pageHeading' => 'Students',
             'portal' => 'admin',
         ]);
     })->name('customers');
 
-    Route::get('/retail-packages', function () {
-        return view('pages.portal.admin.retail-packages', [
-            'title' => 'Retail Package Management',
-            'portal' => 'admin',
-        ]);
-    })->name('retail-packages');
-
     Route::get('/containers', function () {
         return view('pages.portal.admin.containers', [
             'title' => 'Container Management',
+            'pageHeading' => 'Containers',
             'portal' => 'admin',
         ]);
     })->name('containers');
 
+    Route::get('/retail-packages', function () {
+        return view('pages.portal.admin.retail-packages', [
+            'title' => 'Retail Package Management',
+            'pageHeading' => 'Retail Packages',
+            'portal' => 'admin',
+        ]);
+    })->name('retail-packages');
+
     Route::get('/deliveries', function () {
         return view('pages.portal.admin.deliveries', [
             'title' => 'Deliveries Management',
+            'pageHeading' => 'Deliveries',
             'portal' => 'admin',
         ]);
     })->name('deliveries');
+
+    Route::get('/add-ons', function () {
+        return view('pages.portal.admin.add-ons', [
+            'title' => 'Add-Ons Management',
+            'pageHeading' => 'Add-Ons',
+            'portal' => 'admin',
+        ]);
+    })->name('add-ons');
 
     Route::get('/communications', function () {
         return view('pages.portal.admin.communications', [
@@ -148,9 +169,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::get('/reports', function () {
         return view('pages.portal.admin.reports', [
             'title' => 'Reports & Exports',
+            'pageHeading' => 'Reports',
             'portal' => 'admin',
         ]);
     })->name('reports');
+
+    Route::get('/notifications', function () {
+        return view('pages.portal.admin.notifications', [
+            'title' => 'Notifications',
+            'pageHeading' => 'Notifications',
+            'portal' => 'admin',
+        ]);
+    })->name('notifications');
 
     Route::get('/settings', function () {
         return view('pages.portal.admin.settings', [

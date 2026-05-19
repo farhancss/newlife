@@ -880,3 +880,231 @@ pre[class*='language-'] {
     margin-right: -60px !important;
   }
 }
+
+@utility menu-item-active-student {
+  @apply bg-brand-800 text-white;
+}
+
+@utility menu-item-icon-active-student {
+  @apply text-white;
+}
+
+.portal-sidebar .menu-item-inactive {
+  @apply text-gray-700 hover:bg-gray-200/80;
+}
+
+.portal-sidebar .menu-item-icon-inactive {
+  @apply text-gray-600 group-hover:text-gray-800;
+}
+
+.student-portal-sidebar .portal-nav-item-active,
+.admin-portal-sidebar .portal-nav-item-active {
+  @apply ring-1 ring-brand-700/30;
+}
+
+.portal-sidebar .portal-nav-icon svg {
+  @apply h-[22px] w-[22px];
+}
+
+/* Portal navigation (sidebar) */
+@utility portal-nav-item {
+  @apply relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200;
+}
+
+@utility portal-nav-item-active {
+  @apply bg-brand-800 text-white shadow-theme-sm;
+}
+
+@utility portal-nav-item-inactive {
+  @apply text-gray-700 hover:bg-gray-100;
+}
+
+@utility portal-nav-icon {
+  @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors duration-200;
+}
+
+@utility portal-nav-icon-active {
+  @apply bg-white/15 text-white;
+}
+
+@utility portal-nav-icon-inactive {
+  @apply bg-gray-100 text-gray-600 group-hover:bg-brand-50 group-hover:text-brand-700;
+}
+
+.student-portal-sidebar .portal-nav-item-active {
+  @apply ring-1 ring-brand-700/30;
+}
+
+.student-portal-sidebar .portal-nav-icon svg {
+  @apply h-[22px] w-[22px];
+}
+
+/* Portal data tables (simple-datatables) */
+.portal-datatable-wrapper .datatable-wrapper {
+  @apply flex flex-col gap-0;
+}
+
+.portal-datatable-wrapper .portal-dt-toolbar {
+  @apply flex flex-col gap-3 border-b border-gray-200 px-4 pb-4 sm:flex-row sm:items-center sm:justify-between;
+}
+
+.portal-datatable-wrapper .portal-dt-perpage {
+  @apply flex items-center gap-2;
+}
+
+.portal-datatable-wrapper .portal-dt-perpage-text {
+  @apply text-sm text-gray-600;
+}
+
+.portal-datatable-wrapper .portal-dt-select,
+.portal-datatable-wrapper .datatable-selector {
+  @apply h-9 min-w-[4.5rem] cursor-pointer rounded-lg border border-gray-300 bg-white px-2.5 text-sm font-medium text-gray-800 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20;
+}
+
+.portal-datatable-wrapper .portal-dt-search {
+  @apply relative w-full sm:max-w-xs sm:shrink-0;
+}
+
+.portal-datatable-wrapper .portal-dt-search-icon {
+  @apply pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400;
+}
+
+.portal-datatable-wrapper .portal-dt-search-input,
+.portal-datatable-wrapper .datatable-input {
+  @apply h-10 w-full rounded-lg border border-gray-300 bg-gray-50 py-2 pr-3 pl-9 text-sm text-gray-800 outline-none focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-500/20;
+}
+
+.portal-datatable-wrapper .portal-dt-table-wrap {
+  @apply overflow-x-auto px-0;
+}
+
+.portal-datatable-wrapper .portal-dt-footer {
+  @apply flex flex-col gap-3 border-t border-gray-200 px-4 pb-4 pt-3 sm:flex-row sm:items-center sm:justify-between;
+}
+
+.portal-datatable-wrapper .datatable-info {
+  @apply m-0 text-sm text-gray-600;
+}
+
+.portal-datatable-wrapper .datatable-pagination ul,
+.portal-datatable-wrapper .datatable-pagination-list {
+  @apply m-0 flex list-none flex-wrap items-center gap-1 p-0;
+}
+
+.portal-datatable-wrapper .datatable-pagination li,
+.portal-datatable-wrapper .datatable-pagination-list-item {
+  @apply list-none;
+}
+
+.portal-datatable-wrapper .datatable-pagination a,
+.portal-datatable-wrapper .datatable-pagination button,
+.portal-datatable-wrapper .datatable-pagination-list-item-link {
+  @apply inline-flex min-h-9 min-w-9 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-sm font-medium text-gray-700 no-underline transition hover:border-gray-300 hover:bg-gray-50;
+}
+
+.portal-datatable-wrapper .datatable-pagination .datatable-active a,
+.portal-datatable-wrapper .datatable-pagination .datatable-active button,
+.portal-datatable-wrapper .datatable-pagination-list .datatable-active .datatable-pagination-list-item-link {
+  @apply border-brand-600 bg-brand-600 text-white hover:border-brand-600 hover:bg-brand-600;
+}
+
+.portal-datatable-wrapper .datatable-pagination .datatable-disabled a,
+.portal-datatable-wrapper .datatable-pagination .datatable-disabled button,
+.portal-datatable-wrapper .datatable-pagination-list .datatable-disabled .datatable-pagination-list-item-link {
+  @apply pointer-events-none cursor-not-allowed border-gray-100 bg-gray-50 text-gray-400 hover:bg-gray-50;
+}
+
+.portal-datatable-wrapper .datatable-table {
+  @apply w-full border-separate border-spacing-0;
+}
+
+.portal-datatable-wrapper .datatable-table thead th {
+  @apply border-b border-gray-200 bg-gray-50/80 px-3 py-3 text-left text-xs font-semibold tracking-wide text-gray-500 uppercase first:pl-4 last:pr-4;
+}
+
+.portal-datatable-wrapper .datatable-table thead th button {
+  @apply flex w-full items-center gap-1.5 border-0 bg-transparent p-0 text-left text-xs font-semibold tracking-wide text-gray-500 uppercase;
+}
+
+.portal-datatable-wrapper .datatable-table tbody td {
+  @apply border-b border-gray-100 px-3 py-3.5 text-sm text-gray-700 first:pl-4 last:pr-4;
+}
+
+.portal-datatable-wrapper .datatable-table tbody tr:hover td {
+  @apply bg-gray-50/70;
+}
+
+.portal-datatable-wrapper .datatable-table tbody tr:last-child td {
+  @apply border-b-0;
+}
+
+.portal-datatable-wrapper .datatable-sorter {
+  @apply inline-flex w-auto pr-4;
+}
+
+.portal-datatable-wrapper .datatable-sorter::before,
+.portal-datatable-wrapper .datatable-sorter::after {
+  right: 0;
+  border-left-width: 4px;
+  border-right-width: 4px;
+  opacity: 0.25;
+}
+
+.portal-datatable-wrapper .datatable-ascending .datatable-sorter::after,
+.portal-datatable-wrapper .datatable-descending .datatable-sorter::before {
+  opacity: 0.9;
+  border-top-color: theme(--color-brand-600);
+  border-bottom-color: theme(--color-brand-600);
+}
+
+.portal-datatable-wrapper .datatable-empty {
+  @apply px-4 py-10 text-center text-sm text-gray-500;
+}
+
+.portal-datatable-compact .portal-dt-toolbar {
+  @apply gap-2 pb-3 pt-3;
+}
+
+.portal-datatable-compact .portal-dt-footer {
+  @apply gap-2 pb-3 pt-3;
+}
+
+.portal-datatable-compact .portal-dt-search {
+  @apply sm:max-w-[220px];
+}
+
+.portal-datatable-compact .datatable-table thead th,
+.portal-datatable-compact .datatable-table thead th button {
+  @apply py-2.5 text-[11px];
+}
+
+.portal-datatable-compact .datatable-table tbody td {
+  @apply py-2.5;
+}
+
+.portal-datatable-wrapper:not(.portal-datatable-flush) .portal-dt-toolbar {
+  @apply px-4 pt-4 sm:px-5 sm:pt-5;
+}
+
+.portal-datatable-wrapper:not(.portal-datatable-flush) .portal-dt-footer {
+  @apply px-4 pb-4 sm:px-5 sm:pb-5;
+}
+
+.portal-datatable-flush .portal-dt-toolbar,
+.portal-datatable-flush .portal-dt-footer {
+  @apply px-4;
+}
+
+.portal-datatable-flush .portal-dt-table-wrap {
+  @apply px-0;
+}
+
+.portal-datatable-flush .datatable-table thead th:first-child,
+.portal-datatable-flush .datatable-table tbody td:first-child {
+  @apply pl-4;
+}
+
+.portal-datatable-flush .datatable-table thead th:last-child,
+.portal-datatable-flush .datatable-table tbody td:last-child {
+  @apply pr-4;
+}
