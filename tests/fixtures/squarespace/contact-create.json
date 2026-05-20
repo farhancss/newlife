@@ -1,0 +1,27 @@
+{
+  "id": "fixture-contact-001",
+  "websiteId": "test-website",
+  "subscriptionId": "test-subscription",
+  "topic": "contact.create",
+  "createdOn": "2024-01-28T10:44:00Z",
+  "data": {
+    "contact": {
+      "contactId": "sq-contact-fixture-001",
+      "firstName": "Jane",
+      "lastName": "Doe",
+      "primaryEmail": {
+        "value": "jane.doe@example.com"
+      },
+      "defaultShippingAddress": {
+        "address": {
+          "line1": "100 Main St",
+          "city": "Norfolk",
+          "region": "VA",
+          "postalCode": "23510",
+          "countryCode": "US",
+          "phoneNumber": "757-555-0100"
+        }
+      }
+    }
+  }
+}

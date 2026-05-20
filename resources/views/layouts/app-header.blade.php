@@ -43,6 +43,8 @@
 
         <div class="flex shrink-0 items-center gap-2 sm:gap-3">
             @if ($portal === 'student')
+                <x-portal.profile-completion-badge :completion="$profileCompletion ?? null" compact />
+
                 <a href="{{ route('student.notifications') }}"
                     class="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-gray-200 p-2 text-gray-600 hover:bg-gray-50"
                     aria-label="Notifications">

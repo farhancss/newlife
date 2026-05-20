@@ -1,0 +1,31 @@
+{
+  "id": "fixture-order-001",
+  "websiteId": "test-website",
+  "subscriptionId": "test-subscription",
+  "topic": "order.create",
+  "createdOn": "2024-01-28T11:00:00Z",
+  "data": {
+    "orderId": "sq-order-fixture-001",
+    "order": {
+      "id": "sq-order-fixture-001",
+      "customerId": "sq-contact-fixture-001",
+      "customerEmail": "jane.doe@example.com",
+      "fulfillmentStatus": "PENDING",
+      "lineItems": [
+        {
+          "sku": "SQSP-STANDARD",
+          "productName": "Standard Move Package"
+        }
+      ],
+      "shippingAddress": {
+        "firstName": "Jane",
+        "lastName": "Doe",
+        "line1": "100 Main St",
+        "city": "Norfolk",
+        "region": "VA",
+        "postalCode": "23510",
+        "countryCode": "US"
+      }
+    }
+  }
+}

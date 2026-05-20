@@ -34,6 +34,18 @@
     </a>
 </div>
 
+@if (!empty($profileCompletion) && !$profileCompletion['is_complete'])
+    <div class="mx-3 mt-4 rounded-xl border border-warning-200 bg-warning-50 p-3"
+        x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen">
+        <p class="text-xs font-semibold text-warning-800">Profile {{ $profileCompletion['percent'] }}% complete</p>
+        <p class="mt-1 text-xs text-warning-700">Finish your profile to unlock all features.</p>
+        <a href="{{ route('student.profile') }}"
+            class="mt-2 inline-block text-xs font-semibold text-brand-700 hover:text-brand-800">
+            Complete now →
+        </a>
+    </div>
+@endif
+
 {{-- Navigation --}}
 <div class="flex flex-1 flex-col overflow-y-auto px-3 py-5 no-scrollbar">
     <nav class="flex flex-1 flex-col">

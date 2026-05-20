@@ -93,11 +93,11 @@
                 <div class="mt-6 flex flex-col items-center gap-6 sm:flex-row sm:items-center sm:justify-center lg:flex-col">
                     @php
                         $segments = [
-                            ['label' => 'In Progress', 'percent' => 62, 'color' => '#215f95'],
-                            ['label' => 'In Transit', 'percent' => 18, 'color' => '#4c8ec2'],
-                            ['label' => 'At Hub', 'percent' => 10, 'color' => '#78afd9'],
-                            ['label' => 'Out for Delivery', 'percent' => 7, 'color' => '#a9cceb'],
-                            ['label' => 'Delivered', 'percent' => 3, 'color' => '#cfe4f7'],
+                            ['label' => 'In Progress', 'percent' => 62, 'color' => '#0827be'],
+                            ['label' => 'In Transit', 'percent' => 18, 'color' => '#4f6bf3'],
+                            ['label' => 'At Hub', 'percent' => 10, 'color' => '#7b90f6'],
+                            ['label' => 'Out for Delivery', 'percent' => 7, 'color' => '#a7b5f9'],
+                            ['label' => 'Delivered', 'percent' => 3, 'color' => '#d3dafc'],
                         ];
                         $radius = 54;
                         $circumference = 2 * M_PI * $radius;

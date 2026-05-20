@@ -35,7 +35,7 @@ Here’s a tighter, more search-friendly version that highlights value and avoid
 ## 📋 Requirements
 To set up TailAdmin Laravel, make sure your environment includes:
 
-* **PHP 8.2+**
+* **PHP 8.4+**
 * **Composer** (PHP dependency manager)
 * **Node.js 18+** and **npm** (for compiling frontend assets)
 * **Database** - Works with SQLite (default), MySQL, or PostgreSQL

@@ -1,0 +1,18 @@
+{
+  "id": "fixture-address-001",
+  "websiteId": "test-website",
+  "subscriptionId": "test-subscription",
+  "topic": "address.update",
+  "createdOn": "2024-01-28T12:00:00Z",
+  "data": {
+    "contactId": "sq-contact-fixture-001",
+    "addressBookEntryId": "addr-entry-001",
+    "address": {
+      "line1": "200 Oak Ave",
+      "city": "Virginia Beach",
+      "region": "VA",
+      "postalCode": "23451",
+      "countryCode": "US"
+    }
+  }
+}

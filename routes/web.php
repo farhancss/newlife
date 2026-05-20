@@ -1,50 +1,55 @@
 <?php
 
-use App\Enums\UserRole;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ChangePasswordController;
+use App\Http\Controllers\OnboardingController;
+use App\Http\Controllers\StudentProfileController;
+use App\Mail\OnboardingCompleteMail;
+use App\Mail\PasswordChangedMail;
+use App\Mail\StudentInvitationMail;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 
 Route::redirect('/', '/login');
 
-Route::get('/login', function () {
-    return view('pages.portal.login', [
-        'title' => 'Login',
-    ]);
-})->name('login');
-
-Route::post('/login', function () {
-    $credentials = request()->validate([
-        'email' => ['required', 'email'],
-        'password' => ['required', 'string'],
-    ]);
-
-    if (!Auth::attempt($credentials)) {
-        return redirect()
-            ->route('login')
-            ->withInput(['email' => $credentials['email']])
-            ->withErrors([
-                'login' => 'The provided credentials are incorrect.',
+if (app()->environment('local')) {
+    Route::prefix('dev/email-preview')->group(function () {
+        $previewUser = function (): User {
+            return new User([
+                'name' => 'Alex Carter',
+                'email' => 'alex.carter@example.com',
             ]);
-    }
+        };
 
-    request()->session()->regenerate();
+        Route::get('/student-invitation', function () use ($previewUser) {
+            return (new StudentInvitationMail($previewUser(), 'TempP@ss-9421'))->render();
+        });
 
-    $user = Auth::user();
+        Route::get('/password-changed-first', function () use ($previewUser) {
+            return (new PasswordChangedMail($previewUser(), wasFirstReset: true))->render();
+        });
 
-    return $user->role === UserRole::ADMIN
-        ? redirect()->route('admin.dashboard')
-        : redirect()->route('student.dashboard');
-})->name('login.submit');
+        Route::get('/password-changed', function () use ($previewUser) {
+            return (new PasswordChangedMail($previewUser(), wasFirstReset: false))->render();
+        });
 
-Route::get('/logout', function () {
-    Auth::logout();
-    request()->session()->invalidate();
-    request()->session()->regenerateToken();
+        Route::get('/onboarding-complete', function () use ($previewUser) {
+            return (new OnboardingCompleteMail($previewUser()))->render();
+        });
+    });
+}
 
-    return redirect()->route('login');
-})->name('logout');
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::prefix('student')->name('student.')->middleware(['auth', 'role:student'])->group(function () {
+Route::prefix('student')->name('student.')->middleware([
+    'auth',
+    'account.active',
+    'role:student',
+    'password.changed',
+    'onboarding.complete',
+])->group(function () {
     Route::get('/dashboard', function () {
         return view('pages.portal.student.dashboard', [
             'title' => 'Student Dashboard',
@@ -59,13 +64,6 @@ Route::prefix('student')->name('student.')->middleware(['auth', 'role:student'])
             'portal' => 'student',
         ]);
     })->name('retail-packages');
-
-    Route::get('/profile', function () {
-        return view('pages.portal.student.profile', [
-            'title' => 'Student Profile',
-            'portal' => 'student',
-        ]);
-    })->name('profile');
 
     Route::get('/move-tracking', function () {
         return view('pages.portal.student.move-tracking', [
@@ -101,13 +99,21 @@ Route::prefix('student')->name('student.')->middleware(['auth', 'role:student'])
             'portal' => 'student',
         ]);
     })->name('settings');
+});
 
-    Route::get('/change-password', function () {
-        return view('pages.portal.common.change-password', [
-            'title' => 'Change Password',
-            'portal' => 'student',
-        ]);
-    })->name('change-password');
+Route::prefix('student')->name('student.')->middleware(['auth', 'account.active', 'role:student', 'password.changed'])->group(function () {
+    Route::get('/profile', [StudentProfileController::class, 'show'])->name('profile');
+    Route::post('/profile', [StudentProfileController::class, 'update'])->name('profile.update');
+
+    Route::get('/onboarding', [OnboardingController::class, 'show'])->name('onboarding');
+    Route::post('/onboarding', [OnboardingController::class, 'submit'])->name('onboarding.submit');
+});
+
+Route::prefix('student')->name('student.')->middleware(['auth', 'account.active', 'role:student'])->group(function () {
+    Route::get('/change-password', [ChangePasswordController::class, 'show'])->name('change-password');
+    Route::post('/change-password', [ChangePasswordController::class, 'update'])
+        ->middleware('throttle:10,1')
+        ->name('change-password.submit');
 });
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
@@ -196,10 +202,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
         ]);
     })->name('profile');
 
-    Route::get('/change-password', function () {
-        return view('pages.portal.common.change-password', [
-            'title' => 'Change Password',
-            'portal' => 'admin',
-        ]);
-    })->name('change-password');
+    Route::get('/change-password', [ChangePasswordController::class, 'show'])->name('change-password');
+    Route::post('/change-password', [ChangePasswordController::class, 'update'])
+        ->middleware('throttle:10,1')
+        ->name('change-password.submit');
 });

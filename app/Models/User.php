@@ -9,6 +9,11 @@ use Illuminate\Notifications\Notifiable;
 
 /**
  * @property string $role
+ * @property string $status
+ * @property bool $must_reset_password
+ * @property \Illuminate\Support\Carbon|null $password_changed_at
+ * @property string|null $squarespace_contact_id
+ * @property-read StudentProfile|null $studentProfile
  */
 class User extends Authenticatable
 {
@@ -25,7 +30,11 @@ class User extends Authenticatable
         'name',
         'email',
         'role',
+        'status',
         'password',
+        'must_reset_password',
+        'password_changed_at',
+        'squarespace_contact_id',
     ];
 
     /**
@@ -48,6 +57,28 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'must_reset_password' => 'boolean',
+            'password_changed_at' => 'datetime',
         ];
+    }
+
+    public function studentProfile(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(StudentProfile::class);
+    }
+
+    public function isStudent(): bool
+    {
+        return $this->role === \App\Enums\UserRole::STUDENT;
+    }
+
+    public function isSuspended(): bool
+    {
+        return $this->status === \App\Enums\UserStatus::SUSPENDED;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === \App\Enums\UserStatus::ACTIVE;
     }
 }
