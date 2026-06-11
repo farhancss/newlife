@@ -18,9 +18,15 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property string|null $school
  * @property string|null $incoming_year
  * @property string|null $package_tier
+ * @property int|null $package_id
+ * @property-read Package|null $package
  * @property int $onboarding_step
  * @property \Illuminate\Support\Carbon|null $onboarding_completed_at
+ * @property int $move_container_quantity
+ * @property \Illuminate\Support\Carbon|null $move_address_confirmed_at
+ * @property \Illuminate\Support\Carbon|null $move_shipment_triggered_at
  * @property-read User|null $user
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Container> $containers
  * @property-read ParentGuardian|null $parentGuardian
  * @property-read ShippingAddress|null $shippingAddress
  * @property-read HousingInfo|null $housingInfo
@@ -38,8 +44,12 @@ class StudentProfile extends Model
         'school',
         'incoming_year',
         'package_tier',
+        'package_id',
         'onboarding_step',
         'onboarding_completed_at',
+        'move_container_quantity',
+        'move_address_confirmed_at',
+        'move_shipment_triggered_at',
     ];
 
     protected function casts(): array
@@ -47,6 +57,9 @@ class StudentProfile extends Model
         return [
             'onboarding_completed_at' => 'datetime',
             'onboarding_step' => 'integer',
+            'move_container_quantity' => 'integer',
+            'move_address_confirmed_at' => 'datetime',
+            'move_shipment_triggered_at' => 'datetime',
         ];
     }
 
@@ -78,6 +91,18 @@ class StudentProfile extends Model
     public function subscriptions(): HasMany
     {
         return $this->hasMany(StudentSubscription::class);
+    }
+
+    /** @return HasMany<Container, $this> */
+    public function containers(): HasMany
+    {
+        return $this->hasMany(Container::class);
+    }
+
+    /** @return BelongsTo<Package, $this> */
+    public function package(): BelongsTo
+    {
+        return $this->belongsTo(Package::class);
     }
 
     public function isOnboardingComplete(): bool

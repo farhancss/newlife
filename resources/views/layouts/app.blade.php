@@ -98,6 +98,8 @@
 
     </div>
 
+    @stack('modals')
+
 </body>
 
 @stack('scripts')

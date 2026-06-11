@@ -12,6 +12,10 @@
 
 @custom-variant dark (&:is(.dark *));
 
+[x-cloak] {
+  display: none !important;
+}
+
 @theme {
   --font-*: initial;
   --font-outfit: Outfit, sans-serif;
@@ -1126,4 +1130,26 @@ pre[class*='language-'] {
 .portal-datatable-flush .datatable-table thead th:last-child,
 .portal-datatable-flush .datatable-table tbody td:last-child {
   @apply pr-4;
+}
+
+.move-timeline-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.move-timeline-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.move-timeline-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.move-timeline-scroll::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 9999px;
+}
+
+.move-timeline-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8;
 }

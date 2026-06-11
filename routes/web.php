@@ -1,9 +1,17 @@
 <?php
 
+use App\Http\Controllers\AdminContainerController;
+use App\Http\Controllers\AdminStudentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChangePasswordController;
+use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\OnboardingController;
+use App\Http\Controllers\ResetPasswordController;
+use App\Http\Controllers\StudentContainerPhotoController;
+use App\Http\Controllers\StudentDashboardController;
+use App\Http\Controllers\StudentMoveTrackingController;
 use App\Http\Controllers\StudentProfileController;
+use App\Mail\ResetPasswordMail;
 use App\Mail\OnboardingCompleteMail;
 use App\Mail\PasswordChangedMail;
 use App\Mail\StudentInvitationMail;
@@ -36,8 +44,26 @@ if (app()->environment('local')) {
         Route::get('/onboarding-complete', function () use ($previewUser) {
             return (new OnboardingCompleteMail($previewUser()))->render();
         });
+
+        Route::get('/reset-password', function () use ($previewUser) {
+            return (new ResetPasswordMail(
+                $previewUser(),
+                url('/password/reset/sample-token?email=alex.carter@example.com'),
+            ))->render();
+        });
     });
 }
+
+Route::middleware('guest')->group(function () {
+    Route::get('/password/forgot', [ForgotPasswordController::class, 'show'])->name('password.request');
+    Route::post('/password/forgot', [ForgotPasswordController::class, 'store'])
+        ->middleware('throttle:6,1')
+        ->name('password.email');
+    Route::get('/password/reset/{token}', [ResetPasswordController::class, 'show'])->name('password.reset');
+    Route::post('/password/reset', [ResetPasswordController::class, 'store'])
+        ->middleware('throttle:6,1')
+        ->name('password.update');
+});
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
@@ -50,13 +76,7 @@ Route::prefix('student')->name('student.')->middleware([
     'password.changed',
     'onboarding.complete',
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('pages.portal.student.dashboard', [
-            'title' => 'Student Dashboard',
-            'portal' => 'student',
-            'pageHeading' => 'Dashboard',
-        ]);
-    })->name('dashboard');
+    Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/retail-packages', function () {
         return view('pages.portal.student.retail-packages', [
@@ -65,12 +85,13 @@ Route::prefix('student')->name('student.')->middleware([
         ]);
     })->name('retail-packages');
 
-    Route::get('/move-tracking', function () {
-        return view('pages.portal.student.move-tracking', [
-            'title' => 'Move Tracking',
-            'portal' => 'student',
-        ]);
-    })->name('move-tracking');
+    Route::get('/move-tracking', [StudentMoveTrackingController::class, 'index'])->name('move-tracking');
+    Route::post('/move-tracking/containers/{container}/photos', [StudentContainerPhotoController::class, 'store'])
+        ->middleware('throttle:30,1')
+        ->name('move-tracking.photos.store');
+    Route::delete('/move-tracking/containers/{container}/photos/{photo}', [StudentContainerPhotoController::class, 'destroy'])
+        ->middleware('throttle:30,1')
+        ->name('move-tracking.photos.destroy');
 
     Route::get('/add-ons', function () {
         return view('pages.portal.student.add-ons', [
@@ -125,21 +146,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
         ]);
     })->name('dashboard');
 
-    Route::get('/customers', function () {
-        return view('pages.portal.admin.customers', [
-            'title' => 'Student Management',
-            'pageHeading' => 'Students',
-            'portal' => 'admin',
-        ]);
-    })->name('customers');
+    Route::get('/customers', [AdminStudentController::class, 'index'])->name('customers');
 
-    Route::get('/containers', function () {
-        return view('pages.portal.admin.containers', [
-            'title' => 'Container Management',
-            'pageHeading' => 'Containers',
-            'portal' => 'admin',
-        ]);
-    })->name('containers');
+    Route::get('/containers', [AdminContainerController::class, 'index'])->name('containers');
+    Route::put('/containers/{container}', [AdminContainerController::class, 'update'])
+        ->middleware('throttle:30,1')
+        ->name('containers.update');
 
     Route::get('/retail-packages', function () {
         return view('pages.portal.admin.retail-packages', [

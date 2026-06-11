@@ -4,12 +4,15 @@ namespace App\Services;
 
 use App\Mail\OnboardingCompleteMail;
 use App\Models\StudentProfile;
+use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 
 class ProfileCompletionService
 {
     public function __construct(
         private readonly UserStatusService $userStatusService,
+        private readonly StudentPackageService $studentPackageService,
+        private readonly ContainerWorkflowService $containerWorkflowService,
     ) {
     }
 
@@ -84,6 +87,24 @@ class ProfileCompletionService
     public function isComplete(StudentProfile $profile): bool
     {
         return $this->summary($profile)['is_complete'];
+    }
+
+    /**
+     * Provision the student's single move shipment (status "Container Prepared")
+     * the first time onboarding completes. The package may include multiple
+     * physical bins, recorded as the move quantity, but they ship and track
+     * together as one shipment.
+     */
+    private function provisionContainers(StudentProfile $profile, User $user): void
+    {
+        $allowance = $this->studentPackageService->containerAllowance($profile);
+
+        if ($profile->move_container_quantity < $allowance) {
+            $profile->move_container_quantity = $allowance;
+            $profile->save();
+        }
+
+        $this->containerWorkflowService->ensureMoveShipment($profile, $user);
     }
 
     public function resolveActiveSection(StudentProfile $profile, ?int $requestedSection = null): int
@@ -164,6 +185,8 @@ class ProfileCompletionService
                 $this->userStatusService->markOnboardingComplete($user);
 
                 if (!$wasComplete) {
+                    $this->provisionContainers($profile, $user);
+
                     Mail::to($user->email)->queue(new OnboardingCompleteMail($user));
                 }
             } else {

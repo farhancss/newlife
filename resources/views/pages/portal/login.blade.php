@@ -10,6 +10,12 @@
                         <h1 class="mb-2 text-2xl font-semibold text-gray-900 sm:text-3xl">Sign In</h1>
                     </div>
 
+                    @if (session('status'))
+                        <div class="mb-4 rounded-lg border border-success-200 bg-success-50 px-3 py-2 text-sm text-success-700">
+                            {{ session('status') }}
+                        </div>
+                    @endif
+
                     @if ($errors->has('login'))
                         <div class="mb-4 rounded-lg border border-error-200 bg-error-50 px-3 py-2 text-sm text-error-700">
                             {{ $errors->first('login') }}
@@ -25,7 +31,12 @@
                                 class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 text-sm text-gray-800 outline-hidden focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10" />
                         </div>
                         <div>
-                            <label for="login-password" class="mb-1.5 block text-sm font-medium text-gray-700">Password</label>
+                            <div class="mb-1.5 flex items-center justify-between">
+                                <label for="login-password" class="text-sm font-medium text-gray-700">Password</label>
+                                <a href="{{ route('password.request') }}" class="text-sm font-medium text-brand-600 hover:text-brand-700">
+                                    Forgot password?
+                                </a>
+                            </div>
                             <input id="login-password" name="password" type="password" placeholder="Enter your password"
                                 class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 text-sm text-gray-800 outline-hidden focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10" />
                         </div>

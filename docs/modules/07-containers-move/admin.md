@@ -25,7 +25,6 @@ Assign containers, update statuses, manage tracking numbers, align with student 
 |--------|-------|
 | Container ID | e.g. CTN-101 |
 | Student | Name + NL ID |
-| Size | 20ft / 40ft |
 | Status | Workflow state |
 | Location | City/hub |
 | Tracking # | FedEx outbound/return |

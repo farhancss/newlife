@@ -61,6 +61,30 @@ test('login redirects new student to change password then onboarding', function 
     ])->assertRedirect(route('student.change-password'));
 });
 
+test('change password rejects weak passwords', function () {
+    $user = User::factory()->create([
+        'role' => UserRole::STUDENT,
+        'password' => Hash::make('TempPass123!'),
+        'must_reset_password' => true,
+    ]);
+
+    StudentProfile::query()->create([
+        'user_id' => $user->id,
+        'new_life_id' => app(NewLifeIdGenerator::class)->generate(),
+    ]);
+
+    $this->actingAs($user)
+        ->from(route('student.change-password'))
+        ->post(route('student.change-password.submit'), [
+            'password' => 'weakpass',
+            'password_confirmation' => 'weakpass',
+        ])
+        ->assertRedirect(route('student.change-password'))
+        ->assertSessionHasErrors(['password']);
+
+    expect($user->fresh()->must_reset_password)->toBeTrue();
+});
+
 test('password change clears must reset and redirects to onboarding', function () {
     $user = User::factory()->create([
         'role' => UserRole::STUDENT,

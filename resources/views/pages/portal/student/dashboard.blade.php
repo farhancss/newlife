@@ -2,12 +2,16 @@
 
 @php
     $firstName = strtok(auth()->user()->name ?? 'John', ' ');
+    $activeStepNumber = collect($dashboardSteps)->firstWhere('state', 'active')['number'] ?? 1;
 @endphp
 
 @section('content')
     <div class="space-y-6">
         <p class="text-lg font-semibold text-gray-900">
-            Welcome, {{ $firstName }}! <span class="font-normal text-gray-500">· Essential Package</span>
+            Welcome, {{ $firstName }}!
+            @if ($package)
+                <span class="font-normal text-gray-500">· {{ $package->name }}</span>
+            @endif
         </p>
 
         {{-- Move-In Progress --}}
@@ -16,22 +20,15 @@
 
             <div class="mt-10 overflow-x-auto pb-2">
                 <div class="relative min-w-[640px]">
+                    @php
+                        $doneCount = collect($dashboardSteps)->where('state', 'done')->count();
+                        $progressPercent = $doneCount > 0 ? min(100, ($doneCount / (count($dashboardSteps) - 1)) * 100) : 0;
+                    @endphp
                     <div class="absolute left-[8.3%] right-[8.3%] top-5 h-px bg-gray-200" aria-hidden="true"></div>
-                    <div class="absolute left-[8.3%] top-5 h-px w-[33%] bg-brand-300" aria-hidden="true"></div>
+                    <div class="absolute left-[8.3%] top-5 h-px bg-brand-300" style="width: {{ $progressPercent * 0.833 }}%" aria-hidden="true"></div>
 
                     <ol class="relative grid grid-cols-6 gap-2">
-                        @php
-                            $steps = [
-                                ['label' => 'Reservation Confirmed', 'state' => 'done'],
-                                ['label' => 'Profile Completed', 'state' => 'done-icon'],
-                                ['label' => 'Containers Preparing', 'state' => 'active'],
-                                ['label' => 'Containers Shipped', 'state' => 'pending'],
-                                ['label' => 'Delivered to Home', 'state' => 'pending'],
-                                ['label' => 'Dorm Delivery', 'state' => 'pending'],
-                            ];
-                        @endphp
-
-                        @foreach ($steps as $step)
+                        @foreach ($dashboardSteps as $step)
                             <li class="flex flex-col items-center text-center">
                                 @if ($step['state'] === 'done')
                                     <span class="relative z-10 flex h-10 w-10 items-center justify-center rounded-full bg-brand-300 text-white shadow-sm">
@@ -39,16 +36,10 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
                                         </svg>
                                     </span>
-                                @elseif ($step['state'] === 'done-icon')
-                                    <span class="relative z-10 flex h-10 w-10 items-center justify-center rounded-full bg-brand-100 text-brand-600">
-                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                        </svg>
-                                    </span>
                                 @elseif ($step['state'] === 'active')
-                                    <span class="relative z-10 flex h-10 w-10 items-center justify-center rounded-full bg-brand-800 text-sm font-semibold text-white">3</span>
+                                    <span class="relative z-10 flex h-10 w-10 items-center justify-center rounded-full bg-brand-800 text-sm font-semibold text-white">{{ $step['number'] }}</span>
                                 @else
-                                    <span class="relative z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 border-gray-300 bg-white"></span>
+                                    <span class="relative z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 border-gray-300 bg-white text-sm font-semibold text-gray-400">{{ $step['number'] }}</span>
                                 @endif
                                 <p class="mt-3 max-w-[108px] text-xs leading-snug text-gray-600">{{ $step['label'] }}</p>
                             </li>
@@ -64,9 +55,9 @@
                 <h3 class="text-base font-semibold text-gray-900">Action Items</h3>
                 <ul class="mt-5 flex-1 space-y-3.5">
                     @foreach ([
-                        ['label' => 'Complete Profile', 'done' => true],
-                        ['label' => 'Add Retail Packages', 'done' => false],
-                        ['label' => 'Select Move-in Window', 'done' => false],
+                        ['label' => 'Complete Profile', 'done' => $profile->isOnboardingComplete()],
+                        ['label' => 'Select Move-in Window', 'done' => $profile->housingInfo?->move_in_date !== null],
+                        ['label' => 'Containers assigned', 'done' => $primaryContainer !== null],
                     ] as $item)
                         <li class="flex items-start gap-3 text-sm text-gray-800">
                             @if ($item['done'])
@@ -107,8 +98,16 @@
             <div class="flex min-h-[200px] flex-col rounded-xl border border-gray-200 bg-white p-5">
                 <h3 class="text-base font-semibold text-gray-900">Latest Update</h3>
                 <div class="mt-5 flex-1">
-                    <p class="text-sm font-medium text-gray-900">Containers are being prepared</p>
-                    <p class="mt-2 text-sm text-gray-500">May 19, 2026</p>
+                    @if ($latestUpdate)
+                        <p class="text-sm font-medium text-gray-900">{{ $latestUpdate->toStatusLabel() }}</p>
+                        <p class="mt-2 text-sm text-gray-500">{{ $latestUpdate->created_at->format('M j, Y') }}</p>
+                        @if ($primaryContainer)
+                            <p class="mt-1 text-xs text-gray-400">{{ $primaryContainer->code }}</p>
+                        @endif
+                    @else
+                        <p class="text-sm font-medium text-gray-900">Containers are being prepared</p>
+                        <p class="mt-2 text-sm text-gray-500">{{ now()->format('M j, Y') }}</p>
+                    @endif
                 </div>
                 <a href="{{ route('student.notifications') }}" class="mt-5 text-right text-sm font-medium text-brand-600 hover:text-brand-700">View All</a>
             </div>

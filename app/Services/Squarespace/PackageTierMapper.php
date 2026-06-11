@@ -16,20 +16,30 @@ class PackageTierMapper
         foreach ($lineItems as $item) {
             $sku = $item['sku'] ?? $item['productId'] ?? null;
             if ($sku && isset($map[$sku])) {
-                return $map[$sku];
+                return PackageTier::normalize($map[$sku]);
             }
         }
 
         foreach ($lineItems as $item) {
             $name = strtolower((string) ($item['productName'] ?? $item['name'] ?? ''));
+
+            if (str_contains($name, 'legacy')) {
+                return PackageTier::LEGACY;
+            }
+            if (str_contains($name, 'summit')) {
+                return PackageTier::SUMMIT;
+            }
+            if (str_contains($name, 'essential')) {
+                return PackageTier::ESSENTIAL;
+            }
             if (str_contains($name, 'premium')) {
-                return PackageTier::PREMIUM;
+                return PackageTier::LEGACY;
             }
             if (str_contains($name, 'standard')) {
-                return PackageTier::STANDARD;
+                return PackageTier::SUMMIT;
             }
             if (str_contains($name, 'basic')) {
-                return PackageTier::BASIC;
+                return PackageTier::ESSENTIAL;
             }
         }
 

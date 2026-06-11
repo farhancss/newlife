@@ -26,7 +26,7 @@ class StudentProfileController extends Controller
     {
         $user = Auth::user();
         $profile = $this->studentProfileService->ensureForUser($user);
-        $profile->load(['parentGuardian', 'shippingAddress', 'housingInfo']);
+        $profile->load(['parentGuardian', 'shippingAddress', 'housingInfo', 'package']);
 
         $completion = $this->profileCompletionService->summary($profile);
         $requestedSection = $request->filled('section') ? $request->integer('section') : null;
@@ -47,7 +47,7 @@ class StudentProfileController extends Controller
     {
         $user = Auth::user();
         $profile = $this->studentProfileService->ensureForUser($user);
-        $profile->load(['parentGuardian', 'shippingAddress', 'housingInfo']);
+        $profile->load(['parentGuardian', 'shippingAddress', 'housingInfo', 'package']);
 
         $section = $request->resolvedSection();
         $action = $request->resolvedAction();

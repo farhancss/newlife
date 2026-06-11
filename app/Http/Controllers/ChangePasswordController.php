@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\UserRole;
+use App\Http\Requests\ChangePasswordRequest;
 use App\Mail\PasswordChangedMail;
 use App\Models\StudentProfile;
 use App\Models\User;
@@ -13,7 +14,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 
 class ChangePasswordController extends Controller
@@ -35,22 +35,14 @@ class ChangePasswordController extends Controller
         ]);
     }
 
-    public function update(Request $request): RedirectResponse
+    public function update(ChangePasswordRequest $request): RedirectResponse
     {
         /** @var User $user */
         $user = Auth::user();
         $portal = $user->role === UserRole::ADMIN ? 'admin' : 'student';
-        $mustReset = $user->must_reset_password;
+        $mustReset = $request->mustResetPassword();
 
-        $rules = [
-            'password' => ['required', 'confirmed', Password::min(8)],
-        ];
-
-        if (!$mustReset) {
-            $rules['current_password'] = ['required', 'string'];
-        }
-
-        $validated = $request->validate($rules);
+        $validated = $request->validated();
 
         if (!$mustReset && !Hash::check($validated['current_password'], $user->password)) {
             return back()->withErrors(['current_password' => 'Current password is incorrect.']);

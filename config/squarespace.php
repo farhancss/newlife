@@ -10,9 +10,13 @@ return [
     'skip_signature_verification' => env('SQUARESPACE_SKIP_SIGNATURE', false),
 
     'sku_tier_map' => [
-        'SQSP-BASIC' => \App\Enums\PackageTier::BASIC,
-        'SQSP-STANDARD' => \App\Enums\PackageTier::STANDARD,
-        'SQSP-PREMIUM' => \App\Enums\PackageTier::PREMIUM,
+        'SQSP-ESSENTIAL' => \App\Enums\PackageTier::ESSENTIAL,
+        'SQSP-SUMMIT' => \App\Enums\PackageTier::SUMMIT,
+        'SQSP-LEGACY' => \App\Enums\PackageTier::LEGACY,
+        // Legacy simulation / dev SKUs
+        'SQSP-BASIC' => \App\Enums\PackageTier::ESSENTIAL,
+        'SQSP-STANDARD' => \App\Enums\PackageTier::SUMMIT,
+        'SQSP-PREMIUM' => \App\Enums\PackageTier::LEGACY,
     ],
 
     'webhook_topics' => [

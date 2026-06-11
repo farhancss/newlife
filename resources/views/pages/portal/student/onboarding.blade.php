@@ -14,9 +14,9 @@
                     <h1 class="text-xl font-semibold text-gray-900">Complete Your Profile</h1>
                     <p class="mt-1 text-sm text-gray-600">Step {{ $step }} of 4 — required before using the portal</p>
                 </div>
-                @if ($profile->package_tier)
+                @if ($profile->package ?? $profile->package_tier)
                     <span class="w-fit rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700">
-                        Package: {{ ucfirst($profile->package_tier) }}
+                        Package: {{ $profile->package?->name ?? ucfirst($profile->package_tier) }}
                     </span>
                 @endif
             </div>

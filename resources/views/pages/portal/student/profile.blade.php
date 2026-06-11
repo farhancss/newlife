@@ -38,10 +38,14 @@
                         <div class="h-3 overflow-hidden rounded-full bg-gray-200">
                             <div class="h-full rounded-full bg-brand-600 transition-all duration-300" style="width: {{ $completion['percent'] }}%"></div>
                         </div>
-                        @if ($profile->package_tier)
+                        @if ($profile->package)
+                            <span class="text-center text-xs font-semibold text-brand-700">{{ $profile->package->name }}</span>
+                        @elseif ($profile->package_tier)
                             <span class="text-center text-xs font-semibold text-brand-700">Package: {{ ucfirst($profile->package_tier) }}</span>
                         @endif
                     </div>
+                @elseif ($profile->package)
+                    <span class="text-sm font-semibold text-brand-700">{{ $profile->package->name }}</span>
                 @elseif ($profile->package_tier)
                     <span class="text-sm font-semibold text-brand-700">Package: {{ ucfirst($profile->package_tier) }}</span>
                 @endif

@@ -69,4 +69,4 @@ Container shipped, delivered to home, pickup reminders, return updates, dorm del
 - [ ] Shipment trigger blocked until address confirmed.
 - [ ] Tracking links open FedEx when number present.
 - [ ] Pickup instructions page/section visible at appropriate stage.
-- [ ] Multiple containers shown if package tier includes >1.
+- [ ] Move shown as a single shipment; the package's container count is displayed as "includes N containers" (all bins ship and track together).

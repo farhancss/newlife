@@ -4,11 +4,14 @@ namespace Database\Seeders;
 
 use App\Enums\UserRole;
 use App\Enums\UserStatus;
+use App\Enums\ContainerStatus;
+use App\Models\Package;
 use App\Models\HousingInfo;
 use App\Models\ParentGuardian;
 use App\Models\ShippingAddress;
 use App\Models\StudentProfile;
 use App\Models\User;
+use App\Services\ContainerWorkflowService;
 use App\Services\NewLifeIdGenerator;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -44,7 +47,9 @@ class PortalUsersSeeder extends Seeder
             'phone' => '757-555-0100',
             'school' => 'ODU',
             'incoming_year' => '2026',
-            'package_tier' => 'standard',
+            'package_tier' => 'summit',
+            'package_id' => Package::query()->where('slug', 'summit')->value('id'),
+            'move_container_quantity' => 5,
             'onboarding_step' => 5,
             'onboarding_completed_at' => $profile->onboarding_completed_at ?? now(),
         ]);
@@ -79,6 +84,24 @@ class PortalUsersSeeder extends Seeder
                 'move_in_date' => '2026-05-27',
             ]
         );
+
+        $workflow = app(ContainerWorkflowService::class);
+        $primary = $workflow->ensureMoveShipment($profile->fresh(['containers', 'package']) ?? $profile);
+
+        if ($primary->status === ContainerStatus::CONTAINER_PREPARED) {
+            $primary->forceFill([
+                'location' => 'Norfolk',
+                'outbound_tracking' => '794612345678',
+            ])->save();
+
+            $workflow->transition(
+                $primary,
+                ContainerStatus::SHIPPED_TO_HOME,
+                null,
+                'Demo seed data',
+                force: true,
+            );
+        }
 
         User::updateOrCreate(
             ['email' => 'admin@demo.com'],

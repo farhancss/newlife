@@ -1,47 +1,292 @@
 @extends('layouts.app')
 
 @section('content')
+    @php
+        $totalContainers = $containers->count();
+        $inTransit = $containers->filter(fn ($c) => in_array($c->status, [
+            \App\Enums\ContainerStatus::SHIPPED_TO_HOME,
+            \App\Enums\ContainerStatus::RETURN_SHIPMENT_IN_TRANSIT,
+            \App\Enums\ContainerStatus::OUT_FOR_DELIVERY,
+        ], true))->count();
+    @endphp
+
     <div class="space-y-6">
-        <div class="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-5 sm:flex-row sm:items-center sm:justify-between">
+        @if (session('status'))
+            <x-ui.alert variant="success" :message="session('status')" />
+        @endif
+
+        @if ($errors->any())
+            <x-ui.alert variant="error" title="Could not save">
+                <ul class="mt-2 list-disc pl-5 text-sm text-gray-600">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </x-ui.alert>
+        @endif
+
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
-                <h1 class="text-xl font-semibold text-gray-900">Container Management</h1>
-                <p class="mt-1 text-sm text-gray-600">Track container status, routes, and customer assignments.</p>
+                <h1 class="text-2xl font-bold text-gray-900">Container operations</h1>
+                <p class="mt-1 text-sm text-gray-600">Containers are auto-assigned at onboarding. Update workflow status, tracking, and dates here.</p>
             </div>
-            <button type="button" class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white">Add Container</button>
+            <form method="GET" action="{{ route('admin.containers') }}" class="flex w-full max-w-lg gap-2">
+                <input type="search" name="q" value="{{ $search }}" placeholder="Search container, student, tracking…"
+                    class="h-11 flex-1 rounded-xl border border-gray-300 px-4 text-sm shadow-sm focus:border-brand-400 focus:ring-2 focus:ring-brand-500/20" />
+                <button type="submit" class="rounded-xl border border-gray-300 px-5 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+                    Search
+                </button>
+            </form>
         </div>
 
-        <x-portal.data-table table-class="min-w-[860px]">
-            <thead>
-                <tr>
-                    <th>Container</th>
-                    <th>Size</th>
-                    <th>Status</th>
-                    <th>Location</th>
-                    <th>Customer</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ([
-                    ['CTN-101', '20ft', 'In transit', 'Atlanta', 'John Doe'],
-                    ['CTN-205', '40ft', 'Delivered', 'Norfolk', 'Jane Lee'],
-                    ['CTN-389', '20ft', 'Maintenance', 'Miami', 'N/A'],
-                    ['CTN-412', '20ft', 'In transit', 'Richmond', 'Jack Peters'],
-                    ['CTN-518', '40ft', 'Scheduled', 'Charlotte', 'Julia Morris'],
-                    ['CTN-622', '20ft', 'Delivered', 'Norfolk', 'Riley Brown'],
-                    ['CTN-731', '40ft', 'In transit', 'Atlanta', 'Emily Davis'],
-                    ['CTN-844', '20ft', 'Maintenance', 'Miami', 'N/A'],
-                    ['CTN-905', '40ft', 'Scheduled', 'Richmond', 'Michael Brown'],
-                    ['CTN-110', '20ft', 'In transit', 'Charlotte', 'Sarah Johnson'],
-                ] as [$id, $size, $status, $location, $customer])
-                    <tr>
-                        <td class="font-medium text-gray-900">{{ $id }}</td>
-                        <td>{{ $size }}</td>
-                        <td><span class="rounded-full bg-brand-50 px-2 py-1 text-xs font-semibold text-brand-700">{{ $status }}</span></td>
-                        <td>{{ $location }}</td>
-                        <td>{{ $customer }}</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </x-portal.data-table>
+        {{-- Stats — always inline on admin viewport --}}
+        <div class="flex flex-row gap-3">
+            <div class="min-w-0 flex-1 rounded-2xl border border-gray-200 bg-white px-4 py-4 sm:px-5 sm:py-5">
+                <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Move shipments</p>
+                <p class="mt-1 text-2xl font-bold text-gray-900 sm:text-3xl">{{ $totalContainers }}</p>
+            </div>
+            <div class="min-w-0 flex-1 rounded-2xl border border-gray-200 bg-white px-4 py-4 sm:px-5 sm:py-5">
+                <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">In transit</p>
+                <p class="mt-1 text-2xl font-bold text-brand-700 sm:text-3xl">{{ $inTransit }}</p>
+            </div>
+            <div class="min-w-0 flex-1 rounded-2xl border border-gray-200 bg-white px-4 py-4 sm:px-5 sm:py-5">
+                <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Students loaded</p>
+                <p class="mt-1 text-2xl font-bold text-gray-900 sm:text-3xl">{{ $studentsLoaded }}</p>
+            </div>
+        </div>
+
+        <div>
+            {{-- Table --}}
+            <div>
+                <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+                    <x-portal.data-table table-class="min-w-[760px]">
+                        <thead>
+                            <tr>
+                                <th>Container</th>
+                                <th>Student / package</th>
+                                <th>Status</th>
+                                <th>Ship by</th>
+                                <th>Tracking</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($containers as $container)
+                                @php
+                                    $student = $container->studentProfile;
+                                    $pkg = $student->package;
+                                    $outUrl = $fedExLinkService->trackingUrl($container->outbound_tracking);
+                                @endphp
+                                <tr class="hover:bg-gray-50/80">
+                                    <td>
+                                        <span class="font-semibold text-gray-900">{{ $container->code }}</span>
+                                        @if ($pkg)
+                                            <span class="mt-0.5 block text-xs text-gray-500">Includes {{ $pkg->container_count }} {{ \Illuminate\Support\Str::plural('container', $pkg->container_count) }}</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <span class="font-medium text-gray-900">{{ $student->fullName() ?: $student->user?->name }}</span>
+                                        <span class="mt-0.5 block text-xs text-gray-500">{{ $student->new_life_id }}</span>
+                                        @if ($pkg)
+                                            <span class="mt-1 inline-flex rounded-full bg-brand-50 px-2 py-0.5 text-xs font-semibold text-brand-700">
+                                                {{ $pkg->shortLabel() }}
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <span class="inline-flex max-w-[140px] rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold leading-snug text-gray-800">
+                                            {{ $container->statusLabel() }}
+                                        </span>
+                                        @if ($container->location)
+                                            <span class="mt-1 block text-xs text-gray-500">{{ $container->location }}</span>
+                                        @endif
+                                    </td>
+                                    <td class="text-xs text-gray-700">
+                                        {{ $container->ship_by_date ? $container->ship_by_date->format('M j, Y') : '—' }}
+                                    </td>
+                                    <td class="text-xs">
+                                        @if ($container->outbound_tracking)
+                                            <a href="{{ $outUrl }}" target="_blank" rel="noopener noreferrer" class="font-medium text-brand-600 hover:underline">
+                                                {{ $container->outbound_tracking }}
+                                            </a>
+                                        @else
+                                            <span class="text-gray-400">—</span>
+                                        @endif
+                                    </td>
+                                    <td class="text-right">
+                                        <a href="{{ route('admin.containers', ['edit' => $container->id, 'q' => $search ?: null]) }}"
+                                            class="inline-flex rounded-lg px-3 py-1.5 text-sm font-semibold text-brand-600 hover:bg-brand-50">
+                                            Edit
+                                        </a>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="py-16 text-center">
+                                        <p class="text-sm font-medium text-gray-900">No containers yet</p>
+                                        <p class="mt-1 text-sm text-gray-500">Containers appear automatically once a student completes onboarding.</p>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </x-portal.data-table>
+                </div>
+            </div>
+        </div>
+
     </div>
+
+    {{-- Edit drawer (rendered at body level so it overlays the sidebar) --}}
+    @push('modals')
+        @if ($editing)
+            @php $closeUrl = route('admin.containers', array_filter(['q' => $search ?: null])); @endphp
+            <div class="fixed inset-0 z-[100000] flex justify-end"
+                x-data="{ open: false }"
+                x-init="$nextTick(() => open = true); document.body.style.overflow = 'hidden'"
+                x-cloak
+                @keydown.escape.window="window.location='{{ $closeUrl }}'">
+                <div class="absolute inset-0 bg-gray-900/40 backdrop-blur-sm"
+                    x-show="open" x-transition.opacity.duration.200ms
+                    @click="window.location='{{ $closeUrl }}'"></div>
+                <div class="relative flex h-full w-full max-w-lg flex-col overflow-y-auto bg-white shadow-2xl"
+                    x-show="open"
+                    x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="translate-x-full"
+                    x-transition:enter-end="translate-x-0"
+                    x-transition:leave="transition ease-in duration-200"
+                    x-transition:leave-start="translate-x-0"
+                    x-transition:leave-end="translate-x-full">
+                    <div class="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white px-5 py-4">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Edit container</p>
+                            <h2 class="text-xl font-bold text-gray-900">{{ $editing->code }}</h2>
+                        </div>
+                        <a href="{{ route('admin.containers', array_filter(['q' => $search ?: null])) }}"
+                            class="rounded-lg p-2 text-gray-500 hover:bg-gray-100" aria-label="Close">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </a>
+                    </div>
+
+                    <div class="flex-1 p-5">
+                        @php $editStudent = $editing->studentProfile; @endphp
+                        <div class="mb-6 rounded-xl bg-gray-50 p-4 text-sm">
+                            <p class="font-semibold text-gray-900">{{ $editStudent->fullName() }}</p>
+                            <p class="text-gray-600">{{ $editStudent->new_life_id }}</p>
+                            @if ($editStudent->package)
+                                <p class="mt-2 text-brand-700">{{ $editStudent->package->name }} · {{ $editStudent->package->container_count }} containers</p>
+                            @endif
+                        </div>
+
+                        <form action="{{ route('admin.containers.update', $editing) }}" method="POST" class="space-y-4">
+                            @csrf
+                            @method('PUT')
+
+                            <div>
+                                <label for="status" class="mb-1.5 block text-sm font-medium text-gray-700">Workflow status</label>
+                                <select id="status" name="status" class="h-11 w-full rounded-xl border border-gray-300 px-3 text-sm">
+                                    @foreach ($statuses as $status)
+                                        <option value="{{ $status }}" @selected(old('status', $editing->status) === $status)>
+                                            {{ \App\Enums\ContainerStatus::label($status) }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="location" class="mb-1.5 block text-sm font-medium text-gray-700">Location</label>
+                                <input id="location" name="location" type="text" value="{{ old('location', $editing->location) }}"
+                                    class="h-11 w-full rounded-xl border border-gray-300 px-3 text-sm" />
+                            </div>
+
+                            <div>
+                                <label class="mb-1.5 block text-sm font-medium text-gray-700" for="ship_by_date">Ship by date</label>
+                                <x-form.flatpickr-input
+                                    name="ship_by_date"
+                                    :value="old('ship_by_date', $editing->ship_by_date?->format('Y-m-d'))"
+                                    placeholder="Select a date"
+                                    icon="calendar"
+                                    class="h-11 w-full rounded-xl border border-gray-300 px-3 pr-10 text-sm focus:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-200"
+                                    :options="[
+                                        'dateFormat' => 'Y-m-d',
+                                        'altInput' => true,
+                                        'altFormat' => 'F j, Y',
+                                    ]"
+                                />
+                            </div>
+
+                            <div>
+                                <label for="outbound_tracking" class="mb-1.5 block text-sm font-medium text-gray-700">Outbound FedEx tracking</label>
+                                <input id="outbound_tracking" name="outbound_tracking" type="text" value="{{ old('outbound_tracking', $editing->outbound_tracking) }}"
+                                    class="h-11 w-full rounded-xl border border-gray-300 px-3 text-sm font-mono" placeholder="7946…" />
+                            </div>
+
+                            <div>
+                                <label for="return_tracking" class="mb-1.5 block text-sm font-medium text-gray-700">Return FedEx tracking</label>
+                                <input id="return_tracking" name="return_tracking" type="text" value="{{ old('return_tracking', $editing->return_tracking) }}"
+                                    class="h-11 w-full rounded-xl border border-gray-300 px-3 text-sm font-mono" />
+                            </div>
+
+                            <div>
+                                <label for="status_note" class="mb-1.5 block text-sm font-medium text-gray-700">Status note (audit)</label>
+                                <input id="status_note" name="status_note" type="text" value="{{ old('status_note') }}"
+                                    class="h-11 w-full rounded-xl border border-gray-300 px-3 text-sm" />
+                            </div>
+
+                            <div>
+                                <label for="internal_notes" class="mb-1.5 block text-sm font-medium text-gray-700">Internal notes</label>
+                                <textarea id="internal_notes" name="internal_notes" rows="3" class="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm">{{ old('internal_notes', $editing->internal_notes) }}</textarea>
+                            </div>
+
+                            <label class="flex items-center gap-2 text-sm text-gray-700">
+                                <input type="checkbox" name="force_status" value="1" class="rounded border-gray-300 text-brand-600" />
+                                Allow backward status override
+                            </label>
+
+                            <button type="submit" class="w-full rounded-xl bg-brand-600 py-3 text-sm font-semibold text-white hover:bg-brand-700">
+                                Save changes
+                            </button>
+                        </form>
+
+                        {{-- Student container photos --}}
+                        <div class="mt-8 border-t border-gray-100 pt-6">
+                            <h3 class="text-sm font-semibold text-gray-900">Container photos
+                                <span class="font-normal text-gray-500">({{ $editing->photos->count() }})</span>
+                            </h3>
+                            @if ($editing->photos->isNotEmpty())
+                                <div class="mt-3 grid grid-cols-3 gap-2">
+                                    @foreach ($editing->photos as $photo)
+                                        <a href="{{ $photo->url() }}" target="_blank" rel="noopener noreferrer"
+                                            class="group relative block overflow-hidden rounded-lg border border-gray-200">
+                                            <img src="{{ $photo->url() }}" alt="Container photo"
+                                                class="h-24 w-full object-cover transition group-hover:scale-105" loading="lazy" />
+                                        </a>
+                                    @endforeach
+                                </div>
+                                <p class="mt-2 text-xs text-gray-500">Uploaded by the student during Customer Packing.</p>
+                            @else
+                                <p class="mt-3 text-sm text-gray-500">No photos uploaded yet. Students can upload exterior photos once the container reaches Customer Packing.</p>
+                            @endif
+                        </div>
+
+                        @if ($editing->statusHistories->isNotEmpty())
+                            <div class="mt-8 border-t border-gray-100 pt-6">
+                                <h3 class="text-sm font-semibold text-gray-900">Recent history</h3>
+                                <ul class="mt-3 max-h-56 space-y-3 overflow-y-auto">
+                                    @foreach ($editing->statusHistories->take(8) as $history)
+                                        <li class="rounded-lg bg-gray-50 px-3 py-2 text-xs">
+                                            <span class="font-semibold text-gray-800">{{ $history->toStatusLabel() }}</span>
+                                            <span class="text-gray-500"> · {{ $history->created_at->format('M j, g:i A') }}</span>
+                                            @if ($history->note)
+                                                <p class="mt-1 text-gray-600">{{ $history->note }}</p>
+                                            @endif
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        @endif
+    @endpush
 @endsection

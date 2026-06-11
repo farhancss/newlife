@@ -108,7 +108,8 @@ test('squarespace order webhook enriches package and subscription', function () 
 
     $profile = StudentProfile::query()->where('squarespace_contact_id', 'sq-contact-fixture-001')->first();
     expect($profile)->not->toBeNull()
-        ->and($profile->package_tier)->toBe('standard');
+        ->and($profile->package_tier)->toBe('summit')
+        ->and($profile->package_id)->not->toBeNull();
 
     $subscription = StudentSubscription::query()->where('squarespace_order_id', 'sq-order-fixture-001')->first();
     expect($subscription)->not->toBeNull()

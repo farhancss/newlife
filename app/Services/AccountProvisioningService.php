@@ -21,6 +21,7 @@ class AccountProvisioningService
         private readonly NewLifeIdGenerator $newLifeIdGenerator,
         private readonly InvitationMailService $invitationMailService,
         private readonly PackageTierMapper $packageTierMapper,
+        private readonly StudentPackageService $studentPackageService,
         private readonly UserStatusService $userStatusService,
     ) {
     }
@@ -155,8 +156,7 @@ class AccountProvisioningService
             }
 
             $tier = $this->packageTierMapper->mapFromLineItems($lineItems);
-            $profile->package_tier = $tier;
-            $profile->save();
+            $this->studentPackageService->assignFromTier($profile, $tier);
 
             $this->syncShippingFromOrder($profile, $order);
             $this->upsertSubscription($profile, $order);
