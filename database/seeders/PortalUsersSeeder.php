@@ -11,8 +11,10 @@ use App\Models\ParentGuardian;
 use App\Models\ShippingAddress;
 use App\Models\StudentProfile;
 use App\Models\User;
+use App\Enums\RetailPackageStatus;
 use App\Services\ContainerWorkflowService;
 use App\Services\NewLifeIdGenerator;
+use App\Services\RetailPackageService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -103,6 +105,8 @@ class PortalUsersSeeder extends Seeder
             );
         }
 
+        $this->seedRetailPackages($profile->fresh() ?? $profile);
+
         User::updateOrCreate(
             ['email' => 'admin@demo.com'],
             [
@@ -113,5 +117,32 @@ class PortalUsersSeeder extends Seeder
                 'must_reset_password' => false,
             ]
         );
+    }
+
+    private function seedRetailPackages(StudentProfile $profile): void
+    {
+        if ($profile->retailPackages()->exists()) {
+            return;
+        }
+
+        $service = app(RetailPackageService::class);
+
+        $samples = [
+            ['retailer' => 'Amazon', 'description' => 'Mini fridge, dorm size', 'tracking_number' => 'TBA1234567890', 'status' => RetailPackageStatus::IN_TRANSIT],
+            ['retailer' => 'Target', 'description' => 'Bedding kit, twin XL', 'tracking_number' => '1Z999AA10123456784', 'status' => RetailPackageStatus::RECEIVED_AT_HUB],
+            ['retailer' => 'Wayfair', 'description' => '3-tier bookshelf', 'tracking_number' => 'FX785512369874', 'status' => RetailPackageStatus::DELIVERED_TO_DORM],
+        ];
+
+        foreach ($samples as $sample) {
+            $package = $service->create($profile, [
+                'retailer' => $sample['retailer'],
+                'description' => $sample['description'],
+                'tracking_number' => $sample['tracking_number'],
+                'estimated_arrival' => now()->addDays(rand(2, 14))->toDateString(),
+                'notes' => null,
+            ]);
+
+            $service->transition($package, $sample['status'], null, 'Demo seed data');
+        }
     }
 }

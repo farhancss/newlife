@@ -24,7 +24,7 @@ class StudentDashboardController extends Controller
         /** @var User $user */
         $user = Auth::user();
         $profile = $this->studentProfileService->ensureForUser($user);
-        $profile->load(['package', 'containers.statusHistories', 'housingInfo']);
+        $profile->load(['package', 'containers.statusHistories', 'housingInfo', 'retailPackages']);
 
         $primary = $profile->containers->sortBy('id')->first();
         $latestUpdate = $primary instanceof Container
@@ -40,6 +40,37 @@ class StudentDashboardController extends Controller
             'dashboardSteps' => $this->moveProgressService->dashboardSteps($profile),
             'primaryContainer' => $primary,
             'latestUpdate' => $latestUpdate,
+            'deadlines' => $this->deadlines($profile),
         ]);
+    }
+
+    /**
+     * Derive the student's key dates from their move-in window. Deadlines lead
+     * the move-in date so prep happens on time; when no date is set yet they
+     * surface as "To be set".
+     *
+     * @return list<array{label: string, date: ?\Illuminate\Support\Carbon, done: bool}>
+     */
+    private function deadlines(\App\Models\StudentProfile $profile): array
+    {
+        $moveInDate = $profile->housingInfo?->move_in_date;
+
+        return [
+            [
+                'label' => 'Profile Completion',
+                'date' => $moveInDate?->copy()->subDays(30),
+                'done' => $profile->isOnboardingComplete(),
+            ],
+            [
+                'label' => 'Add Retail Packages',
+                'date' => $moveInDate?->copy()->subDays(14),
+                'done' => $profile->retailPackages->isNotEmpty(),
+            ],
+            [
+                'label' => 'Move-in Window',
+                'date' => $moveInDate,
+                'done' => $moveInDate !== null,
+            ],
+        ];
     }
 }

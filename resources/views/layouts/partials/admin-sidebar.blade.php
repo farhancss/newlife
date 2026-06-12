@@ -22,9 +22,6 @@
                 <div class="mt-4 rounded-xl border border-brand-100 bg-gradient-to-br from-brand-50 to-white p-3.5 shadow-theme-xs">
                     <p class="text-xs font-semibold uppercase tracking-wide text-brand-600">Admin Portal</p>
                     <p class="mt-1 text-sm font-semibold text-gray-900">Operations Dashboard</p>
-                    <span class="mt-2 inline-flex items-center rounded-full bg-brand-800 px-2.5 py-0.5 text-xs font-medium text-white">
-                        Campus Management
-                    </span>
                 </div>
             </div>
             <div x-show="!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen" class="hidden xl:flex xl:justify-center">

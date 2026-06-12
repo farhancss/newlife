@@ -21,8 +21,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->loadMigrationsFrom(base_path('new_migration'));
-
         View::composer(
             ['layouts.app-header', 'layouts.app', 'layouts.partials.student-sidebar'],
             StudentProfileCompletionComposer::class

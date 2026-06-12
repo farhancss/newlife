@@ -14,6 +14,7 @@ class ContainerWorkflowService
 {
     public function __construct(
         private readonly ContainerCodeGenerator $codeGenerator,
+        private readonly NotificationService $notifications,
     ) {
     }
 
@@ -75,7 +76,7 @@ class ContainerWorkflowService
             ]);
         }
 
-        return DB::transaction(function () use ($container, $fromStatus, $toStatus, $actor, $note): Container {
+        $fresh = DB::transaction(function () use ($container, $fromStatus, $toStatus, $actor, $note): Container {
             $container->status = $toStatus;
 
             $this->applyAutomaticDates($container, $toStatus);
@@ -84,8 +85,12 @@ class ContainerWorkflowService
 
             $this->recordHistory($container, $fromStatus, $toStatus, $actor, $note);
 
-            return $container->fresh();
+            return $container->fresh(['studentProfile.user']) ?? $container;
         });
+
+        $this->notifications->containerStatusChanged($fresh, $toStatus);
+
+        return $fresh;
     }
 
     public function primaryContainer(StudentProfile $profile): ?Container

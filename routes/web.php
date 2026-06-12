@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\AdminContainerController;
+use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\AdminNotificationController;
+use App\Http\Controllers\AdminRetailPackageController;
 use App\Http\Controllers\AdminStudentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChangePasswordController;
@@ -10,7 +13,10 @@ use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\StudentContainerPhotoController;
 use App\Http\Controllers\StudentDashboardController;
 use App\Http\Controllers\StudentMoveTrackingController;
+use App\Http\Controllers\StudentNotificationController;
 use App\Http\Controllers\StudentProfileController;
+use App\Http\Controllers\StudentRetailPackageController;
+use App\Http\Controllers\StudentSettingsController;
 use App\Mail\ResetPasswordMail;
 use App\Mail\OnboardingCompleteMail;
 use App\Mail\PasswordChangedMail;
@@ -51,6 +57,16 @@ if (app()->environment('local')) {
                 url('/password/reset/sample-token?email=alex.carter@example.com'),
             ))->render();
         });
+
+        Route::get('/portal-notification', function () {
+            return (new \App\Mail\PortalNotificationMail(
+                subjectLine: 'Your container is on its way',
+                heading: 'Your container is on its way',
+                bodyText: 'Good news — your New Life container has shipped to your home address. Track its progress from the My Move page. (Container CTN-21579)',
+                actionUrl: url('/student/move-tracking'),
+                greetingName: 'Alex',
+            ))->render();
+        });
     });
 }
 
@@ -78,12 +94,16 @@ Route::prefix('student')->name('student.')->middleware([
 ])->group(function () {
     Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/retail-packages', function () {
-        return view('pages.portal.student.retail-packages', [
-            'title' => 'Retail Packages',
-            'portal' => 'student',
-        ]);
-    })->name('retail-packages');
+    Route::get('/retail-packages', [StudentRetailPackageController::class, 'index'])->name('retail-packages');
+    Route::post('/retail-packages', [StudentRetailPackageController::class, 'store'])
+        ->middleware('throttle:30,1')
+        ->name('retail-packages.store');
+    Route::put('/retail-packages/{retailPackage}', [StudentRetailPackageController::class, 'update'])
+        ->middleware('throttle:30,1')
+        ->name('retail-packages.update');
+    Route::delete('/retail-packages/{retailPackage}', [StudentRetailPackageController::class, 'destroy'])
+        ->middleware('throttle:30,1')
+        ->name('retail-packages.destroy');
 
     Route::get('/move-tracking', [StudentMoveTrackingController::class, 'index'])->name('move-tracking');
     Route::post('/move-tracking/containers/{container}/photos', [StudentContainerPhotoController::class, 'store'])
@@ -107,19 +127,18 @@ Route::prefix('student')->name('student.')->middleware([
         ]);
     })->name('support');
 
-    Route::get('/notifications', function () {
-        return view('pages.portal.student.notifications', [
-            'title' => 'Notifications',
-            'portal' => 'student',
-        ]);
-    })->name('notifications');
+    Route::get('/notifications', [StudentNotificationController::class, 'index'])->name('notifications');
+    Route::post('/notifications/read-all', [StudentNotificationController::class, 'markAllRead'])
+        ->middleware('throttle:60,1')
+        ->name('notifications.read-all');
+    Route::post('/notifications/{notification}/read', [StudentNotificationController::class, 'markRead'])
+        ->middleware('throttle:120,1')
+        ->name('notifications.read');
 
-    Route::get('/settings', function () {
-        return view('pages.portal.student.settings', [
-            'title' => 'Settings',
-            'portal' => 'student',
-        ]);
-    })->name('settings');
+    Route::get('/settings', [StudentSettingsController::class, 'show'])->name('settings');
+    Route::put('/settings', [StudentSettingsController::class, 'update'])
+        ->middleware('throttle:30,1')
+        ->name('settings.update');
 });
 
 Route::prefix('student')->name('student.')->middleware(['auth', 'account.active', 'role:student', 'password.changed'])->group(function () {
@@ -138,13 +157,7 @@ Route::prefix('student')->name('student.')->middleware(['auth', 'account.active'
 });
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('pages.portal.admin.dashboard', [
-            'title' => 'Admin Dashboard',
-            'pageHeading' => 'Dashboard Overview',
-            'portal' => 'admin',
-        ]);
-    })->name('dashboard');
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/customers', [AdminStudentController::class, 'index'])->name('customers');
 
@@ -153,13 +166,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
         ->middleware('throttle:30,1')
         ->name('containers.update');
 
-    Route::get('/retail-packages', function () {
-        return view('pages.portal.admin.retail-packages', [
-            'title' => 'Retail Package Management',
-            'pageHeading' => 'Retail Packages',
-            'portal' => 'admin',
-        ]);
-    })->name('retail-packages');
+    Route::get('/retail-packages', [AdminRetailPackageController::class, 'index'])->name('retail-packages');
+    Route::post('/retail-packages', [AdminRetailPackageController::class, 'store'])
+        ->middleware('throttle:30,1')
+        ->name('retail-packages.store');
+    Route::put('/retail-packages/{retailPackage}', [AdminRetailPackageController::class, 'update'])
+        ->middleware('throttle:30,1')
+        ->name('retail-packages.update');
+    Route::delete('/retail-packages/{retailPackage}', [AdminRetailPackageController::class, 'destroy'])
+        ->middleware('throttle:30,1')
+        ->name('retail-packages.destroy');
 
     Route::get('/deliveries', function () {
         return view('pages.portal.admin.deliveries', [
@@ -192,13 +208,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
         ]);
     })->name('reports');
 
-    Route::get('/notifications', function () {
-        return view('pages.portal.admin.notifications', [
-            'title' => 'Notifications',
-            'pageHeading' => 'Notifications',
-            'portal' => 'admin',
-        ]);
-    })->name('notifications');
+    Route::get('/notifications', [AdminNotificationController::class, 'index'])->name('notifications');
+    Route::post('/notifications/{notification}/resend', [AdminNotificationController::class, 'resend'])
+        ->middleware('throttle:30,1')
+        ->name('notifications.resend');
 
     Route::get('/settings', function () {
         return view('pages.portal.admin.settings', [

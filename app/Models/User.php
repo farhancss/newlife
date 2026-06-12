@@ -73,6 +73,18 @@ class User extends Authenticatable implements CanResetPasswordContract
         return $this->hasOne(StudentProfile::class);
     }
 
+    /** @return \Illuminate\Database\Eloquent\Relations\HasMany<PortalNotification, $this> */
+    public function portalNotifications(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(PortalNotification::class)->latest();
+    }
+
+    /** @return \Illuminate\Database\Eloquent\Relations\HasOne<NotificationPreference, $this> */
+    public function notificationPreference(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(NotificationPreference::class);
+    }
+
     public function isStudent(): bool
     {
         return $this->role === \App\Enums\UserRole::STUDENT;

@@ -20,7 +20,7 @@ class MenuHelper
                         ['icon' => 'tables', 'name' => 'Retail Packages', 'path' => $basePath . '/retail-packages'],
                         ['icon' => 'clock', 'name' => 'Add-Ons', 'path' => $basePath . '/add-ons'],
                         ['icon' => 'support-ticket', 'name' => 'Support', 'path' => $basePath . '/support'],
-                        ['icon' => 'bell', 'name' => 'Notifications', 'path' => $basePath . '/notifications', 'badge' => '3'],
+                        ['icon' => 'bell', 'name' => 'Notifications', 'path' => $basePath . '/notifications'],
                         ['icon' => 'forms', 'name' => 'Settings', 'path' => $basePath . '/settings'],
                     ],
                 ],

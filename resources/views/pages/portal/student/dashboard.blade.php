@@ -79,20 +79,27 @@
             <div class="flex min-h-[200px] flex-col rounded-xl border border-gray-200 bg-white p-5">
                 <h3 class="text-base font-semibold text-gray-900">Upcoming Deadlines</h3>
                 <ul class="mt-5 flex-1 space-y-3.5 text-sm text-gray-800">
-                    <li class="flex items-center justify-between gap-3">
-                        <span>Profile Completion</span>
-                        <span class="shrink-0 text-gray-500">May 15, 2026</span>
-                    </li>
-                    <li class="flex items-center justify-between gap-3">
-                        <span>Add Retail Packages</span>
-                        <span class="shrink-0 text-gray-500">May 20, 2026</span>
-                    </li>
-                    <li class="flex items-center justify-between gap-3">
-                        <span>Move-in Window</span>
-                        <span class="shrink-0 text-gray-500">Jun 10, 2026</span>
-                    </li>
+                    @foreach ($deadlines as $deadline)
+                        <li class="flex items-center justify-between gap-3">
+                            <span class="flex items-center gap-2">
+                                @if ($deadline['done'])
+                                    <span class="inline-flex h-2 w-2 shrink-0 rounded-full bg-success-500"></span>
+                                @endif
+                                <span class="{{ $deadline['done'] ? 'text-gray-500 line-through' : '' }}">{{ $deadline['label'] }}</span>
+                            </span>
+                            <span class="shrink-0 {{ $deadline['done'] ? 'text-success-600' : 'text-gray-500' }}">
+                                @if ($deadline['done'])
+                                    Done
+                                @elseif ($deadline['date'])
+                                    {{ $deadline['date']->format('M j, Y') }}
+                                @else
+                                    To be set
+                                @endif
+                            </span>
+                        </li>
+                    @endforeach
                 </ul>
-                <a href="#" class="mt-5 text-right text-sm font-medium text-brand-600 hover:text-brand-700">View All</a>
+                <a href="{{ route('student.move-tracking') }}" class="mt-5 text-right text-sm font-medium text-brand-600 hover:text-brand-700">View All</a>
             </div>
 
             <div class="flex min-h-[200px] flex-col rounded-xl border border-gray-200 bg-white p-5">

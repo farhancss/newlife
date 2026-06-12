@@ -25,8 +25,10 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property int $move_container_quantity
  * @property \Illuminate\Support\Carbon|null $move_address_confirmed_at
  * @property \Illuminate\Support\Carbon|null $move_shipment_triggered_at
+ * @property \Illuminate\Support\Carbon|null $retail_packages_acknowledged_at
  * @property-read User|null $user
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Container> $containers
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, RetailPackage> $retailPackages
  * @property-read ParentGuardian|null $parentGuardian
  * @property-read ShippingAddress|null $shippingAddress
  * @property-read HousingInfo|null $housingInfo
@@ -50,6 +52,7 @@ class StudentProfile extends Model
         'move_container_quantity',
         'move_address_confirmed_at',
         'move_shipment_triggered_at',
+        'retail_packages_acknowledged_at',
     ];
 
     protected function casts(): array
@@ -60,6 +63,7 @@ class StudentProfile extends Model
             'move_container_quantity' => 'integer',
             'move_address_confirmed_at' => 'datetime',
             'move_shipment_triggered_at' => 'datetime',
+            'retail_packages_acknowledged_at' => 'datetime',
         ];
     }
 
@@ -97,6 +101,17 @@ class StudentProfile extends Model
     public function containers(): HasMany
     {
         return $this->hasMany(Container::class);
+    }
+
+    /** @return HasMany<RetailPackage, $this> */
+    public function retailPackages(): HasMany
+    {
+        return $this->hasMany(RetailPackage::class)->latest();
+    }
+
+    public function hasAcknowledgedRetailTerms(): bool
+    {
+        return $this->retail_packages_acknowledged_at !== null;
     }
 
     /** @return BelongsTo<Package, $this> */

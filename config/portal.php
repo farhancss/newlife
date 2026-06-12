@@ -19,4 +19,21 @@ return [
         'allowed_mimes' => ['jpeg', 'jpg', 'png'],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Retail Packages
+    |--------------------------------------------------------------------------
+    |
+    | Rules governing student-logged retail shipments. The active cap limits
+    | how many non-delivered packages a student may track at once. Packages
+    | become read-only for students once they reach "edit_lock_status".
+    |
+    */
+
+    'retail_packages' => [
+        'active_cap' => (int) env('RETAIL_PACKAGE_ACTIVE_CAP', 10),
+        'edit_lock_status' => 'received_at_hub',
+        'retailers' => ['Amazon', 'Walmart', 'Target', 'Wayfair', 'DHL', 'UPS', 'FedEx', 'Other'],
+    ],
+
 ];

@@ -5,6 +5,7 @@
     $user = auth()->user();
     $userName = $user->name ?? 'Student User';
     $userEmail = $user->email ?? '';
+    $newLifeId = $user?->studentProfile?->new_life_id;
     $initials = collect(explode(' ', $userName))
         ->filter()
         ->take(2)
@@ -63,13 +64,18 @@
                                     :class="isActive('{{ $item['path'] }}') ? 'portal-nav-icon-active' : 'portal-nav-icon-inactive'">
                                     {!! MenuHelper::getIconSvg($item['icon']) !!}
                                 </span>
+                                @php
+                                    $itemBadge = str_ends_with($item['path'], '/notifications')
+                                        ? (($notificationUnreadCount ?? 0) > 0 ? ($notificationUnreadCount > 99 ? '99+' : $notificationUnreadCount) : null)
+                                        : ($item['badge'] ?? null);
+                                @endphp
                                 <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"
                                     class="flex min-w-0 flex-1 items-center justify-between gap-2">
                                     <span class="truncate">{{ $item['name'] }}</span>
-                                    @if (!empty($item['badge']))
+                                    @if (!empty($itemBadge))
                                         <span class="inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-brand-500 px-1.5 text-[10px] font-semibold text-white"
                                             :class="isActive('{{ $item['path'] }}') ? 'bg-white/25 text-white' : ''">
-                                            {{ $item['badge'] }}
+                                            {{ $itemBadge }}
                                         </span>
                                     @endif
                                 </span>
@@ -92,13 +98,16 @@
         <div x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen" class="min-w-0 flex-1">
             <p class="truncate text-sm font-semibold text-gray-900">{{ $userName }}</p>
             <p class="truncate text-xs text-gray-500">{{ $userEmail }}</p>
+            @if ($newLifeId)
+                <p class="mt-0.5 truncate font-mono text-xs font-medium text-brand-700">{{ $newLifeId }}</p>
+            @endif
         </div>
         <a href="{{ route('logout') }}"
             x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"
-            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-brand-700"
+            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-brand-700"
             title="Logout"
             aria-label="Logout">
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
             </svg>
         </a>
