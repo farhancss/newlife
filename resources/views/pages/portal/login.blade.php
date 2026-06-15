@@ -61,8 +61,8 @@
                 <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.12)_0,transparent_40%),radial-gradient(circle_at_80%_80%,rgba(255,255,255,0.10)_0,transparent_40%)]"></div>
                 <x-common.common-grid-shape />
                 <div class="relative z-10 mx-auto max-w-lg px-8 text-center">
-                    <img src="/images/logo/new-life-logistix-logo.jpg" alt="New Life Logistix"
-                        class="mx-auto mb-8 h-auto w-full max-w-[360px] rounded-sm bg-white p-2" />
+                    <img src="{{ asset('images/logo/new-life-campus-logo.png') }}" alt="New Life Campus"
+                        class="mx-auto mb-8 h-auto w-full max-w-[360px] rounded-2xl bg-white px-6 py-5 shadow-lg" />
                     <h2 class="mb-3 text-2xl font-semibold text-white">Secure access for one unified platform.</h2>
                 </div>
             </div>

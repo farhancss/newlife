@@ -225,3 +225,37 @@ test('carrier link builder maps known retailers and falls back', function () {
         ->and($builder->build('Unknown Store', 'ABC123'))->toContain('google.com')
         ->and($builder->build('FedEx', ''))->toBeNull();
 });
+
+test('tracking number extractor pulls the number from carrier urls', function () {
+    $extractor = app(\App\Services\TrackingNumberExtractor::class);
+
+    expect($extractor->extract('https://www.fedex.com/fedextrack/?trknbr=794612345678'))->toBe('794612345678')
+        ->and($extractor->extract('https://www.ups.com/track?tracknum=1Z999AA10123456784'))->toBe('1Z999AA10123456784')
+        ->and($extractor->extract('https://tools.usps.com/go/TrackConfirmAction?tLabels=9400111899223817428490'))->toBe('9400111899223817428490')
+        ->and($extractor->extract('https://www.dhl.com/us-en/home/tracking.html?tracking-id=1234567890'))->toBe('1234567890')
+        ->and($extractor->extract('https://parcelsapp.com/en/tracking/JD0099887766'))->toBe('JD0099887766')
+        ->and($extractor->extract('1Z999AA10123456784'))->toBe('1Z999AA10123456784')
+        ->and($extractor->extract(''))->toBeNull();
+});
+
+test('logging a package with a tracking url extracts the number and stores the link', function () {
+    [$user, $profile] = makeRetailStudent();
+
+    $url = 'https://www.fedex.com/fedextrack/?trknbr=794612345678';
+
+    $this->actingAs($user)
+        ->post(route('student.retail-packages.store'), [
+            'retailer' => 'Amazon',
+            'description' => 'Standing desk',
+            'tracking_url' => $url,
+            'estimated_arrival' => now()->addDays(7)->toDateString(),
+            'acknowledge' => '1',
+        ])
+        ->assertSessionHasNoErrors()
+        ->assertRedirect(route('student.retail-packages'));
+
+    $package = RetailPackage::query()->where('student_profile_id', $profile->id)->firstOrFail();
+
+    expect($package->tracking_number)->toBe('794612345678')
+        ->and($package->tracking_url)->toBe($url);
+});

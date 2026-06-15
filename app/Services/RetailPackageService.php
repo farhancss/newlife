@@ -38,6 +38,7 @@ class RetailPackageService
                 'retailer' => $data['retailer'],
                 'description' => $data['description'],
                 'tracking_number' => $data['tracking_number'],
+                'tracking_url' => $data['tracking_url'] ?? null,
                 'estimated_arrival' => $data['estimated_arrival'] ?? null,
                 'notes' => $data['notes'] ?? null,
                 'status' => RetailPackageStatus::LOGGED,
@@ -68,6 +69,7 @@ class RetailPackageService
             'retailer' => $data['retailer'] ?? $package->retailer,
             'description' => $data['description'] ?? $package->description,
             'tracking_number' => $data['tracking_number'] ?? $package->tracking_number,
+            'tracking_url' => array_key_exists('tracking_url', $data) ? $data['tracking_url'] : $package->tracking_url,
             'estimated_arrival' => array_key_exists('estimated_arrival', $data) ? $data['estimated_arrival'] : $package->estimated_arrival,
             'notes' => array_key_exists('notes', $data) ? $data['notes'] : $package->notes,
         ]);

@@ -347,7 +347,13 @@
                             <tr class="hover:bg-gray-50/80">
                                 <td class="font-medium text-gray-900">{{ $pkg->description }}</td>
                                 <td>{{ $pkg->retailer }}</td>
-                                <td class="font-mono text-xs">{{ $pkg->tracking_number }}</td>
+                                <td class="font-mono text-xs">
+                                    @if ($pkg->tracking_url)
+                                        <a href="{{ $pkg->tracking_url }}" target="_blank" rel="noopener noreferrer" class="text-brand-600 hover:underline">{{ $pkg->tracking_number }}</a>
+                                    @else
+                                        {{ $pkg->tracking_number }}
+                                    @endif
+                                </td>
                                 <td><span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold {{ $retailBadge($pkg->status) }}">{{ $pkg->statusLabel() }}</span></td>
                                 <td class="text-xs text-gray-700">{{ $pkg->estimated_arrival ? $pkg->estimated_arrival->format('M j, Y') : '—' }}</td>
                             </tr>

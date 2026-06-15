@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $retailer
  * @property string $description
  * @property string $tracking_number
+ * @property string|null $tracking_url
  * @property \Illuminate\Support\Carbon|null $estimated_arrival
  * @property string|null $notes
  * @property string $status
@@ -35,6 +36,7 @@ class RetailPackage extends Model
         'retailer',
         'description',
         'tracking_number',
+        'tracking_url',
         'estimated_arrival',
         'notes',
         'status',

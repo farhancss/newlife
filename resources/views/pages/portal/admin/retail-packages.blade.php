@@ -100,7 +100,7 @@
                     @forelse ($packages as $package)
                         @php
                             $student = $package->studentProfile;
-                            $trackUrl = $carrierLinkBuilder->build($package->retailer, $package->tracking_number);
+                            $trackUrl = $package->tracking_url ?: $carrierLinkBuilder->build($package->retailer, $package->tracking_number);
                         @endphp
                         <tr class="hover:bg-gray-50/80">
                             <td>
@@ -313,10 +313,21 @@
                                     class="h-11 w-full rounded-xl border border-gray-300 px-3 text-sm" />
                             </div>
 
-                            <div>
-                                <label for="add_tracking_number" class="mb-1.5 block text-sm font-medium text-gray-700">Tracking number</label>
-                                <input id="add_tracking_number" name="tracking_number" type="text" value="{{ old('tracking_number') }}"
-                                    class="h-11 w-full rounded-xl border border-gray-300 px-3 text-sm font-mono" />
+                            <div class="space-y-4" x-data="trackingFields(@js(old('tracking_url')), @js(old('tracking_number')))">
+                                <div>
+                                    <label for="add_tracking_url" class="mb-1.5 block text-sm font-medium text-gray-700">Tracking URL <span class="font-normal text-gray-400">(optional)</span></label>
+                                    <input id="add_tracking_url" name="tracking_url" type="url" inputmode="url"
+                                        x-model="url" @input.debounce.400ms="syncFromUrl()" @change="syncFromUrl()" @paste.debounce.50ms="syncFromUrl()"
+                                        placeholder="Paste the carrier or retailer tracking link"
+                                        class="h-11 w-full rounded-xl border border-gray-300 px-3 text-sm" />
+                                    <p class="mt-1 text-xs text-gray-500">Paste a tracking link (Amazon, FedEx, UPS, etc.) to auto-fill the tracking number.</p>
+                                </div>
+
+                                <div>
+                                    <label for="add_tracking_number" class="mb-1.5 block text-sm font-medium text-gray-700">Tracking number</label>
+                                    <input id="add_tracking_number" name="tracking_number" type="text" x-model="number"
+                                        class="h-11 w-full rounded-xl border border-gray-300 px-3 text-sm font-mono" />
+                                </div>
                             </div>
 
                             <div>

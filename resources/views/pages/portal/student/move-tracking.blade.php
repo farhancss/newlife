@@ -107,11 +107,11 @@
             </div>
         </div>
 
-        {{-- Move shipment --}}
+        {{-- Move shipment + container photos --}}
         @if ($primaryContainer)
-            <div>
-                <h2 class="mb-4 text-lg font-semibold text-gray-900">Your move shipment</h2>
-                <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            <div class="grid gap-6 lg:grid-cols-3 lg:items-start">
+                <div class="lg:col-span-1">
+                    <h2 class="mb-4 text-lg font-semibold text-gray-900">Your move shipment</h2>
                     <x-move.container-card
                         :container="$primaryContainer"
                         :fed-ex-link-service="$fedExLinkService"
@@ -119,25 +119,21 @@
                         :is-primary="true"
                     />
                 </div>
-            </div>
 
-            {{-- Container photos --}}
-            @php
-                $photoContainers = $containers->filter(fn ($c) => $c->acceptsPhotos());
-            @endphp
-            @if ($photoContainers->isNotEmpty())
-                <div class="space-y-4">
-                    <div>
-                        <h2 class="text-lg font-semibold text-gray-900">Container photos</h2>
-                        <p class="mt-1 text-sm text-gray-600">
-                            Upload exterior photos of each container at any stage of your move. Failure to upload photos may impact damage claim processing.
-                        </p>
+                @if ($containers->isNotEmpty())
+                    <div class="space-y-4 lg:col-span-2">
+                        <div>
+                            <h2 class="text-lg font-semibold text-gray-900">Container photos</h2>
+                            <p class="mt-1 text-sm text-gray-600">
+                                Upload exterior photos of your container while it is being packed. Failure to upload photos may impact damage claim processing.
+                            </p>
+                        </div>
+                        @foreach ($containers as $container)
+                            <x-move.container-photos :container="$container" />
+                        @endforeach
                     </div>
-                    @foreach ($photoContainers as $container)
-                        <x-move.container-photos :container="$container" />
-                    @endforeach
-                </div>
-            @endif
+                @endif
+            </div>
         @endif
 
         @if ($showPickupInstructions ?? false)

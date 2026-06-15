@@ -88,12 +88,12 @@ class Container extends Model
     }
 
     /**
-     * Students may upload exterior photos of their container at any time, so
-     * they can document condition throughout the move (not only while packing).
+     * Students may only upload (or delete) exterior photos while the container
+     * is being packed at home. Existing photos remain viewable at every stage.
      */
     public function acceptsPhotos(): bool
     {
-        return true;
+        return $this->status === ContainerStatus::CUSTOMER_PACKING;
     }
 
     public function photoCap(): int

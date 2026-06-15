@@ -12,6 +12,7 @@
     $supportPhone = config('brand.support.phone');
     $brandAddress = config('brand.address');
     $websiteUrl = config('brand.website_url') ?: config('app.url');
+    $logoUrl = asset('images/logo/new-life-campus-logo.png');
     $year = now()->year;
 
     $primary = '#0827be';
@@ -73,18 +74,9 @@
                             <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
                                 <tr>
                                     <td align="left" valign="middle" style="vertical-align:middle;">
-                                        <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-                                            <tr>
-                                                <td valign="middle" style="vertical-align:middle;width:44px;height:44px;background-color:{{ $primary }};border-radius:10px;text-align:center;color:#ffffff;font-family:'Outfit',Arial,sans-serif;font-size:18px;font-weight:700;letter-spacing:1px;line-height:44px;">
-                                                    {{ $brandMark }}
-                                                </td>
-                                                <td style="width:14px;"></td>
-                                                <td valign="middle" style="vertical-align:middle;">
-                                                    <div style="font-family:'Outfit',Arial,sans-serif;font-size:18px;font-weight:700;color:{{ $navy }};line-height:1.1;">{{ $brandName }}</div>
-                                                    <div style="font-family:'Outfit',Arial,sans-serif;font-size:12px;font-weight:500;color:{{ $muted }};letter-spacing:0.4px;text-transform:uppercase;margin-top:2px;">{{ $brandTagline }}</div>
-                                                </td>
-                                            </tr>
-                                        </table>
+                                        <a href="{{ $websiteUrl }}" style="text-decoration:none;">
+                                            <img src="{{ $logoUrl }}" alt="{{ $brandName }}" width="200" style="display:block;width:200px;max-width:200px;height:auto;border:0;outline:none;text-decoration:none;" />
+                                        </a>
                                     </td>
                                 </tr>
                             </table>

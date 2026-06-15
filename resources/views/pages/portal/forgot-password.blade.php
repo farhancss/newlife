@@ -43,8 +43,8 @@
             <div class="relative hidden min-h-screen w-full items-center justify-center overflow-hidden bg-gradient-to-br from-brand-900 via-brand-800 to-brand-950 lg:flex lg:w-1/2">
                 <x-common.common-grid-shape />
                 <div class="relative z-10 mx-auto max-w-lg px-8 text-center">
-                    <img src="/images/logo/new-life-logistix-logo.jpg" alt="New Life Logistix"
-                        class="mx-auto mb-8 h-auto w-full max-w-[360px] rounded-sm bg-white p-2" />
+                    <img src="{{ asset('images/logo/new-life-campus-logo.png') }}" alt="New Life Campus"
+                        class="mx-auto mb-8 h-auto w-full max-w-[360px] rounded-2xl bg-white px-6 py-5 shadow-lg" />
                     <h2 class="text-2xl font-semibold text-white">Account recovery</h2>
                     <p class="mt-2 text-sm text-brand-100">Secure self-service password reset for the portal.</p>
                 </div>

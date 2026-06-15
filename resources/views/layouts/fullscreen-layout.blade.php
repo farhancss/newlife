@@ -8,6 +8,10 @@
 
     <title>{{ $title ?? 'Dashboard' }} | New Life Campus</title>
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('images/logo/new-life-campus-logo.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/logo/new-life-campus-logo.png') }}">
+
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 

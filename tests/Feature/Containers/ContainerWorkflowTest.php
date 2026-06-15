@@ -199,7 +199,7 @@ test('student can upload photos while customer packing', function () {
     expect(ContainerPhoto::query()->where('container_id', $container->id)->count())->toBe(1);
 });
 
-test('student can upload photos at any move stage', function () {
+test('student cannot upload photos when container is not packing', function () {
     Storage::fake('public');
     [$user, $profile] = createStudentWithAddress();
 
@@ -214,9 +214,9 @@ test('student can upload photos at any move stage', function () {
             'photos' => [UploadedFile::fake()->image('side.jpg')],
             'acknowledge' => '1',
         ])
-        ->assertRedirect();
+        ->assertForbidden();
 
-    expect(ContainerPhoto::query()->where('container_id', $container->id)->count())->toBe(1);
+    expect(ContainerPhoto::query()->where('container_id', $container->id)->count())->toBe(0);
 });
 
 test('photo uploads are capped per container', function () {
