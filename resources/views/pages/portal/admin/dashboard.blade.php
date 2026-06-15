@@ -26,7 +26,7 @@
                         <h2 class="text-base font-semibold text-gray-900">Recent Activity</h2>
                         <p class="mt-0.5 text-sm text-gray-500">Latest events across students, packages, and deliveries</p>
                     </div>
-                    <a href="{{ route('admin.customers') }}" class="text-sm font-medium text-brand-600 hover:text-brand-700">View all students</a>
+                    <a href="{{ route('admin.students') }}" class="text-sm font-medium text-brand-600 hover:text-brand-700">View all students</a>
                 </div>
 
                 <x-portal.data-table

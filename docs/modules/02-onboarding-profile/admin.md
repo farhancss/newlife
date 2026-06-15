@@ -19,8 +19,8 @@ Operations view and edit student profiles; add internal notes; support manual ov
 
 | Screen | Route | Status |
 |--------|-------|--------|
-| Student list | `/admin/customers` | UI shell |
-| Student detail/edit | `/admin/customers/{id}` | **Not built** |
+| Student list | `/admin/students` | UI shell |
+| Student detail/edit | `/admin/students/{id}` | **Not built** |
 
 ## 4. Admin capabilities
 

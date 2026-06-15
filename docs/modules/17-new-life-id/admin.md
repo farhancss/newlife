@@ -17,7 +17,7 @@ Operations staff search and reference students by New Life ID across intake, sup
 
 | Location | Notes |
 |----------|-------|
-| Student list (`/admin/customers`) | Column + search |
+| Student list (`/admin/students`) | Column + search |
 | Student detail | Header field |
 | Retail package admin list | Associated student ID |
 | CSV exports | Column included |

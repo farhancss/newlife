@@ -7,7 +7,7 @@
                 <h1 class="text-xl font-semibold text-gray-900">Student Management</h1>
                 <p class="mt-1 text-sm text-gray-600">Manage student records and move details.</p>
             </div>
-            <form method="GET" action="{{ route('admin.customers') }}" class="flex w-full max-w-sm gap-2 sm:w-auto">
+            <form method="GET" action="{{ route('admin.students') }}" class="flex w-full max-w-sm gap-2 sm:w-auto">
                 <input type="search" name="q" value="{{ $search }}" placeholder="Search name or Move ID…"
                     class="h-11 flex-1 rounded-lg border border-gray-300 px-4 text-sm shadow-sm focus:border-brand-400 focus:ring-2 focus:ring-brand-500/20" />
                 <button type="submit" class="rounded-lg border border-gray-300 px-4 text-sm font-semibold text-gray-700 hover:bg-gray-50">Search</button>
@@ -31,7 +31,7 @@
                     @php $student = $row['profile']; @endphp
                     <tr>
                         <td>
-                            <a href="{{ route('admin.customers.show', $student) }}" class="font-medium text-gray-900 hover:text-brand-700 hover:underline">
+                            <a href="{{ route('admin.students.show', $student) }}" class="font-medium text-gray-900 hover:text-brand-700 hover:underline">
                                 {{ $student->fullName() ?: $student->user?->name }}
                             </a>
                         </td>
@@ -42,7 +42,7 @@
                         <td><span class="rounded-full bg-brand-50 px-2 py-1 text-xs font-semibold text-brand-700">{{ $row['status'] }}</span></td>
                         <td>
                             <div class="flex items-center gap-2 whitespace-nowrap">
-                                <a href="{{ route('admin.customers.show', $student) }}"
+                                <a href="{{ route('admin.students.show', $student) }}"
                                     class="inline-flex items-center gap-1 rounded-lg bg-brand-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-brand-700">
                                     <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/>

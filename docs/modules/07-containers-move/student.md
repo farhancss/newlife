@@ -27,7 +27,7 @@ Visibility and control over container shipment, return, and dorm delivery stages
 | 2 | Label Generated |
 | 3 | Shipped to Home |
 | 4 | Delivered to Home |
-| 5 | Customer Packing |
+| 5 | Student Packing |
 | 6 | Pickup Scheduled |
 | 7 | Return Shipment In Transit |
 | 8 | Received at New Life Hub |

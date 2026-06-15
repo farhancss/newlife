@@ -262,9 +262,9 @@
                                         </a>
                                     @endforeach
                                 </div>
-                                <p class="mt-2 text-xs text-gray-500">Uploaded by the student during Customer Packing.</p>
+                                <p class="mt-2 text-xs text-gray-500">Uploaded by the student during Student Packing.</p>
                             @else
-                                <p class="mt-3 text-sm text-gray-500">No photos uploaded yet. Students can upload exterior photos once the container reaches Customer Packing.</p>
+                                <p class="mt-3 text-sm text-gray-500">No photos uploaded yet. Students can upload exterior photos once the container reaches Student Packing.</p>
                             @endif
                         </div>
 

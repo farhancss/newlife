@@ -10,4 +10,4 @@ Admin hub for finding, viewing, and managing students — search, filters, profi
 
 ## Current codebase
 
-`/admin/customers` → `admin.customers` (Student Management UI, mock DataTable)
+`/admin/students` → `admin.students` (Student Management UI, mock DataTable)

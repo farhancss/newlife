@@ -20,9 +20,9 @@ Central student registry for operations with powerful search and issue flagging.
 
 | Route | Purpose |
 |-------|---------|
-| `/admin/customers` | List |
-| `/admin/customers/{id}` | Detail (to build) |
-| `/admin/customers/create` | Manual add (optional MVP) |
+| `/admin/students` | List |
+| `/admin/students/{id}` | Detail (to build) |
+| `/admin/students/create` | Manual add (optional MVP) |
 
 ## 4. Search filters
 

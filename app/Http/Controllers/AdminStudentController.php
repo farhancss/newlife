@@ -49,7 +49,7 @@ class AdminStudentController extends Controller
             ];
         });
 
-        return view('pages.portal.admin.customers', [
+        return view('pages.portal.admin.students', [
             'title' => 'Student Management',
             'pageHeading' => 'Students',
             'portal' => 'admin',

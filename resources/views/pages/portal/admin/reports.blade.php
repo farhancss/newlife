@@ -8,7 +8,7 @@
         </div>
 
         <div class="grid gap-6 md:grid-cols-3">
-            @foreach (['Customer Report', 'Retail Package Report', 'Container Export', 'Delivery Report', 'Communications Log', 'Audit Export'] as $report)
+            @foreach (['Student Report', 'Retail Package Report', 'Container Export', 'Delivery Report', 'Communications Log', 'Audit Export'] as $report)
                 <div class="rounded-2xl border border-gray-200 bg-white p-5">
                     <h2 class="text-base font-semibold text-gray-900">{{ $report }}</h2>
                     <p class="mt-2 text-sm text-gray-600">Generate and export as CSV/XLSX.</p>

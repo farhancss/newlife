@@ -20,7 +20,7 @@
             <thead>
                 <tr>
                     <th>Container</th>
-                    <th>Customer</th>
+                    <th>Student</th>
                     <th>Date</th>
                     <th>Time</th>
                     <th>Address</th>
@@ -41,10 +41,10 @@
                     ['CTN-201', 'Sophia Anderson', 'May 31, 2026', '9AM - 12PM', 'Charlotte', 'Out for delivery'],
                     ['CTN-210', 'Liam Thomas', 'Jun 1, 2026', '12PM - 3PM', 'Norfolk', 'Scheduled'],
                     ['CTN-218', 'Ava Jackson', 'Jun 1, 2026', '3PM - 6PM', 'Richmond', 'Completed'],
-                ] as [$container, $customer, $date, $time, $address, $status])
+                ] as [$container, $student, $date, $time, $address, $status])
                     <tr>
                         <td class="font-medium text-gray-900">{{ $container }}</td>
-                        <td>{{ $customer }}</td>
+                        <td>{{ $student }}</td>
                         <td>{{ $date }}</td>
                         <td>{{ $time }}</td>
                         <td>{{ $address }}</td>

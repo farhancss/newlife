@@ -45,7 +45,7 @@ Align with container workflow (module 07):
 3. Containers Preparing  
 4. Containers Shipped to Home  
 5. Containers Delivered to Home  
-6. Customer Packing  
+6. Student Packing  
 7. Return Shipment In Transit  
 8. Received at New Life Hub  
 9. Stored at Receiving Hub  

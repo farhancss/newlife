@@ -30,7 +30,7 @@ class MenuHelper
                 'title' => '',
                 'items' => [
                     ['icon' => 'dashboard', 'name' => 'Dashboard', 'path' => $basePath . '/dashboard'],
-                    ['icon' => 'user-profile', 'name' => 'Students', 'path' => $basePath . '/customers'],
+                    ['icon' => 'user-profile', 'name' => 'Students', 'path' => $basePath . '/students'],
                     ['icon' => 'task', 'name' => 'Containers', 'path' => $basePath . '/containers'],
                     ['icon' => 'tables', 'name' => 'Retail Packages', 'path' => $basePath . '/retail-packages'],
                     ['icon' => 'calendar', 'name' => 'Deliveries', 'path' => $basePath . '/deliveries'],

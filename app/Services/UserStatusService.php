@@ -28,7 +28,7 @@ class UserStatusService
     }
 
     /**
-     * Move INVITED → INCOMPLETE the first time a customer sets their permanent password.
+     * Move INVITED → INCOMPLETE the first time a student sets their permanent password.
      * No-op for already INCOMPLETE/ACTIVE/SUSPENDED accounts.
      */
     public function markPasswordChanged(User $user): User
@@ -42,7 +42,7 @@ class UserStatusService
     }
 
     /**
-     * Move INVITED/INCOMPLETE → ACTIVE when the customer finishes onboarding.
+     * Move INVITED/INCOMPLETE → ACTIVE when the student finishes onboarding.
      * Idempotent for already ACTIVE accounts. Suspended accounts are never auto-reactivated.
      */
     public function markOnboardingComplete(User $user): User

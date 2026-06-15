@@ -45,7 +45,7 @@ final class ContainerStatus
             self::LABEL_GENERATED => 'Label Generated',
             self::SHIPPED_TO_HOME => 'Shipped to Home',
             self::DELIVERED_TO_HOME => 'Delivered to Home',
-            self::CUSTOMER_PACKING => 'Customer Packing',
+            self::CUSTOMER_PACKING => 'Student Packing',
             self::PICKUP_SCHEDULED => 'Pickup Scheduled',
             self::RETURN_SHIPMENT_IN_TRANSIT => 'Return Shipment In Transit',
             self::RECEIVED_AT_NEW_LIFE_HUB => 'Received at New Life Hub',

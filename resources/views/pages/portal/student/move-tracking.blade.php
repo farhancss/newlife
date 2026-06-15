@@ -135,20 +135,5 @@
                 @endif
             </div>
         @endif
-
-        @if ($showPickupInstructions ?? false)
-            <div class="rounded-2xl border border-brand-200 bg-gradient-to-r from-brand-50 to-white p-6 sm:flex sm:items-center sm:justify-between sm:gap-6">
-                <div>
-                    <h2 class="text-lg font-semibold text-brand-900">Ready to schedule FedEx pickup?</h2>
-                    <p class="mt-2 max-w-xl text-sm text-brand-800">
-                        Pack your container using the pre-printed return label, then schedule a pickup at your home address.
-                    </p>
-                </div>
-                <a href="https://www.fedex.com/en-us/shipping/schedule-manage-pickups.html" target="_blank" rel="noopener noreferrer"
-                    class="mt-4 inline-flex shrink-0 items-center justify-center rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-700 sm:mt-0">
-                    Schedule pickup
-                </a>
-            </div>
-        @endif
     </div>
 @endsection

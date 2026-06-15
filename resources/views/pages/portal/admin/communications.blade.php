@@ -15,9 +15,9 @@
                         <div>
                             <label class="mb-1 block text-sm font-medium text-gray-700">Audience</label>
                             <select class="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm">
-                                <option>All Customers</option>
-                                <option>In Transit Customers</option>
-                                <option>Delivered Customers</option>
+                                <option>All Students</option>
+                                <option>In Transit Students</option>
+                                <option>Delivered Students</option>
                             </select>
                         </div>
                         <div>

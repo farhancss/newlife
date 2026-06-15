@@ -8,7 +8,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | Rules governing student-uploaded exterior container photos. Uploads are
-    | only permitted while a container is in the "Customer Packing" status.
+    | only permitted while a container is in the "Student Packing" status.
     |
     */
 

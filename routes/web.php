@@ -165,8 +165,8 @@ Route::prefix('student')->name('student.')->middleware(['auth', 'account.active'
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/customers', [AdminStudentController::class, 'index'])->name('customers');
-    Route::get('/customers/{studentProfile}', [AdminStudentController::class, 'show'])->name('customers.show');
+    Route::get('/students', [AdminStudentController::class, 'index'])->name('students');
+    Route::get('/students/{studentProfile}', [AdminStudentController::class, 'show'])->name('students.show');
 
     Route::get('/containers', [AdminContainerController::class, 'index'])->name('containers');
     Route::put('/containers/{container}', [AdminContainerController::class, 'update'])
