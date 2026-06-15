@@ -179,7 +179,7 @@ test('admin advances container status and label generation sets ship-by date', f
         ->and($container->ship_by_date)->not->toBeNull();
 });
 
-test('student can upload photos only while customer packing', function () {
+test('student can upload photos while customer packing', function () {
     Storage::fake('public');
     [$user, $profile] = createStudentWithAddress();
 
@@ -199,7 +199,7 @@ test('student can upload photos only while customer packing', function () {
     expect(ContainerPhoto::query()->where('container_id', $container->id)->count())->toBe(1);
 });
 
-test('student cannot upload photos when container is not packing', function () {
+test('student can upload photos at any move stage', function () {
     Storage::fake('public');
     [$user, $profile] = createStudentWithAddress();
 
@@ -214,9 +214,9 @@ test('student cannot upload photos when container is not packing', function () {
             'photos' => [UploadedFile::fake()->image('side.jpg')],
             'acknowledge' => '1',
         ])
-        ->assertForbidden();
+        ->assertRedirect();
 
-    expect(ContainerPhoto::query()->where('container_id', $container->id)->count())->toBe(0);
+    expect(ContainerPhoto::query()->where('container_id', $container->id)->count())->toBe(1);
 });
 
 test('photo uploads are capped per container', function () {

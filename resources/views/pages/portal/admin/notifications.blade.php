@@ -61,7 +61,7 @@
                     <th>Email</th>
                     <th>Read</th>
                     <th>Sent</th>
-                    <th></th>
+                    <th data-sortable="false"></th>
                 </tr>
             </thead>
             <tbody>

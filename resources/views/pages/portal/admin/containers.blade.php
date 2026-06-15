@@ -67,7 +67,7 @@
                                 <th>Status</th>
                                 <th>Ship by</th>
                                 <th>Tracking</th>
-                                <th></th>
+                                <th data-sortable="false"></th>
                             </tr>
                         </thead>
                         <tbody>

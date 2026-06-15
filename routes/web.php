@@ -144,6 +144,12 @@ Route::prefix('student')->name('student.')->middleware([
 Route::prefix('student')->name('student.')->middleware(['auth', 'account.active', 'role:student', 'password.changed'])->group(function () {
     Route::get('/profile', [StudentProfileController::class, 'show'])->name('profile');
     Route::post('/profile', [StudentProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/avatar', [StudentProfileController::class, 'updateAvatar'])
+        ->middleware('throttle:20,1')
+        ->name('profile.avatar.update');
+    Route::delete('/profile/avatar', [StudentProfileController::class, 'destroyAvatar'])
+        ->middleware('throttle:20,1')
+        ->name('profile.avatar.destroy');
 
     Route::get('/onboarding', [OnboardingController::class, 'show'])->name('onboarding');
     Route::post('/onboarding', [OnboardingController::class, 'submit'])->name('onboarding.submit');
@@ -160,6 +166,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/customers', [AdminStudentController::class, 'index'])->name('customers');
+    Route::get('/customers/{studentProfile}', [AdminStudentController::class, 'show'])->name('customers.show');
 
     Route::get('/containers', [AdminContainerController::class, 'index'])->name('containers');
     Route::put('/containers/{container}', [AdminContainerController::class, 'update'])

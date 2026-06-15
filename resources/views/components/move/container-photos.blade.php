@@ -13,7 +13,7 @@
             <h3 class="text-base font-semibold text-gray-900">{{ $container->code }}</h3>
             <p class="text-xs text-gray-500">{{ $container->photos->count() }} of {{ $cap }} photos uploaded</p>
         </div>
-        <span class="inline-flex rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">Customer Packing</span>
+        <span class="inline-flex rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">{{ $container->statusLabel() }}</span>
     </div>
 
     @if ($container->photos->isNotEmpty())

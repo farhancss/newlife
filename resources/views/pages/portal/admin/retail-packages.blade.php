@@ -93,7 +93,7 @@
                         <th>Tracking #</th>
                         <th>Status</th>
                         <th>ETA</th>
-                        <th></th>
+                        <th data-sortable="false"></th>
                     </tr>
                 </thead>
                 <tbody>

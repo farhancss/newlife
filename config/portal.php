@@ -36,4 +36,20 @@ return [
         'retailers' => ['Amazon', 'Walmart', 'Target', 'Wayfair', 'DHL', 'UPS', 'FedEx', 'Other'],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Profile Avatars
+    |--------------------------------------------------------------------------
+    |
+    | User-uploaded profile photos. Falls back to name initials when no photo
+    | has been uploaded.
+    |
+    */
+
+    'avatars' => [
+        'disk' => env('AVATAR_DISK', 'public'),
+        'max_size_kb' => (int) env('AVATAR_MAX_KB', 4096),
+        'allowed_mimes' => ['jpeg', 'jpg', 'png', 'webp'],
+    ],
+
 ];

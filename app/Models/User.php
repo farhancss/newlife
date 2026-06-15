@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\URL;
 /**
  * @property string $role
  * @property string $status
+ * @property string|null $avatar_path
  * @property bool $must_reset_password
  * @property \Illuminate\Support\Carbon|null $password_changed_at
  * @property string|null $squarespace_contact_id
@@ -35,6 +36,7 @@ class User extends Authenticatable implements CanResetPasswordContract
     protected $fillable = [
         'name',
         'email',
+        'avatar_path',
         'role',
         'status',
         'password',
@@ -83,6 +85,33 @@ class User extends Authenticatable implements CanResetPasswordContract
     public function notificationPreference(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(NotificationPreference::class);
+    }
+
+    /**
+     * Public URL for the uploaded profile photo, or null to fall back to initials.
+     */
+    public function avatarUrl(): ?string
+    {
+        if ($this->avatar_path === null || $this->avatar_path === '') {
+            return null;
+        }
+
+        return \Illuminate\Support\Facades\Storage::disk((string) config('portal.avatars.disk', 'public'))
+            ->url($this->avatar_path);
+    }
+
+    /**
+     * Up to two uppercase initials derived from the display name.
+     */
+    public function initials(): string
+    {
+        $initials = collect(explode(' ', (string) $this->name))
+            ->filter()
+            ->take(2)
+            ->map(fn (string $part): string => strtoupper(substr($part, 0, 1)))
+            ->join('');
+
+        return $initials !== '' ? $initials : 'NL';
     }
 
     public function isStudent(): bool

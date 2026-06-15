@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ContainerStatus;
+use App\Enums\RetailPackageStatus;
 use App\Models\StudentProfile;
+use App\Services\ContainerWorkflowService;
+use App\Services\FedExLinkService;
 use App\Services\MoveProgressService;
+use App\Services\ProfileCompletionService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -11,6 +16,9 @@ class AdminStudentController extends Controller
 {
     public function __construct(
         private readonly MoveProgressService $moveProgressService,
+        private readonly ContainerWorkflowService $containerWorkflowService,
+        private readonly ProfileCompletionService $profileCompletionService,
+        private readonly FedExLinkService $fedExLinkService,
     ) {
     }
 
@@ -47,6 +55,49 @@ class AdminStudentController extends Controller
             'portal' => 'admin',
             'rows' => $rows,
             'search' => $search,
+        ]);
+    }
+
+    public function show(StudentProfile $studentProfile): View
+    {
+        $studentProfile->load([
+            'user',
+            'package',
+            'parentGuardian',
+            'shippingAddress',
+            'housingInfo',
+            'containers.statusHistories.changedBy',
+            'containers.photos',
+            'retailPackages.statusHistories',
+        ]);
+
+        $containers = $studentProfile->containers->sortBy('id')->values();
+
+        $containerTimelines = [];
+        foreach ($containers as $container) {
+            $containerTimelines[$container->id] = [
+                'steps' => $this->containerWorkflowService->timelineFor($container),
+                'activeIndex' => ContainerStatus::orderIndex($container->status),
+            ];
+        }
+
+        $activeRetailCount = $studentProfile->retailPackages
+            ->where('status', '!=', RetailPackageStatus::DELIVERED_TO_DORM)
+            ->count();
+
+        $name = $studentProfile->fullName() ?: $studentProfile->user->name;
+
+        return view('pages.portal.admin.student-detail', [
+            'title' => $name . ' — Student Detail',
+            'pageHeading' => $name,
+            'portal' => 'admin',
+            'profile' => $studentProfile,
+            'currentStage' => $this->moveProgressService->currentLabel($studentProfile),
+            'completion' => $this->profileCompletionService->summary($studentProfile),
+            'containers' => $containers,
+            'containerTimelines' => $containerTimelines,
+            'activeRetailCount' => $activeRetailCount,
+            'fedExLinkService' => $this->fedExLinkService,
         ]);
     }
 }

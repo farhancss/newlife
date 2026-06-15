@@ -121,19 +121,19 @@
                 </div>
             </div>
 
-            {{-- Container photos — only while packing --}}
+            {{-- Container photos --}}
             @php
-                $packingContainers = $containers->filter(fn ($c) => $c->acceptsPhotos());
+                $photoContainers = $containers->filter(fn ($c) => $c->acceptsPhotos());
             @endphp
-            @if ($packingContainers->isNotEmpty())
+            @if ($photoContainers->isNotEmpty())
                 <div class="space-y-4">
                     <div>
                         <h2 class="text-lg font-semibold text-gray-900">Container photos</h2>
                         <p class="mt-1 text-sm text-gray-600">
-                            Upload exterior photos of each container while you pack. Failure to upload photos may impact damage claim processing.
+                            Upload exterior photos of each container at any stage of your move. Failure to upload photos may impact damage claim processing.
                         </p>
                     </div>
-                    @foreach ($packingContainers as $container)
+                    @foreach ($photoContainers as $container)
                         <x-move.container-photos :container="$container" />
                     @endforeach
                 </div>

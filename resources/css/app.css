@@ -1046,7 +1046,11 @@ pre[class*='language-'] {
 }
 
 .portal-datatable-wrapper .datatable-table thead th button {
-  @apply flex w-full items-center gap-1.5 border-0 bg-transparent p-0 text-left text-xs font-semibold tracking-wide text-gray-500 uppercase;
+  @apply relative flex w-full items-center gap-1.5 border-0 bg-transparent p-0 text-left text-xs font-semibold tracking-wide text-gray-500 uppercase;
+}
+
+.portal-datatable-wrapper .datatable-table thead th button:hover {
+  @apply text-gray-700;
 }
 
 .portal-datatable-wrapper .datatable-table tbody td {
@@ -1062,20 +1066,39 @@ pre[class*='language-'] {
 }
 
 .portal-datatable-wrapper .datatable-sorter {
-  @apply inline-flex w-auto pr-4;
+  @apply relative inline-flex w-auto pr-4;
 }
 
 .portal-datatable-wrapper .datatable-sorter::before,
 .portal-datatable-wrapper .datatable-sorter::after {
+  content: "";
+  position: absolute;
   right: 0;
-  border-left-width: 4px;
-  border-right-width: 4px;
-  opacity: 0.25;
+  height: 0;
+  width: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  opacity: 0.3;
+}
+
+.portal-datatable-wrapper .datatable-sorter::before {
+  bottom: calc(50% - 5px);
+  border-top: 5px solid currentColor;
+}
+
+.portal-datatable-wrapper .datatable-sorter::after {
+  top: calc(50% - 5px);
+  border-bottom: 5px solid currentColor;
+}
+
+.portal-datatable-wrapper .datatable-ascending .datatable-sorter::before,
+.portal-datatable-wrapper .datatable-descending .datatable-sorter::after {
+  opacity: 0.2;
 }
 
 .portal-datatable-wrapper .datatable-ascending .datatable-sorter::after,
 .portal-datatable-wrapper .datatable-descending .datatable-sorter::before {
-  opacity: 0.9;
+  opacity: 1;
   border-top-color: theme(--color-brand-600);
   border-bottom-color: theme(--color-brand-600);
 }

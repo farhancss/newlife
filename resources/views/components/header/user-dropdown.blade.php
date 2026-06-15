@@ -2,6 +2,7 @@
     'portal' => request()->segment(1) === 'admin' ? 'admin' : 'student',
     'userName' => auth()->user()->name ?? 'User',
     'initials' => 'NL',
+    'avatarSrc' => null,
 ])
 
 <div class="relative" x-data="{ dropdownOpen: false }" @click.away="dropdownOpen = false">
@@ -10,9 +11,8 @@
         class="flex items-center gap-2 rounded-lg border border-gray-200 bg-white py-1 pl-1 pr-2 transition hover:border-brand-200 sm:gap-2.5 sm:pr-3"
         @click.prevent="dropdownOpen = !dropdownOpen"
     >
-        <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-800 text-xs font-bold text-white">
-            {{ $initials }}
-        </span>
+        <x-ui.avatar :src="$avatarSrc" :initials="$initials"
+            class="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-800 text-xs font-bold text-white" />
         <span class="hidden min-w-0 text-left sm:block">
             <span class="block truncate text-sm font-semibold text-gray-900">{{ $userName }}</span>
             <span class="block text-xs text-gray-500">{{ ucfirst($portal) }} account</span>

@@ -132,6 +132,56 @@
             </div>
         @endif
 
+        <div class="rounded-2xl border border-gray-200 bg-white p-6"
+            x-data="{ preview: null, fileName: '' }">
+            <h2 class="text-base font-semibold text-gray-900">Profile photo</h2>
+            <p class="mt-1 text-sm text-gray-600">Upload a photo so it shows across your portal. We'll use your initials until then.</p>
+
+            <div class="mt-5 flex flex-col gap-5 sm:flex-row sm:items-center">
+                <div class="shrink-0">
+                    <template x-if="preview">
+                        <img :src="preview" alt="Preview" class="h-24 w-24 rounded-2xl object-cover ring-2 ring-brand-100" />
+                    </template>
+                    <div x-show="!preview">
+                        <x-ui.avatar :src="$user->avatarUrl()" :initials="$user->initials()"
+                            class="flex h-24 w-24 items-center justify-center rounded-2xl bg-brand-100 text-2xl font-bold text-brand-800 ring-2 ring-brand-50" />
+                    </div>
+                </div>
+
+                <div class="flex-1">
+                    <form method="POST" action="{{ route('student.profile.avatar.update') }}" enctype="multipart/form-data" class="space-y-3">
+                        @csrf
+                        <label class="block">
+                            <span class="sr-only">Choose a profile photo</span>
+                            <input type="file" name="avatar" accept="image/png,image/jpeg,image/webp" required
+                                @change="fileName = $event.target.files[0]?.name || ''; preview = $event.target.files[0] ? URL.createObjectURL($event.target.files[0]) : null"
+                                class="block w-full text-sm text-gray-600 file:mr-3 file:rounded-lg file:border-0 file:bg-brand-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-brand-700 hover:file:bg-brand-100" />
+                        </label>
+                        <p class="text-xs text-gray-400">JPG, PNG or WEBP up to {{ (int) (config('portal.avatars.max_size_kb', 4096) / 1024) }}MB.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <button type="submit"
+                                class="inline-flex items-center justify-center rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700">
+                                Save photo
+                            </button>
+                            @if ($user->avatarUrl())
+                                <button type="submit" form="remove-avatar-form"
+                                    class="inline-flex items-center justify-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+                                    Remove photo
+                                </button>
+                            @endif
+                        </div>
+                    </form>
+                    @if ($user->avatarUrl())
+                        <form id="remove-avatar-form" method="POST" action="{{ route('student.profile.avatar.destroy') }}" class="hidden"
+                            onsubmit="return confirm('Remove your profile photo?');">
+                            @csrf
+                            @method('DELETE')
+                        </form>
+                    @endif
+                </div>
+            </div>
+        </div>
+
         <div class="rounded-2xl border border-gray-200 bg-white p-6">
             <form method="POST" action="{{ route('student.profile.update') }}" class="grid gap-4 md:grid-cols-2">
                 @csrf
