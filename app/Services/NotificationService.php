@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\ContainerStatus;
 use App\Enums\NotificationCategory;
 use App\Enums\RetailPackageStatus;
+use App\Enums\UserRole;
 use App\Mail\PortalNotificationMail;
 use App\Models\Container;
 use App\Models\NotificationPreference;
@@ -123,6 +124,34 @@ class NotificationService
             url: route('student.move-tracking'),
             meta: ['container_id' => $container->id, 'status' => $toStatus],
         );
+    }
+
+    /**
+     * Notify every site admin that a student has finished packing and requested
+     * a pickup. Each admin gets an in-app notification (and email) so the action
+     * is preserved in the notification history.
+     *
+     * @return \Illuminate\Support\Collection<int, PortalNotification>
+     */
+    public function containerPickupRequestedByStudent(Container $container, User $student): \Illuminate\Support\Collection
+    {
+        $studentName = $container->studentProfile->fullName() ?: $student->name;
+        $newLifeId = $container->studentProfile->new_life_id;
+
+        $admins = User::query()->where('role', UserRole::ADMIN)->get();
+
+        return $admins->map(function (User $admin) use ($container, $student, $studentName, $newLifeId): PortalNotification {
+            return $this->notify(
+                recipient: $admin,
+                category: NotificationCategory::SHIPMENT,
+                type: 'container.pickup_requested',
+                title: 'Student requested a pickup',
+                body: $studentName . ' (' . $newLifeId . ') marked container ' . $container->code . ' packed and requested a pickup.',
+                url: route('admin.students.show', $container->student_profile_id),
+                actor: $student,
+                meta: ['container_id' => $container->id, 'status' => ContainerStatus::PICKUP_SCHEDULED],
+            );
+        });
     }
 
     public function retailPackageStatusChanged(RetailPackage $package, string $toStatus): ?PortalNotification

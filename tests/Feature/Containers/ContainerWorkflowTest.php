@@ -244,6 +244,82 @@ test('photo uploads are capped per container', function () {
     expect(ContainerPhoto::query()->where('container_id', $container->id)->count())->toBe(0);
 });
 
+test('student can request pickup after uploading a photo and admins are notified', function () {
+    Storage::fake('public');
+    Mail::fake();
+    [$user, $profile] = createStudentWithAddress();
+    $admin = User::factory()->create(['role' => UserRole::ADMIN]);
+
+    $container = Container::query()->create([
+        'student_profile_id' => $profile->id,
+        'code' => 'CTN-44444',
+        'status' => ContainerStatus::CUSTOMER_PACKING,
+    ]);
+
+    ContainerPhoto::query()->create([
+        'container_id' => $container->id,
+        'uploaded_by_user_id' => $user->id,
+        'disk' => 'public',
+        'path' => 'container-photos/sample.jpg',
+        'original_name' => 'sample.jpg',
+        'mime' => 'image/jpeg',
+        'size' => 1024,
+    ]);
+
+    $this->actingAs($user)
+        ->post(route('student.move-tracking.schedule-pickup', $container))
+        ->assertRedirect();
+
+    expect($container->fresh()->status)->toBe(ContainerStatus::PICKUP_SCHEDULED)
+        ->and(\App\Models\PortalNotification::query()
+            ->where('user_id', $admin->id)
+            ->where('type', 'container.pickup_requested')
+            ->exists())->toBeTrue();
+});
+
+test('student cannot request pickup without a photo', function () {
+    [$user, $profile] = createStudentWithAddress();
+
+    $container = Container::query()->create([
+        'student_profile_id' => $profile->id,
+        'code' => 'CTN-55555',
+        'status' => ContainerStatus::CUSTOMER_PACKING,
+    ]);
+
+    $this->actingAs($user)
+        ->post(route('student.move-tracking.schedule-pickup', $container))
+        ->assertSessionHasErrors('pickup');
+
+    expect($container->fresh()->status)->toBe(ContainerStatus::CUSTOMER_PACKING);
+});
+
+test('student cannot request pickup outside the packing stage', function () {
+    Storage::fake('public');
+    [$user, $profile] = createStudentWithAddress();
+
+    $container = Container::query()->create([
+        'student_profile_id' => $profile->id,
+        'code' => 'CTN-66666',
+        'status' => ContainerStatus::DELIVERED_TO_HOME,
+    ]);
+
+    ContainerPhoto::query()->create([
+        'container_id' => $container->id,
+        'uploaded_by_user_id' => $user->id,
+        'disk' => 'public',
+        'path' => 'container-photos/sample.jpg',
+        'original_name' => 'sample.jpg',
+        'mime' => 'image/jpeg',
+        'size' => 1024,
+    ]);
+
+    $this->actingAs($user)
+        ->post(route('student.move-tracking.schedule-pickup', $container))
+        ->assertSessionHasErrors('pickup');
+
+    expect($container->fresh()->status)->toBe(ContainerStatus::DELIVERED_TO_HOME);
+});
+
 test('student cannot upload photos to another students container', function () {
     Storage::fake('public');
     [$user] = createStudentWithAddress();

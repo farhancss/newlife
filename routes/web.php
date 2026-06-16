@@ -112,6 +112,9 @@ Route::prefix('student')->name('student.')->middleware([
     Route::delete('/move-tracking/containers/{container}/photos/{photo}', [StudentContainerPhotoController::class, 'destroy'])
         ->middleware('throttle:30,1')
         ->name('move-tracking.photos.destroy');
+    Route::post('/move-tracking/containers/{container}/schedule-pickup', [StudentMoveTrackingController::class, 'schedulePickup'])
+        ->middleware('throttle:10,1')
+        ->name('move-tracking.schedule-pickup');
 
     Route::get('/add-ons', function () {
         return view('pages.portal.student.add-ons', [

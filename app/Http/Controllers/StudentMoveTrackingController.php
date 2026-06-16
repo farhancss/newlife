@@ -8,10 +8,13 @@ use App\Models\User;
 use App\Services\ContainerWorkflowService;
 use App\Services\FedExLinkService;
 use App\Services\MoveProgressService;
+use App\Services\NotificationService;
 use App\Services\StudentPackageService;
 use App\Services\StudentProfileService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class StudentMoveTrackingController extends Controller
 {
@@ -21,6 +24,7 @@ class StudentMoveTrackingController extends Controller
         private readonly FedExLinkService $fedExLinkService,
         private readonly StudentPackageService $studentPackageService,
         private readonly MoveProgressService $moveProgressService,
+        private readonly NotificationService $notifications,
     ) {
     }
 
@@ -56,12 +60,47 @@ class StudentMoveTrackingController extends Controller
             'returnTrackingUrl' => $primary
                 ? $this->fedExLinkService->trackingUrl($primary->return_tracking)
                 : null,
-            'showPickupInstructions' => $primary && in_array($primary->status, [
-                ContainerStatus::DELIVERED_TO_HOME,
-                ContainerStatus::CUSTOMER_PACKING,
-            ], true),
+            'showPickupInstructions' => $primary && $primary->status === ContainerStatus::CUSTOMER_PACKING,
+            'pickupPhotosUploaded' => $primary instanceof Container && $primary->photos->isNotEmpty(),
             'fedExLinkService' => $this->fedExLinkService,
         ]);
+    }
+
+    /**
+     * Student-initiated transition from "Student Packing" to "Pickup Scheduled".
+     * Only available once the student has documented the container with at least
+     * one photo. Notifies site admins and records the action in history.
+     */
+    public function schedulePickup(Container $container): RedirectResponse
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        $profile = $user->studentProfile;
+
+        abort_unless($profile !== null && $container->student_profile_id === $profile->id, Response::HTTP_FORBIDDEN);
+
+        if ($container->status !== ContainerStatus::CUSTOMER_PACKING) {
+            return back()->withErrors([
+                'pickup' => 'A pickup can only be requested while your container is in the packing stage.',
+            ]);
+        }
+
+        if ($container->photos()->count() === 0) {
+            return back()->withErrors([
+                'pickup' => 'Please upload at least one container photo before requesting a pickup.',
+            ]);
+        }
+
+        $container = $this->workflowService->transition(
+            $container,
+            ContainerStatus::PICKUP_SCHEDULED,
+            $user,
+            'Student confirmed packing complete and requested a pickup.',
+        );
+
+        $this->notifications->containerPickupRequestedByStudent($container, $user);
+
+        return back()->with('status', 'Pickup requested. Our team has been notified and will confirm your pickup shortly.');
     }
 
     /**
