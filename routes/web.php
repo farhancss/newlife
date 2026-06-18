@@ -26,6 +26,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/login');
 
+Route::get('/squarespace/callback', function () {
+    return response()->json(['message' => 'success'], 200);
+})->name('squarespace.callback');
+
+
 if (app()->environment('local')) {
     Route::prefix('dev/email-preview')->group(function () {
         $previewUser = function (): User {
