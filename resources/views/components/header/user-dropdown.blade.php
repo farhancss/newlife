@@ -1,3 +1,10 @@
+@php
+    $portal = $portal ?? (request()->segment(1) === 'admin' ? 'admin' : 'student');
+    $userName = $userName ?? auth()->user()?->name ?? ucfirst($portal) . ' User';
+    $initials = $initials ?? auth()->user()?->initials() ?? 'NL';
+    $avatarSrc = ($avatarSrc ?? null) ?: auth()->user()?->avatarUrl();
+@endphp
+
 <div class="relative" x-data="{ dropdownOpen: false }" @click.away="dropdownOpen = false">
     <button
         type="button"

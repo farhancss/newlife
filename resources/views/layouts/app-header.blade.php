@@ -55,7 +55,12 @@
                 </a>
             @endif
 
-            <x-header.user-dropdown :user-name="$userName" :initials="$initials" :portal="$portal" />
+            <x-header.user-dropdown
+                :user-name="$userName"
+                :initials="$initials"
+                :portal="$portal"
+                :avatar-src="$user?->avatarUrl()"
+            />
         </div>
     </div>
 </header>
