@@ -107,7 +107,7 @@ class MoveProgressService
             return 1; // Profile Completed (in progress)
         }
 
-        $primary = $profile->containers()->orderBy('id')->first();
+        $primary = $profile->containers()->moveShipments()->orderBy('id')->first();
 
         if (!$primary instanceof Container) {
             return 2; // Containers Preparing (auto-provisioning)

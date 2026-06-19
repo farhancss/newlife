@@ -101,7 +101,7 @@ class AdminRetailPackageController extends Controller
         );
 
         return redirect()
-            ->route('admin.retail-packages', ['edit' => $retailPackage->id])
+            ->route('admin.retail-packages')
             ->with('status', 'Package status updated.');
     }
 

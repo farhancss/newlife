@@ -35,9 +35,8 @@ sequenceDiagram
 
 | Status | Meaning |
 |--------|---------|
-| Requested | Student initiated |
-| Payment Pending | Awaiting Squarespace payment |
-| Active | Admin activated |
+| Active | Purchased and active on the account |
+| Cancelled | Purchase cancelled |
 
 ## 5. UI (`/student/add-ons`)
 

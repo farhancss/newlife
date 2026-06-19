@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\AdminAddOnController;
 use App\Http\Controllers\AdminContainerController;
+use App\Http\Controllers\AdminDevToolsController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminNotificationController;
 use App\Http\Controllers\AdminRetailPackageController;
@@ -10,6 +12,7 @@ use App\Http\Controllers\ChangePasswordController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\ResetPasswordController;
+use App\Http\Controllers\StudentAddOnController;
 use App\Http\Controllers\StudentContainerPhotoController;
 use App\Http\Controllers\StudentDashboardController;
 use App\Http\Controllers\StudentMoveTrackingController;
@@ -121,12 +124,8 @@ Route::prefix('student')->name('student.')->middleware([
         ->middleware('throttle:10,1')
         ->name('move-tracking.schedule-pickup');
 
-    Route::get('/add-ons', function () {
-        return view('pages.portal.student.add-ons', [
-            'title' => 'Add-Ons',
-            'portal' => 'student',
-        ]);
-    })->name('add-ons');
+    Route::get('/add-ons', [StudentAddOnController::class, 'index'])->name('add-ons');
+    Route::get('/add-ons/purchases/{studentAddOn}', [StudentAddOnController::class, 'show'])->name('add-ons.show');
 
     Route::get('/support', function () {
         return view('pages.portal.student.support', [
@@ -200,13 +199,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
         ]);
     })->name('deliveries');
 
-    Route::get('/add-ons', function () {
-        return view('pages.portal.admin.add-ons', [
-            'title' => 'Add-Ons Management',
-            'pageHeading' => 'Add-Ons',
-            'portal' => 'admin',
-        ]);
-    })->name('add-ons');
+    Route::get('/add-ons', [AdminAddOnController::class, 'index'])->name('add-ons');
+    Route::get('/add-ons/{studentAddOn}', [AdminAddOnController::class, 'show'])->name('add-ons.show');
 
     Route::get('/communications', function () {
         return view('pages.portal.admin.communications', [
@@ -224,6 +218,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     })->name('reports');
 
     Route::get('/notifications', [AdminNotificationController::class, 'index'])->name('notifications');
+    Route::get('/notifications/compose', [AdminNotificationController::class, 'create'])->name('notifications.create');
+    Route::post('/notifications/compose', [AdminNotificationController::class, 'send'])
+        ->middleware('throttle:30,1')
+        ->name('notifications.send');
     Route::post('/notifications/{notification}/resend', [AdminNotificationController::class, 'resend'])
         ->middleware('throttle:30,1')
         ->name('notifications.resend');
@@ -246,4 +244,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::post('/change-password', [ChangePasswordController::class, 'update'])
         ->middleware('throttle:10,1')
         ->name('change-password.submit');
+
+    Route::prefix('dev-tools')->name('dev-tools.')->group(function () {
+        Route::get('/', [AdminDevToolsController::class, 'index'])->name('index');
+        Route::post('/invite-student', [AdminDevToolsController::class, 'inviteStudent'])
+            ->middleware('throttle:20,1')
+            ->name('invite-student');
+        Route::post('/buy-addon', [AdminDevToolsController::class, 'buyAddon'])
+            ->middleware('throttle:20,1')
+            ->name('buy-addon');
+    });
 });

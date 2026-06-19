@@ -86,6 +86,10 @@
                             class="inline-flex items-center justify-center rounded-lg border border-gray-300 px-3.5 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
                             Retail packages
                         </a>
+                        <a href="{{ route('admin.add-ons', ['q' => $profile->new_life_id]) }}"
+                            class="inline-flex items-center justify-center rounded-lg border border-gray-300 px-3.5 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+                            Add-ons
+                        </a>
                     </div>
                 </div>
 
@@ -362,6 +366,53 @@
                 </x-portal.data-table>
             @else
                 <p class="py-8 text-center text-sm text-gray-400">No retail packages logged.</p>
+            @endif
+        </div>
+
+        {{-- Add-ons --}}
+        <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xs sm:p-6">
+            <div class="mb-4 flex items-center justify-between">
+                <h2 class="text-base font-semibold text-gray-900">Add-ons</h2>
+                <a href="{{ route('admin.add-ons', ['q' => $profile->new_life_id]) }}" class="text-sm font-medium text-brand-600 hover:underline">View all</a>
+            </div>
+            @if ($addOns->isNotEmpty())
+                @php
+                    $addOnBadge = fn (string $status) => match ($status) {
+                        \App\Enums\AddOnStatus::ACTIVE => 'bg-emerald-50 text-emerald-700',
+                        \App\Enums\AddOnStatus::CANCELLED => 'bg-gray-100 text-gray-600',
+                        default => 'bg-gray-100 text-gray-600',
+                    };
+                @endphp
+                <x-portal.data-table table-class="min-w-[640px]">
+                    <thead>
+                        <tr>
+                            <th>Add-on</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th>Purchased</th>
+                            <th>Container</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($addOns as $addOn)
+                            <tr class="hover:bg-gray-50/80">
+                                <td class="font-medium text-gray-900">{{ $addOn->name }}</td>
+                                <td class="text-sm text-gray-700">{{ $addOn->formattedPrice() }}</td>
+                                <td><span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold {{ $addOnBadge($addOn->status) }}">{{ $addOn->statusLabel() }}</span></td>
+                                <td class="text-xs text-gray-700">{{ $addOn->requested_at?->format('M j, Y') ?? '—' }}</td>
+                                <td class="text-xs">
+                                    @if ($addOn->container)
+                                        <a href="{{ route('admin.containers', ['q' => $addOn->container->code]) }}" class="font-medium text-brand-600 hover:underline">{{ $addOn->container->code }}</a>
+                                    @else
+                                        <span class="text-gray-400">—</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </x-portal.data-table>
+            @else
+                <p class="py-8 text-center text-sm text-gray-400">No add-ons purchased.</p>
             @endif
         </div>
     </div>

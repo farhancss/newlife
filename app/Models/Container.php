@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ContainerStatus;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $student_profile_id
  * @property string $code
  * @property string $status
+ * @property string $source
  * @property string|null $location
  * @property string|null $outbound_tracking
  * @property string|null $return_tracking
@@ -24,10 +26,17 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Container extends Model
 {
+    /** Container that represents the student's package move shipment. */
+    public const SOURCE_MOVE = 'move';
+
+    /** Container provisioned by an add-on purchase (e.g. Additional Container). */
+    public const SOURCE_ADD_ON = 'add_on';
+
     protected $fillable = [
         'student_profile_id',
         'code',
         'status',
+        'source',
         'location',
         'outbound_tracking',
         'return_tracking',
@@ -46,6 +55,21 @@ class Container extends Model
     public function studentProfile(): BelongsTo
     {
         return $this->belongsTo(StudentProfile::class);
+    }
+
+    /**
+     * Limit to package move-shipment containers, excluding add-on containers.
+     *
+     * @param  Builder<Container>  $query
+     */
+    public function scopeMoveShipments(Builder $query): void
+    {
+        $query->where('source', self::SOURCE_MOVE);
+    }
+
+    public function isAddOn(): bool
+    {
+        return $this->source === self::SOURCE_ADD_ON;
     }
 
     /** @return HasMany<ContainerStatusHistory, $this> */

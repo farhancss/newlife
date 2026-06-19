@@ -33,6 +33,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property-read ShippingAddress|null $shippingAddress
  * @property-read HousingInfo|null $housingInfo
  * @property-read \Illuminate\Database\Eloquent\Collection<int, StudentSubscription> $subscriptions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, StudentAddOn> $addOns
  */
 class StudentProfile extends Model
 {
@@ -107,6 +108,12 @@ class StudentProfile extends Model
     public function retailPackages(): HasMany
     {
         return $this->hasMany(RetailPackage::class)->latest();
+    }
+
+    /** @return HasMany<StudentAddOn, $this> */
+    public function addOns(): HasMany
+    {
+        return $this->hasMany(StudentAddOn::class)->latest();
     }
 
     public function hasAcknowledgedRetailTerms(): bool

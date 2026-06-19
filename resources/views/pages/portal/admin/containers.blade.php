@@ -80,7 +80,9 @@
                                 <tr class="hover:bg-gray-50/80">
                                     <td>
                                         <span class="font-semibold text-gray-900">{{ $container->code }}</span>
-                                        @if ($pkg)
+                                        @if ($container->isAddOn())
+                                            <span class="mt-0.5 inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700 ring-1 ring-inset ring-amber-600/20">Add-on</span>
+                                        @elseif ($pkg)
                                             <span class="mt-0.5 block text-xs text-gray-500">Includes {{ $pkg->container_count }} {{ \Illuminate\Support\Str::plural('container', $pkg->container_count) }}</span>
                                         @endif
                                     </td>
@@ -170,10 +172,14 @@
                     <div class="flex-1 p-5">
                         @php $editStudent = $editing->studentProfile; @endphp
                         <div class="mb-6 rounded-xl bg-gray-50 p-4 text-sm">
-                            <p class="font-semibold text-gray-900">{{ $editStudent->fullName() }}</p>
+                            <p class="font-semibold text-gray-900">{{ $editStudent->fullName() ?: $editStudent->user?->name }}</p>
                             <p class="text-gray-600">{{ $editStudent->new_life_id }}</p>
-                            @if ($editStudent->package)
-                                <p class="mt-2 text-brand-700">{{ $editStudent->package->name }} · {{ $editStudent->package->container_count }} containers</p>
+                            @if ($editing->isAddOn())
+                                <p class="mt-2 inline-flex items-center rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700 ring-1 ring-inset ring-amber-600/20">
+                                    Additional Container (add-on)
+                                </p>
+                            @elseif ($editStudent->package)
+                                <p class="mt-2 text-brand-700">{{ $editStudent->package->name }} · {{ $editStudent->package->container_count }} {{ \Illuminate\Support\Str::plural('container', $editStudent->package->container_count) }}</p>
                             @endif
                         </div>
 

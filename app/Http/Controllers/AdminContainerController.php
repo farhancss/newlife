@@ -88,8 +88,10 @@ class AdminContainerController extends Controller
         ]);
         $container->save();
 
+        $studentName = $container->studentProfile->fullName() ?: $container->studentProfile->user?->name;
+
         return redirect()
-            ->route('admin.containers', ['edit' => $container->id])
-            ->with('status', 'Container updated.');
+            ->route('admin.containers')
+            ->with('status', "Container {$container->code} for {$studentName} saved — status is now {$container->statusLabel()}.");
     }
 }
