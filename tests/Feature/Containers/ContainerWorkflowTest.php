@@ -98,6 +98,32 @@ test('move shipment provisioning is idempotent on repeated completion sync', fun
     expect(Container::query()->where('student_profile_id', $profile->id)->count())->toBe(1);
 });
 
+test('timeline includes reached dates from status history', function () {
+    $workflow = app(ContainerWorkflowService::class);
+    [, $profile] = createStudentWithAddress();
+
+    $container = $workflow->createForStudent($profile);
+    $preparedAt = $container->reachedAt(ContainerStatus::CONTAINER_PREPARED);
+
+    $container = $workflow->transition($container, ContainerStatus::LABEL_GENERATED);
+    $labelAt = $container->reachedAt(ContainerStatus::LABEL_GENERATED);
+
+    $container->load('statusHistories');
+    $timeline = $workflow->timelineFor($container);
+
+    $preparedStep = collect($timeline)->firstWhere('status', ContainerStatus::CONTAINER_PREPARED);
+    $labelStep = collect($timeline)->firstWhere('status', ContainerStatus::LABEL_GENERATED);
+    $shippedStep = collect($timeline)->firstWhere('status', ContainerStatus::SHIPPED_TO_HOME);
+
+    expect($preparedStep['reached'])->toBeTrue()
+        ->and($preparedStep['reached_at']->toDateTimeString())->toBe($preparedAt->toDateTimeString())
+        ->and($labelStep['reached'])->toBeTrue()
+        ->and($labelStep['current'])->toBeTrue()
+        ->and($labelStep['reached_at']->toDateTimeString())->toBe($labelAt->toDateTimeString())
+        ->and($shippedStep['reached'])->toBeFalse()
+        ->and($shippedStep['reached_at'])->toBeNull();
+});
+
 test('student move tracking shows assigned container timeline', function () {
     [$user, $profile] = createStudentWithAddress();
 

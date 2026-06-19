@@ -179,6 +179,19 @@
                                 {{ $step['label'] }}
                             </p>
                         @endif
+
+                        @if (($isPast || $isCurrent) && !empty($step['reached_at']))
+                            <time
+                                datetime="{{ $step['reached_at']->toDateString() }}"
+                                @class([
+                                    'mt-1 block text-[10px] leading-tight',
+                                    'font-medium text-brand-600/80' => $isPast,
+                                    'font-medium text-green-700/80' => $isCurrent,
+                                ])
+                            >
+                                {{ $step['reached_at']->format('M j, Y') }}
+                            </time>
+                        @endif
                     </div>
                 </li>
             @endforeach
