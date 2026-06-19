@@ -73,7 +73,7 @@
                         </li>
                     @endforeach
                 </ul>
-                <a href="{{ route('student.profile') }}" class="mt-5 text-right text-sm font-medium text-brand-600 hover:text-brand-700">View All</a>
+                <!-- <a href="{{ route('student.profile') }}" class="mt-5 text-right text-sm font-medium text-brand-600 hover:text-brand-700">View All</a> -->
             </div>
 
             <div class="flex min-h-[200px] flex-col rounded-xl border border-gray-200 bg-white p-5">
@@ -116,7 +116,7 @@
                         <p class="mt-2 text-sm text-gray-500">{{ now()->format('M j, Y') }}</p>
                     @endif
                 </div>
-                <a href="{{ route('student.notifications') }}" class="mt-5 text-right text-sm font-medium text-brand-600 hover:text-brand-700">View All</a>
+                <!-- <a href="{{ route('student.notifications') }}" class="mt-5 text-right text-sm font-medium text-brand-600 hover:text-brand-700">View All</a> -->
             </div>
         </div>
 

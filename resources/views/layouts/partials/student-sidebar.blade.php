@@ -20,12 +20,6 @@
     <a href="{{ route('student.dashboard') }}" class="block">
         <div x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen">
             <img src="{{ asset('images/logo/new-life-campus-logo.png') }}" alt="New Life Campus" class="h-auto w-full max-w-[200px]" />
-            <div class="mt-4 rounded-xl border border-brand-100 bg-gradient-to-br from-brand-50 to-white p-3.5 shadow-theme-xs">
-                <p class="text-xs font-semibold uppercase tracking-wide text-brand-600">Student Portal</p>
-                <span class="mt-2 inline-flex items-center rounded-full bg-brand-800 px-2.5 py-0.5 text-xs font-medium text-white">
-                    Essential Package
-                </span>
-            </div>
         </div>
         <div x-show="!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen" class="hidden xl:flex xl:justify-center">
             <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-800 text-sm font-bold text-white shadow-theme-sm">
@@ -92,8 +86,8 @@
     :class="(!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ? 'xl:p-2' : ''">
     <div class="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-2.5 shadow-theme-xs"
         :class="(!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ? 'xl:justify-center xl:p-2' : ''">
-        <x-ui.avatar :src="$user?->avatarUrl()" :initials="$initials"
-            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-100 text-sm font-bold text-brand-800" />
+        <x-ui.avatar :src="$user->avatarUrl()" :initials="$user->initials()"
+            class="h-10 w-10 rounded-full" />
         <div x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen" class="min-w-0 flex-1">
             <p class="truncate text-sm font-semibold text-gray-900">{{ $userName }}</p>
             <p class="truncate text-xs text-gray-500">{{ $userEmail }}</p>

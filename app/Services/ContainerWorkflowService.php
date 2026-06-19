@@ -103,11 +103,20 @@ class ContainerWorkflowService
     }
 
     /**
-     * @return array<int, array{status: string, label: string, reached: bool, current: bool}>
+     * @return array<int, array{status: string, label: string, reached: bool, current: bool, reached_at: ?\Illuminate\Support\Carbon}>
      */
     public function timelineFor(Container $container): array
     {
         $currentIndex = ContainerStatus::orderIndex($container->status);
+
+        if (!$container->relationLoaded('statusHistories')) {
+            $container->load('statusHistories');
+        }
+
+        $reachedAtByStatus = $container->statusHistories
+            ->groupBy('to_status')
+            ->map(fn ($histories) => $histories->sortBy('created_at')->first()?->created_at);
+
         $timeline = [];
 
         foreach (ContainerStatus::ordered() as $index => $status) {
@@ -116,6 +125,7 @@ class ContainerWorkflowService
                 'label' => ContainerStatus::label($status),
                 'reached' => $index <= $currentIndex,
                 'current' => $status === $container->status,
+                'reached_at' => $reachedAtByStatus->get($status),
             ];
         }
 

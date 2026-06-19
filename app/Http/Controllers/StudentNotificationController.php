@@ -6,6 +6,7 @@ use App\Models\PortalNotification;
 use App\Models\User;
 use App\Services\NotificationService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,13 +33,13 @@ class StudentNotificationController extends Controller
         ]);
     }
 
-    public function markRead(PortalNotification $notification): RedirectResponse
+    public function markRead(Request $request, PortalNotification $notification): RedirectResponse
     {
         $this->ensureOwner($notification);
 
         $this->notifications->markRead($notification);
 
-        if ($notification->url !== null && $notification->url !== '') {
+        if ($request->boolean('follow') && $notification->url !== null && $notification->url !== '') {
             return redirect()->to($notification->url);
         }
 

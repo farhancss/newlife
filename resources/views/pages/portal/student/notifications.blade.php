@@ -45,39 +45,65 @@
             <ul class="divide-y divide-gray-100">
                 @forelse ($notifications as $notification)
                     <li @class([
-                        'relative flex items-start gap-4 px-5 py-4 transition hover:bg-gray-50',
+                        'flex flex-col gap-3 px-5 py-4 transition hover:bg-gray-50 sm:flex-row sm:items-center sm:gap-4',
                         'bg-brand-50/40' => $notification->isUnread(),
                     ])>
-                        @if ($notification->isUnread())
-                            <span class="mt-2 h-2 w-2 shrink-0 rounded-full bg-brand-600" aria-hidden="true"></span>
-                        @else
-                            <span class="mt-2 h-2 w-2 shrink-0 rounded-full bg-transparent" aria-hidden="true"></span>
-                        @endif
-
-                        <div class="min-w-0 flex-1">
-                            <div class="flex items-center gap-2">
-                                <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium {{ $categoryBadge($notification->category) }}">
-                                    {{ $notification->categoryLabel() }}
-                                </span>
-                                <p @class([
-                                    'truncate text-sm text-gray-900',
-                                    'font-semibold' => $notification->isUnread(),
-                                    'font-medium' => ! $notification->isUnread(),
-                                ])>{{ $notification->title }}</p>
-                            </div>
-                            @if ($notification->body)
-                                <p class="mt-0.5 text-sm text-gray-600">{{ $notification->body }}</p>
+                        <div class="flex min-w-0 flex-1 items-start gap-4">
+                            @if ($notification->isUnread())
+                                <span class="mt-2 h-2 w-2 shrink-0 rounded-full bg-brand-600" aria-hidden="true"></span>
+                            @else
+                                <span class="mt-2 h-2 w-2 shrink-0 rounded-full bg-transparent" aria-hidden="true"></span>
                             @endif
-                            <p class="mt-1 text-xs text-gray-400">{{ $notification->created_at->diffForHumans() }}</p>
+
+                            <div class="min-w-0 flex-1">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium {{ $categoryBadge($notification->category) }}">
+                                        {{ $notification->categoryLabel() }}
+                                    </span>
+                                    <p @class([
+                                        'text-sm text-gray-900',
+                                        'font-semibold' => $notification->isUnread(),
+                                        'font-medium' => ! $notification->isUnread(),
+                                    ])>{{ $notification->title }}</p>
+                                </div>
+                                @if ($notification->body)
+                                    <p class="mt-0.5 text-sm text-gray-600">{{ $notification->body }}</p>
+                                @endif
+                                <p class="mt-1 text-xs text-gray-400">{{ $notification->created_at->diffForHumans() }}</p>
+                            </div>
                         </div>
 
-                        <form action="{{ route('student.notifications.read', $notification) }}" method="POST" class="shrink-0">
-                            @csrf
-                            <button type="submit"
-                                class="inline-flex items-center rounded-lg px-3 py-1.5 text-sm font-semibold text-brand-600 hover:bg-brand-50">
-                                {{ $notification->url ? 'View' : ($notification->isUnread() ? 'Mark read' : 'Read') }}
-                            </button>
-                        </form>
+                        @if ($notification->isUnread() || $notification->url)
+                            <div class="flex shrink-0 items-center justify-end gap-2 sm:pl-0">
+                                @if ($notification->isUnread())
+                                    <form action="{{ route('student.notifications.read', $notification) }}" method="POST">
+                                        @csrf
+                                        <button type="submit"
+                                            class="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-semibold text-brand-600 hover:bg-brand-50">
+                                            Read
+                                        </button>
+                                    </form>
+                                @endif
+
+                                @if ($notification->url)
+                                    @if ($notification->isUnread())
+                                        <form action="{{ route('student.notifications.read', $notification) }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="follow" value="1">
+                                            <button type="submit"
+                                                class="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-semibold text-brand-600 hover:bg-brand-50">
+                                                View
+                                            </button>
+                                        </form>
+                                    @else
+                                        <a href="{{ $notification->url }}"
+                                            class="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-semibold text-brand-600 hover:bg-brand-50">
+                                            View
+                                        </a>
+                                    @endif
+                                @endif
+                            </div>
+                        @endif
                     </li>
                 @empty
                     <li class="px-5 py-16 text-center">

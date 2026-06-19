@@ -107,7 +107,7 @@ class StudentMoveTrackingController extends Controller
     }
 
     /**
-     * @return array<int, array{status: string, label: string, reached: bool, current: bool}>
+     * @return array<int, array{status: string, label: string, reached: bool, current: bool, reached_at: null}>
      */
     private function defaultTimeline(): array
     {
@@ -119,6 +119,7 @@ class StudentMoveTrackingController extends Controller
                 'label' => ContainerStatus::label($status),
                 'reached' => false,
                 'current' => false,
+                'reached_at' => null,
             ];
         }
 

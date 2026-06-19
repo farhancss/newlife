@@ -155,13 +155,49 @@ test('student can view notification center and mark all read', function () {
 
     $this->actingAs($user)->get(route('student.notifications'))
         ->assertOk()
-        ->assertSee('Hello');
+        ->assertSee('Hello')
+        ->assertSee('Read');
 
     $this->actingAs($user)->post(route('student.notifications.read-all'))->assertRedirect();
 
     expect(app(NotificationService::class)->unreadCount($user))->toBe(0);
 });
 
+test('student can mark a single notification as read without leaving the list', function () {
+    [$user] = makeNotifiableStudent();
+    $notification = app(NotificationService::class)->notify(
+        $user,
+        NotificationCategory::SHIPMENT,
+        'container.shipped',
+        'Container shipped',
+        'Your container is on the way.',
+        url('/student/move-tracking'),
+    );
+
+    $this->actingAs($user)
+        ->post(route('student.notifications.read', $notification))
+        ->assertRedirect(route('student.notifications'));
+
+    expect($notification->fresh()->read_at)->not->toBeNull()
+        ->and(app(NotificationService::class)->unreadCount($user))->toBe(0);
+});
+
+test('student view action marks notification read and follows the link', function () {
+    [$user] = makeNotifiableStudent();
+    $notification = app(NotificationService::class)->notify(
+        $user,
+        NotificationCategory::SHIPMENT,
+        'container.shipped',
+        'Container shipped',
+        'Your container is on the way.',
+        url('/student/move-tracking'),
+    );
+
+    $this->actingAs($user)
+        ->post(route('student.notifications.read', $notification), ['follow' => '1'])
+        ->assertRedirect('/student/move-tracking');
+
+    expect($notification->fresh()->read_at)->not->toBeNull();
 test('admin can send a custom notification and email to a student', function () {
     Mail::fake();
     [$user] = makeNotifiableStudent();
