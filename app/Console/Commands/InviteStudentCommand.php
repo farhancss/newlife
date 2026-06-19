@@ -2,7 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\PackageTier;
 use App\Services\AccountProvisioningService;
+use App\Services\StudentPackageService;
 use Illuminate\Console\Command;
 
 class InviteStudentCommand extends Command
@@ -12,11 +14,12 @@ class InviteStudentCommand extends Command
         {--first-name= : First name (defaults to email local-part)}
         {--last-name= : Last name (defaults to empty)}
         {--contact-id= : Optional external contact id (Squarespace, CRM, etc.)}
+        {--package= : Package tier to assign (essential, summit, legacy)}
         {--no-email : Skip sending the branded invitation email}';
 
     protected $description = 'Provision a student account and send the branded invitation email synchronously (no queue worker required).';
 
-    public function handle(AccountProvisioningService $provisioning): int
+    public function handle(AccountProvisioningService $provisioning, StudentPackageService $packages): int
     {
         $email = strtolower(trim((string) $this->argument('email')));
 
@@ -53,6 +56,18 @@ class InviteStudentCommand extends Command
 
         $user = $result->user;
         $profile = $result->profile;
+
+        $package = strtolower(trim((string) ($this->option('package') ?? '')));
+        if ($package !== '') {
+            $tier = PackageTier::normalize($package);
+
+            if ($tier === PackageTier::UNKNOWN) {
+                $this->warn("Unknown package \"{$package}\" — skipped package assignment.");
+            } else {
+                $packages->assignFromTier($profile, $tier);
+                $this->line("  Package:         {$tier}");
+            }
+        }
 
         if (!$result->isNewUser) {
             $this->warn("User {$user->email} already exists (status: {$user->status}).");

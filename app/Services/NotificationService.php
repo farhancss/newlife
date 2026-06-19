@@ -175,6 +175,34 @@ class NotificationService
         );
     }
 
+    /**
+     * Confirm to the student that an add-on purchase is now active.
+     */
+    public function addOnPurchased(\App\Models\StudentAddOn $addOn): ?PortalNotification
+    {
+        $recipient = $addOn->studentProfile?->user;
+
+        if ($recipient === null) {
+            return null;
+        }
+
+        $body = 'Your “' . $addOn->name . '” add-on is now active.';
+
+        if ($addOn->tracksContainer()) {
+            $body .= ' Track its progress from the add-on details page.';
+        }
+
+        return $this->notify(
+            recipient: $recipient,
+            category: NotificationCategory::ADD_ON,
+            type: 'add_on.purchased',
+            title: 'Add-on purchased',
+            body: $body,
+            url: route('student.add-ons.show', $addOn),
+            meta: ['student_add_on_id' => $addOn->id, 'slug' => $addOn->add_on_slug],
+        );
+    }
+
     public function markRead(PortalNotification $notification): void
     {
         if ($notification->read_at === null) {

@@ -61,7 +61,7 @@ class StudentPackageService
 
     public function containersAssigned(StudentProfile $profile): int
     {
-        return $profile->containers()->count();
+        return $profile->containers()->moveShipments()->count();
     }
 
     public function containersRemaining(StudentProfile $profile): int

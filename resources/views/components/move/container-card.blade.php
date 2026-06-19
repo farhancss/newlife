@@ -16,7 +16,7 @@
 ])>
     <div class="flex items-start justify-between gap-3">
         <div>
-            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Move shipment</p>
+            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">{{ $container->isAddOn() ? 'Add-on container' : 'Move shipment' }}</p>
             <h3 class="text-lg font-bold text-gray-900">{{ $container->code }}</h3>
             @if ($quantity)
                 <p class="mt-0.5 text-xs text-gray-500">Includes {{ $quantity }} {{ \Illuminate\Support\Str::plural('container', $quantity) }}</p>

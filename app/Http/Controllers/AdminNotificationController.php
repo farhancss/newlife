@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Enums\NotificationCategory;
+use App\Enums\UserRole;
 use App\Models\PortalNotification;
 use App\Models\User;
 use App\Services\NotificationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class AdminNotificationController extends Controller
@@ -63,6 +65,56 @@ class AdminNotificationController extends Controller
         ]);
     }
 
+    public function create(): View
+    {
+        return view('pages.portal.admin.notification-compose', [
+            'title' => 'Send Notification',
+            'pageHeading' => 'Send Notification',
+            'portal' => 'admin',
+            'students' => $this->students(),
+            'categories' => NotificationCategory::all(),
+        ]);
+    }
+
+    public function send(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'user_id' => [
+                'required',
+                Rule::exists('users', 'id')->where(fn ($query) => $query->where('role', UserRole::STUDENT)),
+            ],
+            'category' => ['required', Rule::in(NotificationCategory::all())],
+            'title' => ['required', 'string', 'max:120'],
+            'body' => ['required', 'string', 'max:2000'],
+            'url' => ['nullable', 'url', 'max:500'],
+        ]);
+
+        /** @var User $actor */
+        $actor = Auth::user();
+
+        /** @var User $recipient */
+        $recipient = User::query()->findOrFail($validated['user_id']);
+
+        $notification = $this->notifications->notify(
+            recipient: $recipient,
+            category: $validated['category'],
+            type: 'admin.custom',
+            title: $validated['title'],
+            body: $validated['body'],
+            url: $validated['url'] ?? null,
+            actor: $actor,
+            meta: ['custom' => true],
+        );
+
+        $emailed = $notification->email_status === PortalNotification::EMAIL_SENT;
+
+        return redirect()
+            ->route('admin.notifications')
+            ->with('status', $emailed
+                ? "Notification sent to {$recipient->name} and emailed to {$recipient->email}."
+                : "Notification sent to {$recipient->name} (email was not delivered — check their preferences).");
+    }
+
     public function resend(PortalNotification $notification): RedirectResponse
     {
         /** @var User $actor */
@@ -73,5 +125,17 @@ class AdminNotificationController extends Controller
         return redirect()
             ->route('admin.notifications')
             ->with('status', 'Notification re-sent.');
+    }
+
+    /**
+     * @return \Illuminate\Support\Collection<int, User>
+     */
+    private function students()
+    {
+        return User::query()
+            ->where('role', UserRole::STUDENT)
+            ->with('studentProfile')
+            ->orderBy('name')
+            ->get();
     }
 }

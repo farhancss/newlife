@@ -14,12 +14,16 @@ Per FSD §21.2 — **in-portal payments are out of scope**. No Stripe/Apple Pay 
 
 ## Current codebase
 
-| Portal | Route |
-|--------|-------|
-| Student | `/student/add-ons` |
-| Admin | `/admin/add-ons` |
+| Portal | Route | Status |
+|--------|-------|--------|
+| Student | `/student/add-ons` | Live — catalog cards (external links to Squarespace) + "My add-ons" listing |
+| Student | `/student/add-ons/purchases/{studentAddOn}` | Add-on detail page (12-status journey for Additional Container) |
+| Admin | `/admin/add-ons` | Live — stat cards + listing of all student purchases (search + status filter) |
 
-Both UI shells.
+Purchases are created **active** via `php artisan portal:buy-addon`. There is no
+in-portal payment-pending state.
+
+Catalog is hardcoded in `config/addons.php` from the live Squarespace storefront.
 
 ## Phase 2 enhancements
 

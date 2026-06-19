@@ -21,15 +21,19 @@ class ContainerWorkflowService
     public function createForStudent(
         StudentProfile $profile,
         ?User $actor = null,
+        string $source = Container::SOURCE_MOVE,
     ): Container {
-        return DB::transaction(function () use ($profile, $actor): Container {
+        return DB::transaction(function () use ($profile, $actor, $source): Container {
             $container = Container::query()->create([
                 'student_profile_id' => $profile->id,
                 'code' => $this->codeGenerator->generate(),
                 'status' => ContainerStatus::CONTAINER_PREPARED,
+                'source' => $source,
             ]);
 
-            $this->recordHistory($container, null, ContainerStatus::CONTAINER_PREPARED, $actor, 'Container assigned');
+            $note = $source === Container::SOURCE_ADD_ON ? 'Add-on container assigned' : 'Container assigned';
+
+            $this->recordHistory($container, null, ContainerStatus::CONTAINER_PREPARED, $actor, $note);
 
             return $container;
         });
@@ -42,7 +46,7 @@ class ContainerWorkflowService
      */
     public function ensureMoveShipment(StudentProfile $profile, ?User $actor = null): Container
     {
-        $existing = $profile->containers()->orderBy('id')->first();
+        $existing = $profile->containers()->moveShipments()->orderBy('id')->first();
 
         if ($existing instanceof Container) {
             return $existing;
@@ -95,7 +99,7 @@ class ContainerWorkflowService
 
     public function primaryContainer(StudentProfile $profile): ?Container
     {
-        return $profile->containers()->orderBy('id')->first();
+        return $profile->containers()->moveShipments()->orderBy('id')->first();
     }
 
     /**

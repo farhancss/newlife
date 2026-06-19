@@ -40,7 +40,10 @@ class AdminStudentController extends Controller
             ->get();
 
         $rows = $students->map(function (StudentProfile $profile): array {
-            $primary = $profile->containers->sortBy('id')->first();
+            $primary = $profile->containers
+                ->where('source', \App\Models\Container::SOURCE_MOVE)
+                ->sortBy('id')
+                ->first();
 
             return [
                 'profile' => $profile,
@@ -69,6 +72,7 @@ class AdminStudentController extends Controller
             'containers.statusHistories.changedBy',
             'containers.photos',
             'retailPackages.statusHistories',
+            'addOns.container',
         ]);
 
         $containers = $studentProfile->containers->sortBy('id')->values();
@@ -97,6 +101,7 @@ class AdminStudentController extends Controller
             'containers' => $containers,
             'containerTimelines' => $containerTimelines,
             'activeRetailCount' => $activeRetailCount,
+            'addOns' => $studentProfile->addOns,
             'fedExLinkService' => $this->fedExLinkService,
         ]);
     }

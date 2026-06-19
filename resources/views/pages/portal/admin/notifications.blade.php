@@ -20,9 +20,16 @@
             <x-ui.alert variant="success" :message="session('status')" />
         @endif
 
-        <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-theme-xs">
-            <h1 class="text-xl font-semibold text-gray-900">Notifications</h1>
-            <p class="mt-1 text-sm text-gray-600">Delivery log across all students. Resend failed or missed messages.</p>
+        <div class="flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-5 shadow-theme-xs sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <h1 class="text-xl font-semibold text-gray-900">Notifications</h1>
+                <p class="mt-1 text-sm text-gray-600">Delivery log across all students. Resend failed or missed messages.</p>
+            </div>
+            <a href="{{ route('admin.notifications.create') }}"
+                class="inline-flex h-10 flex-none items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 text-sm font-semibold text-white hover:bg-brand-700">
+                <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M2.94 2.94a1.5 1.5 0 011.62-.33l12 5a1.5 1.5 0 010 2.78l-12 5A1.5 1.5 0 012.5 14V6a1.5 1.5 0 01.44-1.06zM4 6.6v2.65l5.2 0.75L4 10.75V13.4l11-5.4L4 6.6z"/></svg>
+                Send notification
+            </a>
         </div>
 
         <form method="GET" class="flex flex-col gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-theme-xs sm:flex-row sm:items-end">

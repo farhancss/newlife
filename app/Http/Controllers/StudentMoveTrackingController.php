@@ -36,7 +36,10 @@ class StudentMoveTrackingController extends Controller
         $profile->load(['shippingAddress', 'package', 'containers.statusHistories', 'containers.photos']);
 
         $package = $this->studentPackageService->resolve($profile);
-        $containers = $profile->containers->sortBy('id')->values();
+        $containers = $profile->containers
+            ->where('source', Container::SOURCE_MOVE)
+            ->sortBy('id')
+            ->values();
         $primary = $containers->first();
         $timeline = $primary instanceof Container
             ? $this->workflowService->timelineFor($primary)

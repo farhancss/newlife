@@ -162,6 +162,43 @@ test('student can view notification center and mark all read', function () {
     expect(app(NotificationService::class)->unreadCount($user))->toBe(0);
 });
 
+test('admin can send a custom notification and email to a student', function () {
+    Mail::fake();
+    [$user] = makeNotifiableStudent();
+    $admin = User::factory()->create(['role' => UserRole::ADMIN, 'must_reset_password' => false]);
+
+    $this->actingAs($admin)
+        ->post(route('admin.notifications.send'), [
+            'user_id' => $user->id,
+            'category' => NotificationCategory::ACCOUNT,
+            'title' => 'Please confirm your move-in date',
+            'body' => 'We need you to confirm your move-in date by Friday.',
+            'url' => 'https://new-life.test/student/profile',
+        ])
+        ->assertRedirect(route('admin.notifications'));
+
+    $notification = PortalNotification::query()
+        ->where('user_id', $user->id)
+        ->where('type', 'admin.custom')
+        ->first();
+
+    expect($notification)->not->toBeNull()
+        ->and($notification->title)->toBe('Please confirm your move-in date')
+        ->and($notification->category)->toBe(NotificationCategory::ACCOUNT)
+        ->and($notification->created_by_user_id)->toBe($admin->id)
+        ->and($notification->email_status)->toBe(PortalNotification::EMAIL_SENT);
+
+    Mail::assertQueued(PortalNotificationMail::class);
+});
+
+test('admin custom notification validates required fields', function () {
+    $admin = User::factory()->create(['role' => UserRole::ADMIN, 'must_reset_password' => false]);
+
+    $this->actingAs($admin)
+        ->post(route('admin.notifications.send'), [])
+        ->assertSessionHasErrors(['user_id', 'category', 'title', 'body']);
+});
+
 test('admin resend re-queues email and increments attempts', function () {
     Mail::fake();
     [$user] = makeNotifiableStudent();
