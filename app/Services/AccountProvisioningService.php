@@ -23,6 +23,7 @@ class AccountProvisioningService
         private readonly PackageTierMapper $packageTierMapper,
         private readonly StudentPackageService $studentPackageService,
         private readonly UserStatusService $userStatusService,
+        private readonly DeadlineService $deadlineService,
     ) {
     }
 
@@ -101,6 +102,9 @@ class AccountProvisioningService
 
             if ($isNewUser) {
                 $this->userStatusService->markInvited($user);
+
+                // Case 01: start the 7-day profile-completion countdown.
+                $this->deadlineService->openProfileCompletion($profile);
             }
 
             if ($isNewUser && $sendInvitationIfNew && $tempPassword !== null) {

@@ -154,6 +154,33 @@ class NotificationService
         });
     }
 
+    /**
+     * Notify every site admin that a student has started packing their
+     * container. Recorded in the notification history for each admin.
+     *
+     * @return \Illuminate\Support\Collection<int, PortalNotification>
+     */
+    public function containerPackingStartedByStudent(Container $container, User $student): \Illuminate\Support\Collection
+    {
+        $studentName = $container->studentProfile->fullName() ?: $student->name;
+        $newLifeId = $container->studentProfile->new_life_id;
+
+        $admins = User::query()->where('role', UserRole::ADMIN)->get();
+
+        return $admins->map(function (User $admin) use ($container, $student, $studentName, $newLifeId): PortalNotification {
+            return $this->notify(
+                recipient: $admin,
+                category: NotificationCategory::SHIPMENT,
+                type: 'container.packing_started',
+                title: 'Student started packing',
+                body: $studentName . ' (' . $newLifeId . ') started packing container ' . $container->code . '. A pickup request should follow soon.',
+                url: route('admin.students.show', $container->student_profile_id),
+                actor: $student,
+                meta: ['container_id' => $container->id, 'status' => ContainerStatus::CUSTOMER_PACKING],
+            );
+        });
+    }
+
     public function retailPackageStatusChanged(RetailPackage $package, string $toStatus): ?PortalNotification
     {
         $event = self::RETAIL_EVENTS[$toStatus] ?? null;
@@ -201,6 +228,69 @@ class NotificationService
             url: route('student.add-ons.show', $addOn),
             meta: ['student_add_on_id' => $addOn->id, 'slug' => $addOn->add_on_slug],
         );
+    }
+
+    /**
+     * Reminder fired one day before a deadline is due.
+     */
+    public function deadlineReminder(\App\Models\Deadline $deadline): ?PortalNotification
+    {
+        return $this->notifyDeadline(
+            $deadline,
+            type: 'deadline.reminder',
+            title: 'Reminder: ' . $deadline->title,
+            body: $this->deadlineDueText($deadline) . ' ' . (string) $deadline->description,
+        );
+    }
+
+    /**
+     * Confirmation sent once a deadline's criteria have been met.
+     */
+    public function deadlineCompleted(\App\Models\Deadline $deadline): ?PortalNotification
+    {
+        return $this->notifyDeadline(
+            $deadline,
+            type: 'deadline.completed',
+            title: 'Completed: ' . $deadline->title,
+            body: 'Nice work — you met this deadline. No further action is needed.',
+        );
+    }
+
+    /**
+     * Alert sent once a deadline has passed without being met.
+     */
+    public function deadlineOverdue(\App\Models\Deadline $deadline): ?PortalNotification
+    {
+        return $this->notifyDeadline(
+            $deadline,
+            type: 'deadline.overdue',
+            title: 'Overdue: ' . $deadline->title,
+            body: 'This deadline has passed. ' . (string) $deadline->description . ' Please take action as soon as possible.',
+        );
+    }
+
+    private function notifyDeadline(\App\Models\Deadline $deadline, string $type, string $title, string $body): ?PortalNotification
+    {
+        $recipient = $deadline->studentProfile?->user;
+
+        if ($recipient === null) {
+            return null;
+        }
+
+        return $this->notify(
+            recipient: $recipient,
+            category: NotificationCategory::DEADLINE,
+            type: $type,
+            title: $title,
+            body: trim($body),
+            url: route('student.deadlines'),
+            meta: ['deadline_id' => $deadline->id, 'deadline_type' => $deadline->type],
+        );
+    }
+
+    private function deadlineDueText(\App\Models\Deadline $deadline): string
+    {
+        return 'Due ' . $deadline->due_at->format('M j, Y') . '.';
     }
 
     public function markRead(PortalNotification $notification): void

@@ -6,6 +6,7 @@ use App\Enums\ContainerStatus;
 use App\Enums\RetailPackageStatus;
 use App\Models\StudentProfile;
 use App\Services\ContainerWorkflowService;
+use App\Services\DeadlineService;
 use App\Services\FedExLinkService;
 use App\Services\MoveProgressService;
 use App\Services\ProfileCompletionService;
@@ -19,6 +20,7 @@ class AdminStudentController extends Controller
         private readonly ContainerWorkflowService $containerWorkflowService,
         private readonly ProfileCompletionService $profileCompletionService,
         private readonly FedExLinkService $fedExLinkService,
+        private readonly DeadlineService $deadlineService,
     ) {
     }
 
@@ -103,6 +105,7 @@ class AdminStudentController extends Controller
             'activeRetailCount' => $activeRetailCount,
             'addOns' => $studentProfile->addOns,
             'fedExLinkService' => $this->fedExLinkService,
+            'deadlines' => $this->deadlineService->groupedForStudent($studentProfile),
         ]);
     }
 }

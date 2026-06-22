@@ -136,7 +136,6 @@
                     <h2 class="text-base font-semibold text-gray-900">Upcoming Deliveries</h2>
                     <p class="mt-0.5 text-sm text-gray-500">Scheduled drop-offs for the next 7 days</p>
                 </div>
-                <a href="{{ route('admin.deliveries') }}" class="text-sm font-medium text-brand-600 hover:text-brand-700">Manage deliveries</a>
             </div>
 
             <x-portal.data-table

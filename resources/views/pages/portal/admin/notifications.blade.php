@@ -16,10 +16,6 @@
 
 @section('content')
     <div class="space-y-6">
-        @if (session('status'))
-            <x-ui.alert variant="success" :message="session('status')" />
-        @endif
-
         <div class="flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-5 shadow-theme-xs sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <h1 class="text-xl font-semibold text-gray-900">Notifications</h1>

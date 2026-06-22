@@ -198,6 +198,8 @@ test('student view action marks notification read and follows the link', functio
         ->assertRedirect('/student/move-tracking');
 
     expect($notification->fresh()->read_at)->not->toBeNull();
+});
+
 test('admin can send a custom notification and email to a student', function () {
     Mail::fake();
     [$user] = makeNotifiableStudent();

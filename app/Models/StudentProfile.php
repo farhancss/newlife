@@ -116,6 +116,12 @@ class StudentProfile extends Model
         return $this->hasMany(StudentAddOn::class)->latest();
     }
 
+    /** @return HasMany<Deadline, $this> */
+    public function deadlines(): HasMany
+    {
+        return $this->hasMany(Deadline::class);
+    }
+
     public function hasAcknowledgedRetailTerms(): bool
     {
         return $this->retail_packages_acknowledged_at !== null;

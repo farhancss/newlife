@@ -13,22 +13,6 @@
             </p>
         </div>
 
-        @if (session('status'))
-            <div class="rounded-lg border border-success-200 bg-success-50 px-4 py-3 text-sm text-success-700">
-                {{ session('status') }}
-            </div>
-        @endif
-
-        @if ($errors->any())
-            <div class="rounded-lg border border-error-200 bg-error-50 px-4 py-3 text-sm text-error-700">
-                <ul class="list-disc pl-5">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
         <div class="rounded-2xl border border-gray-200 bg-white p-6">
             <form method="POST" action="{{ route($portal . '.change-password.submit') }}">
                 @csrf

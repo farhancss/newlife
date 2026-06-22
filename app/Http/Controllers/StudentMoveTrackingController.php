@@ -63,10 +63,42 @@ class StudentMoveTrackingController extends Controller
             'returnTrackingUrl' => $primary
                 ? $this->fedExLinkService->trackingUrl($primary->return_tracking)
                 : null,
+            'showStartPacking' => $primary && $primary->status === ContainerStatus::DELIVERED_TO_HOME,
             'showPickupInstructions' => $primary && $primary->status === ContainerStatus::CUSTOMER_PACKING,
             'pickupPhotosUploaded' => $primary instanceof Container && $primary->photos->isNotEmpty(),
             'fedExLinkService' => $this->fedExLinkService,
         ]);
+    }
+
+    /**
+     * Student-initiated transition from "Delivered to Home" to "Student Packing".
+     * Signals to admins that packing has begun; a pickup request typically
+     * follows once photos are uploaded.
+     */
+    public function startPacking(Container $container): RedirectResponse
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        $profile = $user->studentProfile;
+
+        abort_unless($profile !== null && $container->student_profile_id === $profile->id, Response::HTTP_FORBIDDEN);
+
+        if ($container->status !== ContainerStatus::DELIVERED_TO_HOME) {
+            return back()->withErrors([
+                'packing' => 'You can only start packing once your container has been delivered to your home.',
+            ]);
+        }
+
+        $container = $this->workflowService->transition(
+            $container,
+            ContainerStatus::CUSTOMER_PACKING,
+            $user,
+            'Student marked packing started.',
+        );
+
+        $this->notifications->containerPackingStartedByStudent($container, $user);
+
+        return back()->with('status', 'Packing started — our team has been notified. Upload your container photos, then request a pickup.');
     }
 
     /**

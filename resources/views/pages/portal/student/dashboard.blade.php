@@ -79,49 +79,58 @@
             <div class="flex min-h-[200px] flex-col rounded-xl border border-gray-200 bg-white p-5">
                 <h3 class="text-base font-semibold text-gray-900">Upcoming Deadlines</h3>
                 <ul class="mt-5 flex-1 space-y-3.5 text-sm text-gray-800">
-                    @foreach ($deadlines as $deadline)
+                    @forelse ($deadlines as $deadline)
+                        @php $days = $deadline->daysRemaining(); @endphp
                         <li class="flex items-center justify-between gap-3">
                             <span class="flex items-center gap-2">
-                                @if ($deadline['done'])
-                                    <span class="inline-flex h-2 w-2 shrink-0 rounded-full bg-success-500"></span>
-                                @endif
-                                <span class="{{ $deadline['done'] ? 'text-gray-500 line-through' : '' }}">{{ $deadline['label'] }}</span>
+                                <span class="inline-flex h-2 w-2 shrink-0 rounded-full {{ $deadline->isOverdue() ? 'bg-amber-500' : 'bg-brand-500' }}"></span>
+                                <span>{{ $deadline->title }}</span>
                             </span>
-                            <span class="shrink-0 {{ $deadline['done'] ? 'text-success-600' : 'text-gray-500' }}">
-                                @if ($deadline['done'])
-                                    Done
-                                @elseif ($deadline['date'])
-                                    {{ $deadline['date']->format('M j, Y') }}
+                            <span class="shrink-0 text-xs font-medium {{ $deadline->isOverdue() ? 'text-amber-700' : 'text-gray-500' }}">
+                                @if ($deadline->isOverdue())
+                                    {{ abs($days) }}d overdue
+                                @elseif ($days <= 0)
+                                    Due today
                                 @else
-                                    To be set
+                                    {{ $days }}d left
                                 @endif
                             </span>
                         </li>
-                    @endforeach
+                    @empty
+                        <li class="text-sm text-gray-500">No active deadlines — you're all caught up.</li>
+                    @endforelse
                 </ul>
-                <a href="{{ route('student.move-tracking') }}" class="mt-5 text-right text-sm font-medium text-brand-600 hover:text-brand-700">View All</a>
+                <a href="{{ route('student.deadlines') }}" class="mt-5 text-right text-sm font-medium text-brand-600 hover:text-brand-700">View All</a>
             </div>
 
             <div class="flex min-h-[200px] flex-col rounded-xl border border-gray-200 bg-white p-5">
-                <h3 class="text-base font-semibold text-gray-900">Latest Update</h3>
-                <div class="mt-5 flex-1">
-                    @if ($latestUpdate)
-                        <p class="text-sm font-medium text-gray-900">{{ $latestUpdate->toStatusLabel() }}</p>
-                        <p class="mt-2 text-sm text-gray-500">{{ $latestUpdate->created_at->format('M j, Y') }}</p>
-                        @if ($primaryContainer)
-                            <p class="mt-1 text-xs text-gray-400">{{ $primaryContainer->code }}</p>
-                        @endif
-                    @else
-                        <p class="text-sm font-medium text-gray-900">Containers are being prepared</p>
-                        <p class="mt-2 text-sm text-gray-500">{{ now()->format('M j, Y') }}</p>
-                    @endif
-                </div>
-                <!-- <a href="{{ route('student.notifications') }}" class="mt-5 text-right text-sm font-medium text-brand-600 hover:text-brand-700">View All</a> -->
+                <h3 class="text-base font-semibold text-gray-900">Recent Updates</h3>
+                <ul class="mt-5 flex-1 space-y-4">
+                    @forelse ($recentUpdates as $index => $update)
+                        <li class="flex gap-3">
+                            <div class="flex flex-col items-center">
+                                <span class="mt-1 h-2 w-2 shrink-0 rounded-full {{ $index === 0 ? 'bg-brand-500' : 'bg-gray-300' }}"></span>
+                                @if (! $loop->last)
+                                    <span class="mt-1 w-px flex-1 bg-gray-200"></span>
+                                @endif
+                            </div>
+                            <div class="-mt-0.5 min-w-0">
+                                <p class="text-sm font-medium text-gray-900">{{ $update['label'] }}</p>
+                                <p class="mt-0.5 text-xs text-gray-500">{{ $update['date']->format('M j, Y') }} · {{ $update['code'] }}</p>
+                            </div>
+                        </li>
+                    @empty
+                        <li>
+                            <p class="text-sm font-medium text-gray-900">Containers are being prepared</p>
+                            <p class="mt-1 text-xs text-gray-500">{{ now()->format('M j, Y') }}</p>
+                        </li>
+                    @endforelse
+                </ul>
             </div>
         </div>
 
         {{-- Quick links --}}
-        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             @php
                 $quickLinks = [
                     [
@@ -141,13 +150,7 @@
                         'subtitle' => 'Explore Options',
                         'href' => route('student.add-ons'),
                         'icon' => 'addons',
-                    ],
-                    [
-                        'title' => 'Help & Support',
-                        'subtitle' => 'Get Help',
-                        'href' => route('student.support'),
-                        'icon' => 'support',
-                    ],
+                    ]
                 ];
             @endphp
 

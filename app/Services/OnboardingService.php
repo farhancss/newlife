@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\DB;
 
 class OnboardingService
 {
+    public function __construct(
+        private readonly DeadlineService $deadlines,
+    ) {
+    }
+
     public function getProgress(StudentProfile $profile): int
     {
         return (int) $profile->onboarding_step;
@@ -66,6 +71,9 @@ class OnboardingService
         $profile->onboarding_completed_at = now();
         $profile->onboarding_step = 5;
         $profile->save();
+
+        // Case 01: completing onboarding satisfies the profile-completion deadline.
+        $this->deadlines->syncForSubject($profile);
 
         return $profile;
     }

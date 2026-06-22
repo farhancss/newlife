@@ -11,20 +11,6 @@
     @endphp
 
     <div class="space-y-6">
-        @if (session('status'))
-            <x-ui.alert variant="success" :message="session('status')" />
-        @endif
-
-        @if ($errors->any())
-            <x-ui.alert variant="error" title="Could not save">
-                <ul class="mt-2 list-disc pl-5 text-sm text-gray-600">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </x-ui.alert>
-        @endif
-
         <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">Container operations</h1>

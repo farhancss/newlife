@@ -19,20 +19,6 @@
 
 @section('content')
     <div class="space-y-6">
-        @if (session('status'))
-            <x-ui.alert variant="success" :message="session('status')" />
-        @endif
-
-        @if ($errors->any())
-            <x-ui.alert variant="error" title="Could not save">
-                <ul class="mt-2 list-disc pl-5 text-sm text-gray-600">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </x-ui.alert>
-        @endif
-
         <div class="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <h1 class="text-xl font-semibold text-gray-900">Retail Packages</h1>

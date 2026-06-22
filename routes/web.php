@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminAddOnController;
+use App\Http\Controllers\AdminDeadlineController;
 use App\Http\Controllers\AdminContainerController;
 use App\Http\Controllers\AdminDevToolsController;
 use App\Http\Controllers\AdminDashboardController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\StudentAddOnController;
+use App\Http\Controllers\StudentDeadlineController;
 use App\Http\Controllers\StudentContainerPhotoController;
 use App\Http\Controllers\StudentDashboardController;
 use App\Http\Controllers\StudentMoveTrackingController;
@@ -120,12 +122,17 @@ Route::prefix('student')->name('student.')->middleware([
     Route::delete('/move-tracking/containers/{container}/photos/{photo}', [StudentContainerPhotoController::class, 'destroy'])
         ->middleware('throttle:30,1')
         ->name('move-tracking.photos.destroy');
+    Route::post('/move-tracking/containers/{container}/start-packing', [StudentMoveTrackingController::class, 'startPacking'])
+        ->middleware('throttle:10,1')
+        ->name('move-tracking.start-packing');
     Route::post('/move-tracking/containers/{container}/schedule-pickup', [StudentMoveTrackingController::class, 'schedulePickup'])
         ->middleware('throttle:10,1')
         ->name('move-tracking.schedule-pickup');
 
     Route::get('/add-ons', [StudentAddOnController::class, 'index'])->name('add-ons');
     Route::get('/add-ons/purchases/{studentAddOn}', [StudentAddOnController::class, 'show'])->name('add-ons.show');
+
+    Route::get('/deadlines', [StudentDeadlineController::class, 'index'])->name('deadlines');
 
     Route::get('/support', function () {
         return view('pages.portal.student.support', [
@@ -191,16 +198,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
         ->middleware('throttle:30,1')
         ->name('retail-packages.destroy');
 
-    Route::get('/deliveries', function () {
-        return view('pages.portal.admin.deliveries', [
-            'title' => 'Deliveries Management',
-            'pageHeading' => 'Deliveries',
-            'portal' => 'admin',
-        ]);
-    })->name('deliveries');
-
     Route::get('/add-ons', [AdminAddOnController::class, 'index'])->name('add-ons');
     Route::get('/add-ons/{studentAddOn}', [AdminAddOnController::class, 'show'])->name('add-ons.show');
+
+    Route::get('/deadlines', [AdminDeadlineController::class, 'index'])->name('deadlines');
 
     Route::get('/communications', function () {
         return view('pages.portal.admin.communications', [

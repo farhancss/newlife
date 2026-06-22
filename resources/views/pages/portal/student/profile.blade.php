@@ -110,86 +110,68 @@
             </div>
         </div>
 
-        @if (session('status'))
-            <div class="rounded-lg border border-success-200 bg-success-50 px-4 py-3 text-sm text-success-700">
-                {{ session('status') }}
-            </div>
-        @endif
+        <div class="rounded-2xl border border-gray-200 bg-white p-6">
+            @if ($activeSection === 1)
+                {{-- Optional profile photo, grouped with Student Information --}}
+                <div x-data="{ preview: null, fileName: '' }" class="mb-6 border-b border-gray-100 pb-6">
+                    <h2 class="text-lg font-semibold text-gray-900">Student Information</h2>
+                    <p class="mt-1 text-sm text-gray-500">Your contact and school details.</p>
 
-        @if (session('warning'))
-            <div class="rounded-lg border border-warning-200 bg-warning-50 px-4 py-3 text-sm text-warning-700">
-                {{ session('warning') }}
-            </div>
-        @endif
+                    <div class="mt-5 flex flex-col gap-5 sm:flex-row sm:items-center">
+                        <div class="shrink-0">
+                            <template x-if="preview">
+                                <img :src="preview" alt="Preview" class="h-20 w-20 rounded-2xl object-cover ring-2 ring-brand-100" />
+                            </template>
+                            <div x-show="!preview">
+                                <x-ui.avatar :src="$user->avatarUrl()" :initials="$user->initials()"
+                                    class="flex h-20 w-20 items-center justify-center rounded-2xl bg-brand-100 text-xl font-bold text-brand-800 ring-2 ring-brand-50" />
+                            </div>
+                        </div>
 
-        @if ($errors->any())
-            <div class="rounded-lg border border-error-200 bg-error-50 px-4 py-3 text-sm text-error-700">
-                <ul class="list-disc pl-5">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
-        <div class="rounded-2xl border border-gray-200 bg-white p-6"
-            x-data="{ preview: null, fileName: '' }">
-            <h2 class="text-base font-semibold text-gray-900">Profile photo</h2>
-            <p class="mt-1 text-sm text-gray-600">Upload a photo so it shows across your portal. We'll use your initials until then.</p>
-
-            <div class="mt-5 flex flex-col gap-5 sm:flex-row sm:items-center">
-                <div class="shrink-0">
-                    <template x-if="preview">
-                        <img :src="preview" alt="Preview" class="h-24 w-24 rounded-2xl object-cover ring-2 ring-brand-100" />
-                    </template>
-                    <div x-show="!preview">
-                        <x-ui.avatar :src="$user->avatarUrl()" :initials="$user->initials()"
-                            class="flex h-24 w-24 items-center justify-center rounded-2xl bg-brand-100 text-2xl font-bold text-brand-800 ring-2 ring-brand-50" />
-                    </div>
-                </div>
-
-                <div class="flex-1">
-                    <form method="POST" action="{{ route('student.profile.avatar.update') }}" enctype="multipart/form-data" class="space-y-3">
-                        @csrf
-                        <label class="block">
-                            <span class="sr-only">Choose a profile photo</span>
-                            <input type="file" name="avatar" accept="image/png,image/jpeg,image/webp" required
-                                @change="fileName = $event.target.files[0]?.name || ''; preview = $event.target.files[0] ? URL.createObjectURL($event.target.files[0]) : null"
-                                class="block w-full text-sm text-gray-600 file:mr-3 file:rounded-lg file:border-0 file:bg-brand-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-brand-700 hover:file:bg-brand-100" />
-                        </label>
-                        <p class="text-xs text-gray-400">JPG, PNG or WEBP up to {{ (int) (config('portal.avatars.max_size_kb', 4096) / 1024) }}MB.</p>
-                        <div class="flex flex-wrap gap-2">
-                            <button type="submit"
-                                class="inline-flex items-center justify-center rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700">
-                                Save photo
-                            </button>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-700">Profile photo <span class="font-normal text-gray-500">(optional)</span></p>
+                            <p class="mt-0.5 text-xs text-gray-500">We'll use your initials until you add one.</p>
+                            <form method="POST" action="{{ route('student.profile.avatar.update') }}" enctype="multipart/form-data" class="mt-3 space-y-2">
+                                @csrf
+                                <label class="block">
+                                    <span class="sr-only">Choose a profile photo</span>
+                                    <input type="file" name="avatar" accept="image/png,image/jpeg,image/webp" required
+                                        @change="fileName = $event.target.files[0]?.name || ''; preview = $event.target.files[0] ? URL.createObjectURL($event.target.files[0]) : null"
+                                        class="block w-full text-sm text-gray-600 file:mr-3 file:rounded-lg file:border-0 file:bg-brand-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-brand-700 hover:file:bg-brand-100" />
+                                </label>
+                                <p class="text-xs text-gray-400">JPG, PNG or WEBP up to {{ (int) (config('portal.avatars.max_size_kb', 4096) / 1024) }}MB.</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <button type="submit"
+                                        class="inline-flex items-center justify-center rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700">
+                                        Save photo
+                                    </button>
+                                    @if ($user->avatarUrl())
+                                        <button type="submit" form="remove-avatar-form"
+                                            class="inline-flex items-center justify-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+                                            Remove photo
+                                        </button>
+                                    @endif
+                                </div>
+                            </form>
                             @if ($user->avatarUrl())
-                                <button type="submit" form="remove-avatar-form"
-                                    class="inline-flex items-center justify-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
-                                    Remove photo
-                                </button>
+                                <form id="remove-avatar-form" method="POST" action="{{ route('student.profile.avatar.destroy') }}" class="hidden"
+                                    onsubmit="return confirm('Remove your profile photo?');">
+                                    @csrf
+                                    @method('DELETE')
+                                </form>
                             @endif
                         </div>
-                    </form>
-                    @if ($user->avatarUrl())
-                        <form id="remove-avatar-form" method="POST" action="{{ route('student.profile.avatar.destroy') }}" class="hidden"
-                            onsubmit="return confirm('Remove your profile photo?');">
-                            @csrf
-                            @method('DELETE')
-                        </form>
-                    @endif
+                    </div>
                 </div>
-            </div>
-        </div>
+            @endif
 
-        <div class="rounded-2xl border border-gray-200 bg-white p-6">
             <form method="POST" action="{{ route('student.profile.update') }}" class="grid gap-4 md:grid-cols-2">
                 @csrf
                 <input type="hidden" name="section" value="{{ $activeSection }}" />
 
                 @if ($activeSection === 1)
                     <div class="md:col-span-2">
-                        <h2 class="text-lg font-semibold text-gray-900">Student Information</h2>
+                        <h2 class="text-lg font-semibold text-gray-900">Contact details</h2>
                         <p class="mt-1 text-sm text-gray-500">Your contact and school details.</p>
                     </div>
                     <div>
@@ -370,29 +352,31 @@
                     </div>
                 @endif
 
-                <div class="flex flex-wrap items-center justify-between gap-3 md:col-span-2">
-                    <div class="flex flex-wrap gap-3">
-                        @if ($activeSection === 4)
-                            <a href="{{ route('student.profile', ['section' => 3]) }}"
-                                class="rounded-lg border border-gray-300 px-5 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50">
-                                Back
-                            </a>
-                            <button type="submit" name="action" value="{{ $completion['is_complete'] ? 'save' : 'next' }}"
-                                class="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">
-                                Save
-                            </button>
-                        @else
-                            <button type="submit" name="action" value="next"
-                                class="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">
-                                Save & Continue
-                            </button>
-                        @endif
-                    </div>
-                    @if ($completion['is_complete'])
+                <div class="flex items-center justify-between gap-3 md:col-span-2">
+                    {{-- Back (left) --}}
+                    @if ($activeSection > 1)
+                        <a href="{{ route('student.profile', ['section' => $activeSection - 1]) }}"
+                            class="rounded-lg border border-gray-300 px-5 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+                            Back
+                        </a>
+                    @else
                         <a href="{{ route('student.dashboard') }}"
-                            class="text-sm font-semibold text-brand-600 hover:text-brand-700">
+                            class="rounded-lg border border-gray-300 px-5 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50">
                             Back to Dashboard
                         </a>
+                    @endif
+
+                    {{-- Primary action (right) --}}
+                    @if ($activeSection === 4)
+                        <button type="submit" name="action" value="{{ $completion['is_complete'] ? 'save' : 'next' }}"
+                            class="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">
+                            Save
+                        </button>
+                    @else
+                        <button type="submit" name="action" value="next"
+                            class="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">
+                            Save &amp; Continue
+                        </button>
                     @endif
                 </div>
             </form>

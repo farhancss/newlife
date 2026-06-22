@@ -14,10 +14,6 @@
             <a href="{{ route('admin.notifications') }}" class="text-sm font-medium text-gray-500 hover:text-gray-700">← Back to log</a>
         </div>
 
-        @if ($errors->any())
-            <x-ui.alert variant="error" :message="$errors->first()" />
-        @endif
-
         <form method="POST" action="{{ route('admin.notifications.send') }}"
             class="space-y-5 rounded-2xl border border-gray-200 bg-white p-6 shadow-theme-xs">
             @csrf

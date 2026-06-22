@@ -7,20 +7,6 @@
     @endphp
 
     <div class="space-y-6">
-        @if (session('status'))
-            <x-ui.alert variant="success" :title="'Success'" :message="session('status')" />
-        @endif
-
-        @if ($errors->any())
-            <x-ui.alert variant="error" title="Please fix the following">
-                <ul class="mt-2 list-disc space-y-1 pl-5 text-sm text-gray-600">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </x-ui.alert>
-        @endif
-
         {{-- Page header --}}
         <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
@@ -136,6 +122,40 @@
             </div>
         @endif
 
+        @if (($showStartPacking ?? false) && $primaryContainer)
+            <div class="rounded-2xl border border-brand-200 bg-gradient-to-r from-brand-50 to-white p-6">
+                <div class="sm:flex sm:items-start sm:justify-between sm:gap-6">
+                    <div>
+                        <h2 class="text-lg font-semibold text-brand-900">Your container has arrived — ready to pack?</h2>
+                        <p class="mt-2 max-w-xl text-sm text-brand-800">
+                            When you begin packing, let us know. We'll notify the New Life team that your move is in progress,
+                            and you'll be able to upload container photos and request your pickup.
+                        </p>
+                    </div>
+                </div>
+
+                @error('packing')
+                    <p class="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{{ $message }}</p>
+                @enderror
+
+                <div class="mt-5 border-t border-brand-100 pt-5">
+                    <form action="{{ route('student.move-tracking.start-packing', $primaryContainer) }}" method="POST"
+                        data-confirm="Let us know you've started packing — our team will be notified."
+                        data-confirm-title="Start packing?"
+                        data-confirm-button="Yes, I've started"
+                        data-confirm-icon="question">
+                        @csrf
+                        <button type="submit"
+                            class="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-700">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                            I've started packing
+                        </button>
+                        <p class="mt-2 text-xs text-brand-700/80">This moves your move to “Student Packing” and notifies our team.</p>
+                    </form>
+                </div>
+            </div>
+        @endif
+
         @if (($showPickupInstructions ?? false) && $primaryContainer)
             <div class="rounded-2xl border border-brand-200 bg-gradient-to-r from-brand-50 to-white p-6">
                 <div class="sm:flex sm:items-start sm:justify-between sm:gap-6">
@@ -159,7 +179,10 @@
                 <div class="mt-5 border-t border-brand-100 pt-5">
                     @if ($pickupPhotosUploaded ?? false)
                         <form action="{{ route('student.move-tracking.schedule-pickup', $primaryContainer) }}" method="POST"
-                            onsubmit="return confirm('Confirm your container is fully packed and request a pickup?');">
+                            data-confirm="This confirms your container is fully packed and notifies our team to arrange your pickup."
+                            data-confirm-title="Request pickup?"
+                            data-confirm-button="Yes, request pickup"
+                            data-confirm-icon="question">
                             @csrf
                             <button type="submit"
                                 class="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-700">
