@@ -49,26 +49,6 @@
             </div>
         </div>
 
-        <form method="GET" action="{{ route('admin.retail-packages') }}" class="flex flex-col gap-2 sm:flex-row sm:items-center">
-            <input type="search" name="q" value="{{ $search }}" placeholder="Search tracking, item, student…"
-                class="h-11 flex-1 rounded-xl border border-gray-300 px-4 text-sm shadow-sm focus:border-brand-400 focus:ring-2 focus:ring-brand-500/20" />
-            <select name="status" class="h-11 rounded-xl border border-gray-300 px-3 text-sm">
-                <option value="">All statuses</option>
-                @foreach ($statuses as $status)
-                    <option value="{{ $status }}" @selected($statusFilter === $status)>{{ RetailPackageStatus::label($status) }}</option>
-                @endforeach
-            </select>
-            <select name="retailer" class="h-11 rounded-xl border border-gray-300 px-3 text-sm">
-                <option value="">All retailers</option>
-                @foreach ($retailers as $retailer)
-                    <option value="{{ $retailer }}" @selected($retailerFilter === $retailer)>{{ $retailer }}</option>
-                @endforeach
-            </select>
-            <button type="submit" class="h-11 rounded-xl border border-gray-300 px-5 text-sm font-semibold text-gray-700 hover:bg-gray-50">
-                Filter
-            </button>
-        </form>
-
         <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
             <x-portal.data-table table-class="min-w-[920px]">
                 <thead>

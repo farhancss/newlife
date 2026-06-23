@@ -16,6 +16,12 @@
         'disableMobile' => true,
     ];
 
+    // Block past dates by default on calendar pickers (time-only pickers are
+    // exempt). Callers can still override by passing their own `minDate`.
+    if (empty($options['noCalendar']) && ! array_key_exists('minDate', $options)) {
+        $defaults['minDate'] = 'today';
+    }
+
     $mergedOptions = array_replace($defaults, $options);
     $jsOptions = json_encode($mergedOptions, JSON_UNESCAPED_SLASHES);
 

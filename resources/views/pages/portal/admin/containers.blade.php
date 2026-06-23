@@ -16,13 +16,6 @@
                 <h1 class="text-2xl font-bold text-gray-900">Container operations</h1>
                 <p class="mt-1 text-sm text-gray-600">Containers are auto-assigned at onboarding. Update workflow status, tracking, and dates here.</p>
             </div>
-            <form method="GET" action="{{ route('admin.containers') }}" class="flex w-full max-w-lg gap-2">
-                <input type="search" name="q" value="{{ $search }}" placeholder="Search container, student, tracking…"
-                    class="h-11 flex-1 rounded-xl border border-gray-300 px-4 text-sm shadow-sm focus:border-brand-400 focus:ring-2 focus:ring-brand-500/20" />
-                <button type="submit" class="rounded-xl border border-gray-300 px-5 text-sm font-semibold text-gray-700 hover:bg-gray-50">
-                    Search
-                </button>
-            </form>
         </div>
 
         {{-- Stats — always inline on admin viewport --}}

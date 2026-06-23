@@ -25,6 +25,8 @@ class MenuHelper
                 [
                     'title' => 'Support',
                     'items' => [
+                        ['icon' => 'clock', 'name' => 'Add-Ons', 'path' => $basePath . '/add-ons'],
+                        ['icon' => 'calendar', 'name' => 'Deadlines', 'path' => $basePath . '/deadlines'],
                         ['icon' => 'bell', 'name' => 'Notifications', 'path' => $basePath . '/notifications'],
                     ],
                 ],

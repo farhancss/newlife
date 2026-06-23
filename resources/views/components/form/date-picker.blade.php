@@ -6,6 +6,7 @@
     'placeholder' => 'Select date',
     'name' => null,
     'dateFormat' => 'Y-m-d',
+    'minDate' => 'today',
 ])
 
 <div x-data="{
@@ -17,6 +18,7 @@
                 static: true,
                 monthSelectorType: 'static',
                 dateFormat: '{{ $dateFormat }}',
+                @if ($mode !== 'time' && $minDate) minDate: '{{ $minDate }}', @endif
                 defaultDate: {{ $defaultDate ? (is_array($defaultDate) ? json_encode($defaultDate) : "'" . $defaultDate . "'") : 'null' }},
                 onChange: (selectedDates, dateStr, instance) => {
                     this.$dispatch('date-change', {
