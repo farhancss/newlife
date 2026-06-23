@@ -20,12 +20,12 @@
             <div x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen">
                 <img src="{{ asset('images/logo/new-life-campus-logo.png') }}" alt="New Life Campus" class="h-auto w-full max-w-[200px]" />
                 <div class="mt-4 rounded-xl border border-brand-100 bg-gradient-to-br from-brand-50 to-white p-3.5 shadow-theme-xs">
-                    <p class="text-xs font-semibold uppercase tracking-wide text-brand-600">Admin Portal</p>
+                    <p class="text-xs font-semibold uppercase tracking-wide text-brand-500">Admin Portal</p>
                     <p class="mt-1 text-sm font-semibold text-gray-900">Operations Dashboard</p>
                 </div>
             </div>
             <div x-show="!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen" class="hidden xl:flex xl:justify-center">
-                <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-800 text-sm font-bold text-white shadow-theme-sm">
+                <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-500 text-sm font-bold text-white shadow-theme-sm">
                     NL
                 </span>
             </div>
@@ -73,7 +73,7 @@
         <div class="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-2.5 shadow-theme-xs"
             :class="(!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ? 'xl:justify-center xl:p-2' : ''">
             <x-ui.avatar :src="$user?->avatarUrl()" :initials="$initials"
-                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-100 text-sm font-bold text-brand-800" />
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-100 text-sm font-bold text-brand-500" />
             <div x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen" class="min-w-0 flex-1">
                 <p class="truncate text-sm font-semibold text-gray-900">{{ $userName }}</p>
                 <p class="truncate text-xs text-gray-500">{{ $userEmail }}</p>

@@ -59,7 +59,7 @@ test('user can reset password with valid token', function () {
         'email' => 'newpass@example.com',
         'password' => 'NewSecure123!',
         'password_confirmation' => 'NewSecure123!',
-    ])->assertRedirect(route('login'));
+    ])->assertRedirect(route('password.reset.success'));
 
     $user->refresh();
     expect($user->must_reset_password)->toBeFalse();

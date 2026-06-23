@@ -38,6 +38,24 @@
             </div>
         </div>
 
+        <form method="GET" class="flex flex-col gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-theme-xs sm:flex-row sm:items-end">
+            <div class="flex-1">
+                <label for="q" class="mb-1.5 block text-xs font-medium text-gray-500">Search</label>
+                <input id="q" name="q" type="text" value="{{ $search }}" placeholder="Student, email, New Life ID, or title"
+                    class="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm" />
+            </div>
+            <div>
+                <label for="status" class="mb-1.5 block text-xs font-medium text-gray-500">Status</label>
+                <select id="status" name="status" class="h-10 rounded-lg border border-gray-300 px-3 text-sm">
+                    <option value="">All</option>
+                    @foreach ($statuses as $status)
+                        <option value="{{ $status }}" @selected($statusFilter === $status)>{{ DeadlineStatus::label($status) }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <button type="submit" class="h-10 rounded-lg bg-gray-900 px-4 text-sm font-semibold text-white hover:bg-gray-800">Filter</button>
+        </form>
+
         <x-portal.data-table table-class="min-w-[820px]">
             <thead>
                 <tr>

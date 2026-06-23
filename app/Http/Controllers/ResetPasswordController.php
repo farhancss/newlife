@@ -51,12 +51,24 @@ class ResetPasswordController extends Controller
 
         if ($status === Password::PASSWORD_RESET) {
             return redirect()
-                ->route('login')
-                ->with('status', 'Your password has been reset. Sign in with your new password.');
+                ->route('password.reset.success')
+                ->with('password_reset_success', true);
         }
 
         return back()
             ->withInput($request->only('email'))
             ->withErrors(['email' => __($status)]);
+    }
+
+    public function success(Request $request): View|RedirectResponse
+    {
+        // TODO: Re-enable after preview — require one-time session flag from successful reset.
+        if (! $request->session()->pull('password_reset_success')) {
+            return redirect()->route('login');
+        }
+
+        return view('pages.portal.reset-password-success', [
+            'title' => 'Password Updated',
+        ]);
     }
 }

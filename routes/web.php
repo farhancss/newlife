@@ -61,6 +61,12 @@ if (app()->environment('local')) {
             return (new OnboardingCompleteMail($previewUser()))->render();
         });
 
+        Route::get('/reset-password-success', function () {
+            return view('pages.portal.reset-password-success', [
+                'title' => 'Password Updated',
+            ]);
+        });
+
         Route::get('/reset-password', function () use ($previewUser) {
             return (new ResetPasswordMail(
                 $previewUser(),
@@ -85,6 +91,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/password/forgot', [ForgotPasswordController::class, 'store'])
         ->middleware('throttle:6,1')
         ->name('password.email');
+    Route::get('/password/reset/success', [ResetPasswordController::class, 'success'])->name('password.reset.success');
     Route::get('/password/reset/{token}', [ResetPasswordController::class, 'show'])->name('password.reset');
     Route::post('/password/reset', [ResetPasswordController::class, 'store'])
         ->middleware('throttle:6,1')

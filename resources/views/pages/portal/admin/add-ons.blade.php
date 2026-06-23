@@ -75,7 +75,7 @@
                             <td class="text-xs text-gray-700">{{ $addOn->requested_at?->format('M j, Y') ?? '—' }}</td>
                             <td class="text-xs">
                                 @if ($addOn->container)
-                                    <a href="{{ route('admin.containers', ['q' => $addOn->container->code]) }}" class="font-medium text-brand-600 hover:underline">
+                                    <a href="{{ route('admin.containers', ['q' => $addOn->container->code]) }}" class="font-medium text-brand-500 hover:underline">
                                         {{ $addOn->container->code }}
                                     </a>
                                     <span class="mt-0.5 block text-gray-500">{{ $addOn->container->statusLabel() }}</span>
@@ -86,7 +86,7 @@
                             <td class="text-right">
                                 <div class="inline-flex items-center gap-1">
                                     <a href="{{ route('admin.add-ons.show', $addOn) }}"
-                                        class="inline-flex rounded-lg px-3 py-1.5 text-sm font-semibold text-brand-600 hover:bg-brand-50">
+                                        class="inline-flex rounded-lg px-3 py-1.5 text-sm font-semibold text-brand-500 hover:bg-brand-50">
                                         View
                                     </a>
                                     @if ($addOn->container)

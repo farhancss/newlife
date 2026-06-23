@@ -26,7 +26,7 @@
                     <input type="text" value="+1 (555) 324-9987" class="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm" />
                 </div>
                 <div class="md:col-span-2">
-                    <button type="button" class="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white">Save Profile</button>
+                    <button type="button" class="rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white">Save Profile</button>
                 </div>
             </form>
         </div>

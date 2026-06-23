@@ -46,7 +46,7 @@
                     ])>
                         <div class="flex min-w-0 flex-1 items-start gap-4">
                             @if ($notification->isUnread())
-                                <span class="mt-2 h-2 w-2 shrink-0 rounded-full bg-brand-600" aria-hidden="true"></span>
+                                <span class="mt-2 h-2 w-2 shrink-0 rounded-full bg-brand-500" aria-hidden="true"></span>
                             @else
                                 <span class="mt-2 h-2 w-2 shrink-0 rounded-full bg-transparent" aria-hidden="true"></span>
                             @endif
@@ -75,7 +75,7 @@
                                     <form action="{{ route('student.notifications.read', $notification) }}" method="POST">
                                         @csrf
                                         <button type="submit"
-                                            class="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-semibold text-brand-600 hover:bg-brand-50">
+                                            class="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-semibold text-brand-500 hover:bg-brand-50">
                                             Read
                                         </button>
                                     </form>
@@ -87,13 +87,13 @@
                                             @csrf
                                             <input type="hidden" name="follow" value="1">
                                             <button type="submit"
-                                                class="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-semibold text-brand-600 hover:bg-brand-50">
+                                                class="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-semibold text-brand-500 hover:bg-brand-50">
                                                 View
                                             </button>
                                         </form>
                                     @else
                                         <a href="{{ $notification->url }}"
-                                            class="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-semibold text-brand-600 hover:bg-brand-50">
+                                            class="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-semibold text-brand-500 hover:bg-brand-50">
                                             View
                                         </a>
                                     @endif

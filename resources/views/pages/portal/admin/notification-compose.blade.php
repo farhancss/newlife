@@ -69,7 +69,7 @@
 
             <div class="flex items-center justify-end gap-3 border-t border-gray-100 pt-4">
                 <a href="{{ route('admin.notifications') }}" class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</a>
-                <button type="submit" class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700">
+                <button type="submit" class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700">
                     Send notification
                 </button>
             </div>

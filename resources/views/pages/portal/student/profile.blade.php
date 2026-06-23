@@ -36,7 +36,7 @@
                             <span>{{ $completion['percent'] }}%</span>
                         </div>
                         <div class="h-3 overflow-hidden rounded-full bg-gray-200">
-                            <div class="h-full rounded-full bg-brand-600 transition-all duration-300" style="width: {{ $completion['percent'] }}%"></div>
+                            <div class="h-full rounded-full bg-brand-500 transition-all duration-300" style="width: {{ $completion['percent'] }}%"></div>
                         </div>
                         @if ($profile->package)
                             <span class="text-center text-xs font-semibold text-brand-700">{{ $profile->package->name }}</span>
@@ -67,7 +67,7 @@
                             <div
                                 @class([
                                     'hidden h-0.5 flex-1 sm:block',
-                                    'bg-brand-600' => $previousComplete,
+                                    'bg-brand-500' => $previousComplete,
                                     'bg-gray-200' => !$previousComplete,
                                 ])
                                 aria-hidden="true"
@@ -91,7 +91,7 @@
                                     </svg>
                                 </span>
                             @elseif ($isCurrent)
-                                <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-600 text-xs font-bold text-white">
+                                <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-500 text-xs font-bold text-white">
                                     {{ $section['step'] }}
                                 </span>
                             @else
@@ -101,7 +101,7 @@
                             @endif
                             <span @class([
                                 'min-w-0 text-xs font-semibold leading-tight sm:text-[11px]',
-                                'text-brand-800' => $isCurrent || $isComplete,
+                                'text-brand-500' => $isCurrent || $isComplete,
                                 'text-warning-800' => $isIncomplete && !$isCurrent,
                             ])>{{ $section['label'] }}</span>
                         </a>
@@ -124,7 +124,7 @@
                             </template>
                             <div x-show="!preview">
                                 <x-ui.avatar :src="$user->avatarUrl()" :initials="$user->initials()"
-                                    class="flex h-20 w-20 items-center justify-center rounded-2xl bg-brand-100 text-xl font-bold text-brand-800 ring-2 ring-brand-50" />
+                                    class="flex h-20 w-20 items-center justify-center rounded-2xl bg-brand-100 text-xl font-bold text-brand-500 ring-2 ring-brand-50" />
                             </div>
                         </div>
 
@@ -142,7 +142,7 @@
                                 <p class="text-xs text-gray-400">JPG, PNG or WEBP up to {{ (int) (config('portal.avatars.max_size_kb', 4096) / 1024) }}MB.</p>
                                 <div class="flex flex-wrap gap-2">
                                     <button type="submit"
-                                        class="inline-flex items-center justify-center rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700">
+                                        class="inline-flex items-center justify-center rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700">
                                         Save photo
                                     </button>
                                     @if ($user->avatarUrl())
@@ -369,12 +369,12 @@
                     {{-- Primary action (right) --}}
                     @if ($activeSection === 4)
                         <button type="submit" name="action" value="{{ $completion['is_complete'] ? 'save' : 'next' }}"
-                            class="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">
+                            class="rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">
                             Save
                         </button>
                     @else
                         <button type="submit" name="action" value="next"
-                            class="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">
+                            class="rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">
                             Save &amp; Continue
                         </button>
                     @endif

@@ -20,7 +20,7 @@
                             <span class="block text-xs text-gray-500">Move, retail, and account updates by email.</span>
                         </span>
                         <input type="checkbox" name="email_enabled" value="1" @checked($preference->email_enabled)
-                            class="h-5 w-9 rounded-full border-gray-300 text-brand-600" />
+                            class="h-5 w-9 rounded-full border-gray-300 text-brand-500" />
                     </label>
 
                     <label class="flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3">
@@ -31,7 +31,7 @@
                             <span class="block text-xs text-gray-500">Text alerts for time-sensitive updates.</span>
                         </span>
                         <input type="checkbox" name="sms_enabled" value="1" @checked($preference->sms_enabled)
-                            class="h-5 w-9 rounded-full border-gray-300 text-brand-600" />
+                            class="h-5 w-9 rounded-full border-gray-300 text-brand-500" />
                     </label>
 
                     <div class="rounded-xl bg-gray-50 px-4 py-3">
@@ -51,12 +51,12 @@
                         <span class="block text-xs text-gray-500">CC the guardian on your profile for key shipment and retail updates.</span>
                     </span>
                     <input type="checkbox" name="parent_cc_enabled" value="1" @checked($preference->parent_cc_enabled)
-                        class="h-5 w-9 rounded-full border-gray-300 text-brand-600" />
+                        class="h-5 w-9 rounded-full border-gray-300 text-brand-500" />
                 </label>
             </div>
 
             <div class="flex justify-end">
-                <button type="submit" class="rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">
+                <button type="submit" class="rounded-xl bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">
                     Save preferences
                 </button>
             </div>

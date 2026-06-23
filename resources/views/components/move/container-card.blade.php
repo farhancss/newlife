@@ -22,7 +22,7 @@
                 <p class="mt-0.5 text-xs text-gray-500">Includes {{ $quantity }} {{ \Illuminate\Support\Str::plural('container', $quantity) }}</p>
             @endif
         </div>
-        <span class="inline-flex shrink-0 rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-800">
+        <span class="inline-flex shrink-0 rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-500">
             {{ $container->statusLabel() }}
         </span>
     </div>
@@ -56,7 +56,7 @@
             <dt>Outbound tracking</dt>
             <dd class="font-medium text-gray-900">
                 @if ($container->outbound_tracking)
-                    <a href="{{ $outUrl }}" target="_blank" rel="noopener noreferrer" class="font-semibold text-brand-600 hover:underline">
+                    <a href="{{ $outUrl }}" target="_blank" rel="noopener noreferrer" class="font-semibold text-brand-500 hover:underline">
                         {{ $container->outbound_tracking }}
                     </a>
                 @else

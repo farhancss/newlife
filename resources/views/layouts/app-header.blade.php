@@ -1,57 +1,56 @@
 @php
+    use App\Helpers\MenuHelper;
+
     $portal = request()->segment(1) === 'admin' ? 'admin' : 'student';
     $portalLabel = $portal === 'admin' ? 'Admin' : 'Student';
     $user = auth()->user();
     $userName = $user->name ?? ucfirst($portal) . ' User';
-    $pageHeading = $pageHeading ?? ($title ?? 'Dashboard');
     $initials = collect(explode(' ', $userName))
         ->filter()
         ->take(2)
         ->map(fn ($part) => strtoupper(substr($part, 0, 1)))
         ->join('') ?: 'NL';
+    $hasUnreadNotifications = ($notificationUnreadCount ?? 0) > 0;
 @endphp
 
 <header class="sticky top-0 z-40 border-b border-gray-200 bg-white">
-    <div class="flex h-14 items-center justify-between gap-3 px-4 lg:px-6">
-        <div class="flex min-w-0 flex-1 items-center gap-3">
+    <div class="flex h-16 items-center justify-between gap-4 pr-4 sm:pr-6">
+        <div class="flex h-full items-center gap-4 border-l border-gray-200 pl-4 sm:pl-6">
             <button
                 type="button"
-                class="hidden h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 xl:flex"
+                class="hidden h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-gray-200 text-gray-600 transition hover:bg-gray-50 xl:flex"
                 @click="$store.sidebar.toggleExpanded()"
                 aria-label="Toggle Sidebar"
             >
-                <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+                <svg width="18" height="14" viewBox="0 0 16 12" fill="none" aria-hidden="true">
                     <path d="M1 1H15M1 6H9M1 11H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
                 </svg>
             </button>
             <button
                 type="button"
-                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-gray-600 hover:bg-gray-50 xl:hidden"
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-gray-200 text-gray-600 transition hover:bg-gray-50 xl:hidden"
                 @click="$store.sidebar.toggleMobileOpen()"
                 aria-label="Toggle Mobile Menu"
             >
-                <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+                <svg width="18" height="14" viewBox="0 0 16 12" fill="none" aria-hidden="true">
                     <path d="M1 1H15M1 6H9M1 11H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
                 </svg>
             </button>
-
-            <div class="min-w-0">
-                <p class="truncate text-xs text-gray-500">{{ $portalLabel }} Portal</p>
-                <h1 class="truncate text-base font-semibold text-gray-900">{{ $pageHeading }}</h1>
-            </div>
         </div>
 
-        <div class="flex shrink-0 items-center gap-2 sm:gap-3">
+        <div class="flex shrink-0 items-center gap-3 sm:gap-4">
             @if ($portal === 'student')
                 <x-portal.profile-completion-badge :completion="$profileCompletion ?? null" compact />
 
                 <a href="{{ route('student.notifications') }}"
-                    class="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-gray-200 p-2 text-gray-600 hover:bg-gray-50"
+                    class="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-gray-200 text-gray-600 transition hover:bg-gray-50"
                     aria-label="Notifications">
-                    <svg class="h-[18px] w-[18px]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/>
-                    </svg>
-                    <span class="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full border border-white bg-error-500"></span>
+                    <span class="flex h-5 w-5 items-center justify-center [&_svg]:h-5 [&_svg]:w-5" aria-hidden="true">
+                        {!! MenuHelper::getIconSvg('bell') !!}
+                    </span>
+                    @if ($hasUnreadNotifications)
+                        <span class="absolute top-1 right-0.5 h-2.5 w-2.5 translate-x-1/2 -translate-y-1/2 rounded-full bg-orange-500 ring-2 ring-white" aria-hidden="true"></span>
+                    @endif
                 </a>
             @endif
 

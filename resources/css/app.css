@@ -56,8 +56,8 @@
   --color-brand-50: #e9edfe;
   --color-brand-100: #d3dafc;
   --color-brand-200: #a7b5f9;
-  --color-brand-300: #7b90f6;
-  --color-brand-400: #4f6bf3;
+  --color-brand-300: #7B90F6;
+  --color-brand-400: #465FFF;
   --color-brand-500: #0112EF;
   --color-brand-600: #0827be;
   --color-brand-700: #061f98;
@@ -271,7 +271,7 @@
 }
 
 @utility menu-dropdown-badge-pro {
-  @apply text-brand-600 dark:text-brand-500 block rounded-full px-2.5 py-0.5 text-xs font-medium uppercase;
+  @apply text-brand-500 dark:text-brand-500 block rounded-full px-2.5 py-0.5 text-xs font-medium uppercase;
 }
 
 @utility menu-dropdown-badge-pro-active {
@@ -561,7 +561,7 @@ span.flatpickr-weekday,
 .flatpickr-day.startRange.nextMonthDay,
 .flatpickr-day.endRange.nextMonthDay {
   background: #0827be;
-  @apply !border-brand-600 !bg-brand-600 hover:!border-brand-600 hover:!bg-brand-600;
+  @apply !border-brand-500 !bg-brand-500 hover:!border-brand-500 hover:!bg-brand-500;
 }
 .flatpickr-day.selected.startRange + .endRange:not(:nth-child(7n + 1)),
 .flatpickr-day.startRange.startRange + .endRange:not(:nth-child(7n + 1)),
@@ -630,7 +630,7 @@ span.flatpickr-weekday,
   @apply hidden;
 }
 .fc-addEventButton-button {
-  @apply !rounded-lg !border-0 !bg-brand-500 !px-4 !py-2.5 !text-sm !font-medium hover:!bg-brand-600 focus:!shadow-none;
+  @apply !rounded-lg !border-0 !bg-brand-500 !px-4 !py-2.5 !text-sm !font-medium hover:!bg-brand-500 focus:!shadow-none;
 }
 .fc-toolbar-title {
   @apply !text-lg !font-medium text-gray-800 dark:text-white/90;
@@ -905,7 +905,7 @@ pre[class*='language-'] {
 }
 
 @utility menu-item-active-student {
-  @apply bg-brand-800 text-white;
+  @apply bg-brand-500 text-white;
 }
 
 @utility menu-item-icon-active-student {
@@ -935,7 +935,7 @@ pre[class*='language-'] {
 }
 
 @utility portal-nav-item-active {
-  @apply bg-brand-800 text-white shadow-theme-sm;
+  @apply bg-brand-500 text-white shadow-theme-sm;
 }
 
 @utility portal-nav-item-inactive {
@@ -959,6 +959,35 @@ pre[class*='language-'] {
 }
 
 .student-portal-sidebar .portal-nav-icon svg {
+  @apply h-[22px] w-[22px];
+}
+
+/* Student sidebar navigation (design-specific) */
+@utility student-nav-item {
+  @apply relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200;
+}
+
+@utility student-nav-item-active {
+  @apply bg-brand-50 text-brand-300;
+}
+
+@utility student-nav-item-inactive {
+  @apply text-gray-600 hover:bg-gray-50 hover:text-gray-800;
+}
+
+@utility student-nav-icon {
+  @apply flex h-6 w-6 shrink-0 items-center justify-center transition-colors duration-200;
+}
+
+@utility student-nav-icon-active {
+  @apply text-brand-300;
+}
+
+@utility student-nav-icon-inactive {
+  @apply text-gray-500 group-hover:text-gray-700;
+}
+
+.student-portal-sidebar .student-nav-icon svg {
   @apply h-[22px] w-[22px];
 }
 
@@ -1028,7 +1057,7 @@ pre[class*='language-'] {
 .portal-datatable-wrapper .datatable-pagination .datatable-active a,
 .portal-datatable-wrapper .datatable-pagination .datatable-active button,
 .portal-datatable-wrapper .datatable-pagination-list .datatable-active .datatable-pagination-list-item-link {
-  @apply border-brand-600 bg-brand-600 text-white hover:border-brand-600 hover:bg-brand-600;
+  @apply border-brand-500 bg-brand-500 text-white hover:border-brand-500 hover:bg-brand-500;
 }
 
 .portal-datatable-wrapper .datatable-pagination .datatable-disabled a,
@@ -1099,8 +1128,8 @@ pre[class*='language-'] {
 .portal-datatable-wrapper .datatable-ascending .datatable-sorter::after,
 .portal-datatable-wrapper .datatable-descending .datatable-sorter::before {
   opacity: 1;
-  border-top-color: theme(--color-brand-600);
-  border-bottom-color: theme(--color-brand-600);
+  border-top-color: theme(--color-brand-500);
+  border-bottom-color: theme(--color-brand-500);
 }
 
 .portal-datatable-wrapper .datatable-empty {

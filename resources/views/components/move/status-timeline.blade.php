@@ -155,7 +155,7 @@
                                 {{ $stepNumber }}
                             </span>
                         @elseif ($isPast)
-                            <span class="relative flex h-11 w-11 items-center justify-center rounded-full bg-brand-600 text-sm font-bold text-white shadow-md">
+                            <span class="relative flex h-11 w-11 items-center justify-center rounded-full bg-brand-500 text-sm font-bold text-white shadow-md">
                                 {{ $stepNumber }}
                             </span>
                         @else
@@ -185,7 +185,7 @@
                                 datetime="{{ $step['reached_at']->toDateString() }}"
                                 @class([
                                     'mt-1 block text-[10px] leading-tight',
-                                    'font-medium text-brand-600/80' => $isPast,
+                                    'font-medium text-brand-500/80' => $isPast,
                                     'font-medium text-green-700/80' => $isCurrent,
                                 ])
                             >

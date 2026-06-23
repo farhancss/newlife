@@ -22,7 +22,7 @@
             </div>
             <div class="mt-4 grid gap-2 sm:grid-cols-4">
                 @for ($i = 1; $i <= 4; $i++)
-                    <div class="h-2 rounded-full {{ $i <= $step ? 'bg-brand-600' : 'bg-gray-200' }}"></div>
+                    <div class="h-2 rounded-full {{ $i <= $step ? 'bg-brand-500' : 'bg-gray-200' }}"></div>
                 @endfor
             </div>
         </div>
@@ -210,12 +210,12 @@
                     @endif
                     @if ($step < 4)
                         <button type="submit" name="action" value="next"
-                            class="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">
+                            class="rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">
                             Save & Continue
                         </button>
                     @else
                         <button type="submit" name="action" value="complete"
-                            class="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">
+                            class="rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">
                             Complete Profile
                         </button>
                     @endif

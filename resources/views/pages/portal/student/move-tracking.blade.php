@@ -14,7 +14,7 @@
                 <p class="mt-1 text-sm text-gray-600">Track containers from home shipment through dorm delivery.</p>
             </div>
             @if ($package)
-                <div class="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-4 py-2 text-sm font-semibold text-brand-800">
+                <div class="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-4 py-2 text-sm font-semibold text-brand-500">
                     <span class="h-2 w-2 rounded-full bg-brand-500"></span>
                     Move includes {{ $containerAllowance }} {{ \Illuminate\Support\Str::plural('container', $containerAllowance) }}
                 </div>
@@ -27,7 +27,7 @@
         @if (!$package)
             <p class="text-center text-sm text-gray-500">
                 Purchased on
-                <a href="https://www.newlifecampus.com" target="_blank" rel="noopener noreferrer" class="font-medium text-brand-600 hover:underline">newlifecampus.com</a>?
+                <a href="https://www.newlifecampus.com" target="_blank" rel="noopener noreferrer" class="font-medium text-brand-500 hover:underline">newlifecampus.com</a>?
                 Your package syncs automatically after checkout.
             </p>
         @endif
@@ -127,7 +127,7 @@
                 <div class="sm:flex sm:items-start sm:justify-between sm:gap-6">
                     <div>
                         <h2 class="text-lg font-semibold text-brand-900">Your container has arrived — ready to pack?</h2>
-                        <p class="mt-2 max-w-xl text-sm text-brand-800">
+                        <p class="mt-2 max-w-xl text-sm text-brand-500">
                             When you begin packing, let us know. We'll notify the New Life team that your move is in progress,
                             and you'll be able to upload container photos and request your pickup.
                         </p>
@@ -146,7 +146,7 @@
                         data-confirm-icon="question">
                         @csrf
                         <button type="submit"
-                            class="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-700">
+                            class="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-700">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                             I've started packing
                         </button>
@@ -161,7 +161,7 @@
                 <div class="sm:flex sm:items-start sm:justify-between sm:gap-6">
                     <div>
                         <h2 class="text-lg font-semibold text-brand-900">Ready to schedule your pickup?</h2>
-                        <p class="mt-2 max-w-xl text-sm text-brand-800">
+                        <p class="mt-2 max-w-xl text-sm text-brand-500">
                             Pack your container using the pre-printed return label and upload exterior photos above. Once you're
                             packed, confirm below and our team will arrange the pickup at your home address.
                         </p>
@@ -185,14 +185,14 @@
                             data-confirm-icon="question">
                             @csrf
                             <button type="submit"
-                                class="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-700">
+                                class="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-700">
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                                 I'm packed — request pickup
                             </button>
                             <p class="mt-2 text-xs text-brand-700/80">This moves your move to “Pickup Scheduled” and notifies our team.</p>
                         </form>
                     @else
-                        <p class="rounded-lg bg-white/70 px-3 py-2 text-sm text-brand-800">
+                        <p class="rounded-lg bg-white/70 px-3 py-2 text-sm text-brand-500">
                             Upload at least one container photo above to unlock pickup scheduling.
                         </p>
                     @endif
