@@ -104,6 +104,19 @@
 
     @stack('modals')
 
+    {{-- Surface server-side flash + validation messages as global SweetAlert popups --}}
+    @php
+        $flashPayload = json_encode([
+            'success' => session('status'),
+            'error' => session('error'),
+            'warning' => session('warning'),
+            'errors' => $errors->all(),
+        ]);
+    @endphp
+    <script>
+        window.flashMessages = {!! $flashPayload !!};
+    </script>
+
 </body>
 
 @stack('scripts')

@@ -2,10 +2,6 @@
 
 @section('content')
     <div class="space-y-6">
-        @if (session('status'))
-            <x-ui.alert variant="success" :message="session('status')" />
-        @endif
-
         <div class="rounded-2xl border border-gray-200 bg-white p-5">
             <h1 class="text-xl font-semibold text-gray-900">Settings</h1>
             <p class="mt-1 text-sm text-gray-600">Choose how we keep you and your family updated.</p>

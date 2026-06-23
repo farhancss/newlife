@@ -15,6 +15,7 @@ class ContainerWorkflowService
     public function __construct(
         private readonly ContainerCodeGenerator $codeGenerator,
         private readonly NotificationService $notifications,
+        private readonly DeadlineService $deadlines,
     ) {
     }
 
@@ -93,6 +94,14 @@ class ContainerWorkflowService
         });
 
         $this->notifications->containerStatusChanged($fresh, $toStatus);
+
+        // Case 02 / 04: opening a pickup deadline on home delivery, and closing
+        // it once a pickup is scheduled (or the container moves further along).
+        if ($toStatus === ContainerStatus::DELIVERED_TO_HOME) {
+            $this->deadlines->openContainerPickup($fresh);
+        }
+
+        $this->deadlines->syncForSubject($fresh);
 
         return $fresh;
     }

@@ -1176,3 +1176,8 @@ pre[class*='language-'] {
 .move-timeline-scroll::-webkit-scrollbar-thumb:hover {
   background-color: #94a3b8;
 }
+
+/* Keep SweetAlert popups above slide-over drawers and modal overlays */
+.swal2-container {
+  z-index: 1000000 !important;
+}

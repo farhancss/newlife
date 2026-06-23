@@ -13,6 +13,7 @@ class ProfileCompletionService
         private readonly UserStatusService $userStatusService,
         private readonly StudentPackageService $studentPackageService,
         private readonly ContainerWorkflowService $containerWorkflowService,
+        private readonly DeadlineService $deadlineService,
     ) {
     }
 
@@ -193,6 +194,11 @@ class ProfileCompletionService
                 $this->userStatusService->markIncomplete($user);
             }
         }
+
+        // Case 01: a 100%-complete profile satisfies the profile-completion
+        // deadline. Computed here on the write path so the Deadline Center can
+        // simply read the stored status without recomputing the ratio.
+        $this->deadlineService->syncForSubject($profile);
 
         return $profile;
     }

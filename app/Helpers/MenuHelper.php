@@ -19,6 +19,7 @@ class MenuHelper
                         ['icon' => 'task', 'name' => 'My Move', 'path' => $basePath . '/move-tracking'],
                         ['icon' => 'tables', 'name' => 'Retail Packages', 'path' => $basePath . '/retail-packages'],
                         ['icon' => 'clock', 'name' => 'Add-Ons', 'path' => $basePath . '/add-ons'],
+                        ['icon' => 'calendar', 'name' => 'Deadlines', 'path' => $basePath . '/deadlines'],
                         ['icon' => 'bell', 'name' => 'Notifications', 'path' => $basePath . '/notifications'],
                     ],
                 ],
@@ -30,9 +31,8 @@ class MenuHelper
             ['icon' => 'user-profile', 'name' => 'Students', 'path' => $basePath . '/students'],
             ['icon' => 'task', 'name' => 'Containers', 'path' => $basePath . '/containers'],
             ['icon' => 'tables', 'name' => 'Retail Packages', 'path' => $basePath . '/retail-packages'],
-            ['icon' => 'calendar', 'name' => 'Deliveries', 'path' => $basePath . '/deliveries'],
             ['icon' => 'clock', 'name' => 'Add-Ons', 'path' => $basePath . '/add-ons'],
-            ['icon' => 'charts', 'name' => 'Reports', 'path' => $basePath . '/reports'],
+            ['icon' => 'calendar', 'name' => 'Deadlines', 'path' => $basePath . '/deadlines'],
             ['icon' => 'bell', 'name' => 'Notifications', 'path' => $basePath . '/notifications'],
         ];
 

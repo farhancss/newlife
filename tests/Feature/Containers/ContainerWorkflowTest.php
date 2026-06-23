@@ -303,6 +303,44 @@ test('student can request pickup after uploading a photo and admins are notified
             ->exists())->toBeTrue();
 });
 
+test('student can start packing from delivered to home and admins are notified', function () {
+    Mail::fake();
+    [$user, $profile] = createStudentWithAddress();
+    $admin = User::factory()->create(['role' => UserRole::ADMIN]);
+
+    $container = Container::query()->create([
+        'student_profile_id' => $profile->id,
+        'code' => 'CTN-77777',
+        'status' => ContainerStatus::DELIVERED_TO_HOME,
+    ]);
+
+    $this->actingAs($user)
+        ->post(route('student.move-tracking.start-packing', $container))
+        ->assertRedirect();
+
+    expect($container->fresh()->status)->toBe(ContainerStatus::CUSTOMER_PACKING)
+        ->and(\App\Models\PortalNotification::query()
+            ->where('user_id', $admin->id)
+            ->where('type', 'container.packing_started')
+            ->exists())->toBeTrue();
+});
+
+test('student cannot start packing before delivery to home', function () {
+    [$user, $profile] = createStudentWithAddress();
+
+    $container = Container::query()->create([
+        'student_profile_id' => $profile->id,
+        'code' => 'CTN-88888',
+        'status' => ContainerStatus::SHIPPED_TO_HOME,
+    ]);
+
+    $this->actingAs($user)
+        ->post(route('student.move-tracking.start-packing', $container))
+        ->assertSessionHasErrors('packing');
+
+    expect($container->fresh()->status)->toBe(ContainerStatus::SHIPPED_TO_HOME);
+});
+
 test('student cannot request pickup without a photo', function () {
     [$user, $profile] = createStudentWithAddress();
 

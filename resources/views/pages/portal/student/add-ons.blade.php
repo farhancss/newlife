@@ -23,20 +23,6 @@
 
 @section('content')
     <div class="space-y-6">
-        @if (session('status'))
-            <x-ui.alert variant="success" :message="session('status')" />
-        @endif
-
-        @if ($errors->any())
-            <x-ui.alert variant="error" title="Something went wrong">
-                <ul class="mt-2 list-disc pl-5 text-sm text-gray-600">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </x-ui.alert>
-        @endif
-
         <div class="rounded-2xl border border-gray-200 bg-white p-5">
             <h1 class="text-xl font-semibold text-gray-900">Add-Ons</h1>
             <p class="mt-1 text-sm text-gray-600">

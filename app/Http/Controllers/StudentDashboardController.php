@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\DeadlineStatus;
 use App\Models\Container;
 use App\Models\User;
+use App\Services\DeadlineService;
 use App\Services\MoveProgressService;
 use App\Services\StudentPackageService;
 use App\Services\StudentProfileService;
@@ -16,6 +18,7 @@ class StudentDashboardController extends Controller
         private readonly StudentProfileService $studentProfileService,
         private readonly StudentPackageService $studentPackageService,
         private readonly MoveProgressService $moveProgressService,
+        private readonly DeadlineService $deadlineService,
     ) {
     }
 
@@ -27,9 +30,7 @@ class StudentDashboardController extends Controller
         $profile->load(['package', 'containers.statusHistories', 'housingInfo', 'retailPackages']);
 
         $primary = $profile->containers->sortBy('id')->first();
-        $latestUpdate = $primary instanceof Container
-            ? $primary->statusHistories->first()
-            : null;
+        $recentUpdates = $this->recentUpdates($profile);
 
         return view('pages.portal.student.dashboard', [
             'title' => 'Student Dashboard',
@@ -39,38 +40,42 @@ class StudentDashboardController extends Controller
             'package' => $this->studentPackageService->resolve($profile),
             'dashboardSteps' => $this->moveProgressService->dashboardSteps($profile),
             'primaryContainer' => $primary,
-            'latestUpdate' => $latestUpdate,
-            'deadlines' => $this->deadlines($profile),
+            'recentUpdates' => $recentUpdates,
+            'deadlines' => $this->dashboardDeadlines($profile),
         ]);
     }
 
     /**
-     * Derive the student's key dates from their move-in window. Deadlines lead
-     * the move-in date so prep happens on time; when no date is set yet they
-     * surface as "To be set".
+     * The most recent container status changes across the student's shipments,
+     * newest first, for the dashboard activity card.
      *
-     * @return list<array{label: string, date: ?\Illuminate\Support\Carbon, done: bool}>
+     * @return \Illuminate\Support\Collection<int, array{label: string, code: string, date: \Illuminate\Support\Carbon}>
      */
-    private function deadlines(\App\Models\StudentProfile $profile): array
+    private function recentUpdates(\App\Models\StudentProfile $profile): \Illuminate\Support\Collection
     {
-        $moveInDate = $profile->housingInfo?->move_in_date;
+        return $profile->containers
+            ->flatMap(fn (Container $container) => $container->statusHistories->map(fn ($history) => [
+                'label' => $history->toStatusLabel(),
+                'code' => $container->code,
+                'date' => $history->created_at,
+            ]))
+            ->sortByDesc('date')
+            ->take(3)
+            ->values();
+    }
 
-        return [
-            [
-                'label' => 'Profile Completion',
-                'date' => $moveInDate?->copy()->subDays(30),
-                'done' => $profile->isOnboardingComplete(),
-            ],
-            [
-                'label' => 'Add Retail Packages',
-                'date' => $moveInDate?->copy()->subDays(14),
-                'done' => $profile->retailPackages->isNotEmpty(),
-            ],
-            [
-                'label' => 'Move-in Window',
-                'date' => $moveInDate,
-                'done' => $moveInDate !== null,
-            ],
-        ];
+    /**
+     * Active deadlines for the dashboard widget — overdue first, then the
+     * soonest upcoming ones. Completed deadlines are omitted to keep the widget
+     * focused on what still needs attention.
+     *
+     * @return \Illuminate\Support\Collection<int, \App\Models\Deadline>
+     */
+    private function dashboardDeadlines(\App\Models\StudentProfile $profile): \Illuminate\Support\Collection
+    {
+        return $this->deadlineService->forStudent($profile)
+            ->where('status', '!=', DeadlineStatus::COMPLETED)
+            ->take(5)
+            ->values();
     }
 }

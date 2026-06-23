@@ -14,6 +14,7 @@ class RetailPackageService
 {
     public function __construct(
         private readonly NotificationService $notifications,
+        private readonly DeadlineService $deadlines,
     ) {
     }
 
@@ -31,7 +32,7 @@ class RetailPackageService
             ]);
         }
 
-        return DB::transaction(function () use ($profile, $data, $actor): RetailPackage {
+        $package = DB::transaction(function () use ($profile, $data, $actor): RetailPackage {
             $package = RetailPackage::query()->create([
                 'student_profile_id' => $profile->id,
                 'created_by_user_id' => $actor?->id,
@@ -52,6 +53,12 @@ class RetailPackageService
 
             return $package;
         });
+
+        // Case 03: track arrival against the estimated date.
+        $package->setRelation('studentProfile', $profile);
+        $this->deadlines->openRetailArrival($package);
+
+        return $package;
     }
 
     /**
@@ -74,6 +81,11 @@ class RetailPackageService
             'notes' => array_key_exists('notes', $data) ? $data['notes'] : $package->notes,
         ]);
         $package->save();
+
+        // Open an arrival deadline if an estimated date was added after logging.
+        if ($package->estimated_arrival !== null) {
+            $this->deadlines->openRetailArrival($package);
+        }
 
         return $package;
     }
@@ -122,6 +134,9 @@ class RetailPackageService
         });
 
         $this->notifications->retailPackageStatusChanged($fresh, $toStatus);
+
+        // Case 03: arriving at the hub satisfies the arrival deadline.
+        $this->deadlines->syncForSubject($fresh);
 
         return $fresh;
     }

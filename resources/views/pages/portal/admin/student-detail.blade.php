@@ -90,6 +90,10 @@
                             class="inline-flex items-center justify-center rounded-lg border border-gray-300 px-3.5 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
                             Add-ons
                         </a>
+                        <a href="{{ route('admin.deadlines', ['q' => $profile->new_life_id]) }}"
+                            class="inline-flex items-center justify-center rounded-lg border border-gray-300 px-3.5 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+                            Deadlines
+                        </a>
                     </div>
                 </div>
 
@@ -232,6 +236,37 @@
             @empty
                 <p class="py-8 text-center text-sm text-gray-400">No containers assigned yet.</p>
             @endforelse
+        </div>
+
+        {{-- Deadlines --}}
+        @php
+            $allDeadlines = $deadlines['overdue']->concat($deadlines['upcoming'])->concat($deadlines['completed']);
+        @endphp
+        <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xs sm:p-6">
+            <div class="mb-4 flex items-center justify-between">
+                <h2 class="text-base font-semibold text-gray-900">Deadlines</h2>
+                <div class="flex flex-wrap gap-2 text-xs">
+                    <span class="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 font-semibold text-amber-800">
+                        {{ $deadlines['overdue']->count() }} overdue
+                    </span>
+                    <span class="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2.5 py-1 font-semibold text-brand-700">
+                        {{ $deadlines['upcoming']->count() }} upcoming
+                    </span>
+                    <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 font-semibold text-emerald-700">
+                        {{ $deadlines['completed']->count() }} completed
+                    </span>
+                </div>
+            </div>
+
+            @if ($allDeadlines->isNotEmpty())
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+                    @foreach ($allDeadlines as $deadline)
+                        <x-deadline.card :deadline="$deadline" />
+                    @endforeach
+                </div>
+            @else
+                <p class="py-8 text-center text-sm text-gray-400">No deadlines on record.</p>
+            @endif
         </div>
 
         {{-- Detail grid --}}

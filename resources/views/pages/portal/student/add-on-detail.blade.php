@@ -12,10 +12,6 @@
 
 @section('content')
     <div class="mx-auto max-w-5xl space-y-6">
-        @if (session('status'))
-            <x-ui.alert variant="success" :message="session('status')" />
-        @endif
-
         <a href="{{ route('student.add-ons') }}" class="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-gray-700">
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M15 18l-6-6 6-6" />

@@ -28,6 +28,7 @@
         "jsvectormap": "^1.7.0",
         "prismjs": "^1.30.0",
         "simple-datatables": "^10.2.0",
+        "sweetalert2": "^11.26.25",
         "swiper": "^12.0.3"
     }
 }

@@ -16,10 +16,6 @@
 
 @section('content')
     <div class="space-y-6">
-        @if (session('status'))
-            <x-ui.alert variant="success" :message="session('status')" />
-        @endif
-
         <div>
             <h1 class="text-2xl font-bold text-gray-900">Add-Ons</h1>
             <p class="mt-1 text-sm text-gray-600">Add-ons purchased by students. The Additional Container add-on provisions a trackable container.</p>

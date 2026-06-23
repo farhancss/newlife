@@ -27,12 +27,6 @@
             </div>
         </div>
 
-        @if (session('status'))
-            <div class="rounded-lg border border-success-200 bg-success-50 px-4 py-3 text-sm text-success-700">
-                {{ session('status') }}
-            </div>
-        @endif
-
         <div class="rounded-2xl border border-gray-200 bg-white p-6">
             <form method="POST" action="{{ route('student.onboarding.submit') }}" class="grid gap-4 md:grid-cols-2">
                 @csrf
