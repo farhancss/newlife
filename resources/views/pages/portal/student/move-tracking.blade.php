@@ -14,7 +14,7 @@
                 <p class="mt-1 text-sm text-gray-600">Track containers from home shipment through dorm delivery.</p>
             </div>
             @if ($package)
-                <div class="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-4 py-2 text-sm font-semibold text-brand-800">
+                <div class="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-4 py-2 text-sm font-semibold text-brand-500">
                     <span class="h-2 w-2 rounded-full bg-brand-500"></span>
                     Move includes {{ $containerAllowance }} {{ \Illuminate\Support\Str::plural('container', $containerAllowance) }}
                 </div>
@@ -127,7 +127,7 @@
                 <div class="sm:flex sm:items-start sm:justify-between sm:gap-6">
                     <div>
                         <h2 class="text-lg font-semibold text-brand-900">Your container has arrived — ready to pack?</h2>
-                        <p class="mt-2 max-w-xl text-sm text-brand-800">
+                        <p class="mt-2 max-w-xl text-sm text-brand-500">
                             When you begin packing, let us know. We'll notify the New Life team that your move is in progress,
                             and you'll be able to upload container photos and request your pickup.
                         </p>
@@ -161,7 +161,7 @@
                 <div class="sm:flex sm:items-start sm:justify-between sm:gap-6">
                     <div>
                         <h2 class="text-lg font-semibold text-brand-900">Ready to schedule your pickup?</h2>
-                        <p class="mt-2 max-w-xl text-sm text-brand-800">
+                        <p class="mt-2 max-w-xl text-sm text-brand-500">
                             Pack your container using the pre-printed return label and upload exterior photos above. Once you're
                             packed, confirm below and our team will arrange the pickup at your home address.
                         </p>
@@ -192,7 +192,7 @@
                             <p class="mt-2 text-xs text-brand-700/80">This moves your move to “Pickup Scheduled” and notifies our team.</p>
                         </form>
                     @else
-                        <p class="rounded-lg bg-white/70 px-3 py-2 text-sm text-brand-800">
+                        <p class="rounded-lg bg-white/70 px-3 py-2 text-sm text-brand-500">
                             Upload at least one container photo above to unlock pickup scheduling.
                         </p>
                     @endif

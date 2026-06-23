@@ -58,11 +58,11 @@
 
         {{-- Identity header --}}
         <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-theme-xs">
-            <div class="h-20 bg-gradient-to-r from-brand-600 to-brand-800"></div>
+            <div class="h-20 bg-gradient-to-r from-brand-600 to-brand-500"></div>
             <div class="px-5 pb-5 sm:px-6">
                 <div class="-mt-12">
                     <x-ui.avatar :src="$user?->avatarUrl()" :initials="$initials"
-                        class="flex h-20 w-20 items-center justify-center rounded-2xl border-4 border-white bg-brand-100 text-2xl font-bold text-brand-800 shadow-sm" />
+                        class="flex h-20 w-20 items-center justify-center rounded-2xl border-4 border-white bg-brand-100 text-2xl font-bold text-brand-500 shadow-sm" />
                 </div>
 
                 <div class="mt-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -151,7 +151,7 @@
                             <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Move shipment</p>
                             <h3 class="text-lg font-bold text-gray-900">{{ $container->code }}</h3>
                         </div>
-                        <span class="inline-flex h-fit rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-800">{{ $container->statusLabel() }}</span>
+                        <span class="inline-flex h-fit rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-500">{{ $container->statusLabel() }}</span>
                     </div>
 
                     <dl class="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 text-sm sm:grid-cols-4">

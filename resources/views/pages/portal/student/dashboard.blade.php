@@ -37,7 +37,7 @@
                                         </svg>
                                     </span>
                                 @elseif ($step['state'] === 'active')
-                                    <span class="relative z-10 flex h-10 w-10 items-center justify-center rounded-full bg-brand-800 text-sm font-semibold text-white">{{ $step['number'] }}</span>
+                                    <span class="relative z-10 flex h-10 w-10 items-center justify-center rounded-full bg-brand-500 text-sm font-semibold text-white">{{ $step['number'] }}</span>
                                 @else
                                     <span class="relative z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 border-gray-300 bg-white text-sm font-semibold text-gray-400">{{ $step['number'] }}</span>
                                 @endif

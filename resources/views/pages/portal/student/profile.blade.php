@@ -101,7 +101,7 @@
                             @endif
                             <span @class([
                                 'min-w-0 text-xs font-semibold leading-tight sm:text-[11px]',
-                                'text-brand-800' => $isCurrent || $isComplete,
+                                'text-brand-500' => $isCurrent || $isComplete,
                                 'text-warning-800' => $isIncomplete && !$isCurrent,
                             ])>{{ $section['label'] }}</span>
                         </a>
@@ -124,7 +124,7 @@
                             </template>
                             <div x-show="!preview">
                                 <x-ui.avatar :src="$user->avatarUrl()" :initials="$user->initials()"
-                                    class="flex h-20 w-20 items-center justify-center rounded-2xl bg-brand-100 text-xl font-bold text-brand-800 ring-2 ring-brand-50" />
+                                    class="flex h-20 w-20 items-center justify-center rounded-2xl bg-brand-100 text-xl font-bold text-brand-500 ring-2 ring-brand-50" />
                             </div>
                         </div>
 

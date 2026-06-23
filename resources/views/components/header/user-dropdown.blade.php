@@ -18,7 +18,7 @@
                 class="h-9 w-9 shrink-0 rounded-lg object-cover"
             />
         @else
-            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-800 text-xs font-bold text-white">
+            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-500 text-xs font-bold text-white">
                 {{ $initials }}
             </span>
         @endif

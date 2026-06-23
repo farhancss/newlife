@@ -31,4 +31,20 @@ final class PasswordPolicy
             'symbol' => 'At least one special character (!@#$…)',
         ];
     }
+
+    /**
+     * Compact labels for auth screens (reset password, etc.) — display only.
+     * Client-side submit still enforces the full policy in password-strength.
+     *
+     * @return array<string, string>
+     */
+    public static function authRequirements(): array
+    {
+        return [
+            'minLength' => 'At least use 8 characters',
+            'number' => 'Must contain min 1 number',
+            'uppercase' => 'At least 1 uppercase letter',
+            'symbol' => 'Must contain min 1 symbol',
+        ];
+    }
 }

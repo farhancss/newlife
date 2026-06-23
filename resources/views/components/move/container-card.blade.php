@@ -22,7 +22,7 @@
                 <p class="mt-0.5 text-xs text-gray-500">Includes {{ $quantity }} {{ \Illuminate\Support\Str::plural('container', $quantity) }}</p>
             @endif
         </div>
-        <span class="inline-flex shrink-0 rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-800">
+        <span class="inline-flex shrink-0 rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-500">
             {{ $container->statusLabel() }}
         </span>
     </div>

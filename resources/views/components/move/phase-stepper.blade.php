@@ -33,7 +33,7 @@
                     @endif
                     <p @class([
                         'mt-3 max-w-[92px] text-xs leading-snug',
-                        'font-semibold text-brand-800' => $phase['current'],
+                        'font-semibold text-brand-500' => $phase['current'],
                         'text-gray-700' => $phase['reached'] && !$phase['current'],
                         'text-gray-400' => !$phase['reached'],
                     ])>

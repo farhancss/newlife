@@ -77,7 +77,7 @@
                                     <span class="text-sm text-gray-600">Keep me logged in</span>
                                 </label>
                                 <a href="{{ route('password.request') }}"
-                                    class="text-sm font-medium text-brand-500 transition hover:text-brand-600">
+                                    class="text-sm font-medium text-brand-500 transition hover:text-brand-500">
                                     Forgot password?
                                 </a>
                             </div>
