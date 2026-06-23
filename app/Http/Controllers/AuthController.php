@@ -64,7 +64,7 @@ class AuthController extends Controller
                 ]);
         }
 
-        if (!Auth::attempt($credentials)) {
+        if (!Auth::attempt($credentials, $request->boolean('remember'))) {
             RateLimiter::hit($throttleKey, self::LOGIN_DECAY_SECONDS);
 
             return redirect()
