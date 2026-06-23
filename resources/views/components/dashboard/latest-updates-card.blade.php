@@ -26,7 +26,7 @@
             <div class="flex items-end justify-between gap-3">
                 <div class="w-[8.75rem] shrink-0 rounded-lg border border-dashed border-gray-300 bg-gray-50 px-3.5 py-2.5 text-center sm:w-[9.5rem]">
                     <p class="text-[11px] font-medium uppercase tracking-wide text-gray-500">Container ID</p>
-                    <p class="mt-0.5 font-mono text-sm font-semibold text-brand-500">{{ $latest['code'] }}</p>
+                    <p class="mt-0.5 font-mono text-sm font-semibold text-color-500">{{ $latest['code'] }}</p>
                 </div>
 
                 <img src="{{ asset('images/dashboard/truck.png') }}" alt=""
