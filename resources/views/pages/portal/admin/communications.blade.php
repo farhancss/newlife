@@ -36,7 +36,7 @@
                         <label class="mb-1 block text-sm font-medium text-gray-700">Message</label>
                         <textarea rows="5" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" placeholder="Type your message"></textarea>
                     </div>
-                    <button type="button" class="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white">Send</button>
+                    <button type="button" class="rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white">Send</button>
                 </form>
             </div>
             <div class="rounded-2xl border border-gray-200 bg-white p-5">

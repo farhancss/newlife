@@ -94,7 +94,7 @@
                                     </td>
                                     <td class="text-xs">
                                         @if ($container->outbound_tracking)
-                                            <a href="{{ $outUrl }}" target="_blank" rel="noopener noreferrer" class="font-medium text-brand-600 hover:underline">
+                                            <a href="{{ $outUrl }}" target="_blank" rel="noopener noreferrer" class="font-medium text-brand-500 hover:underline">
                                                 {{ $container->outbound_tracking }}
                                             </a>
                                         @else
@@ -103,7 +103,7 @@
                                     </td>
                                     <td class="text-right">
                                         <a href="{{ route('admin.containers', ['edit' => $container->id, 'q' => $search ?: null]) }}"
-                                            class="inline-flex rounded-lg px-3 py-1.5 text-sm font-semibold text-brand-600 hover:bg-brand-50">
+                                            class="inline-flex rounded-lg px-3 py-1.5 text-sm font-semibold text-brand-500 hover:bg-brand-50">
                                             Edit
                                         </a>
                                     </td>
@@ -230,11 +230,11 @@
                             </div>
 
                             <label class="flex items-center gap-2 text-sm text-gray-700">
-                                <input type="checkbox" name="force_status" value="1" class="rounded border-gray-300 text-brand-600" />
+                                <input type="checkbox" name="force_status" value="1" class="rounded border-gray-300 text-brand-500" />
                                 Allow backward status override
                             </label>
 
-                            <button type="submit" class="w-full rounded-xl bg-brand-600 py-3 text-sm font-semibold text-white hover:bg-brand-700">
+                            <button type="submit" class="w-full rounded-xl bg-brand-500 py-3 text-sm font-semibold text-white hover:bg-brand-700">
                                 Save changes
                             </button>
                         </form>

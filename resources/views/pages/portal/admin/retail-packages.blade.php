@@ -29,7 +29,7 @@
                 <p class="mt-1 text-sm text-gray-600">Receive, stage, and deliver student-logged retail shipments.</p>
             </div>
             <a href="{{ route('admin.retail-packages', ['add' => 1]) }}"
-                class="inline-flex items-center justify-center rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700">
+                class="inline-flex items-center justify-center rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700">
                 Add on behalf
             </a>
         </div>
@@ -97,7 +97,7 @@
                             <td class="text-gray-700">{{ $package->description }}</td>
                             <td class="font-mono text-xs">
                                 @if ($trackUrl)
-                                    <a href="{{ $trackUrl }}" target="_blank" rel="noopener noreferrer" class="text-brand-600 hover:underline">{{ $package->tracking_number }}</a>
+                                    <a href="{{ $trackUrl }}" target="_blank" rel="noopener noreferrer" class="text-brand-500 hover:underline">{{ $package->tracking_number }}</a>
                                 @else
                                     {{ $package->tracking_number }}
                                 @endif
@@ -110,7 +110,7 @@
                             <td class="text-xs text-gray-700">{{ $package->estimated_arrival ? $package->estimated_arrival->format('M j, Y') : '—' }}</td>
                             <td class="text-right">
                                 <a href="{{ route('admin.retail-packages', array_merge($filters, ['edit' => $package->id])) }}"
-                                    class="inline-flex rounded-lg px-3 py-1.5 text-sm font-semibold text-brand-600 hover:bg-brand-50">
+                                    class="inline-flex rounded-lg px-3 py-1.5 text-sm font-semibold text-brand-500 hover:bg-brand-50">
                                     Manage
                                 </a>
                             </td>
@@ -190,11 +190,11 @@
                             </div>
 
                             <label class="flex items-center gap-2 text-sm text-gray-700">
-                                <input type="checkbox" name="force_status" value="1" class="rounded border-gray-300 text-brand-600" />
+                                <input type="checkbox" name="force_status" value="1" class="rounded border-gray-300 text-brand-500" />
                                 Allow backward status override
                             </label>
 
-                            <button type="submit" class="w-full rounded-xl bg-brand-600 py-3 text-sm font-semibold text-white hover:bg-brand-700">
+                            <button type="submit" class="w-full rounded-xl bg-brand-500 py-3 text-sm font-semibold text-white hover:bg-brand-700">
                                 Save status
                             </button>
                         </form>
@@ -337,7 +337,7 @@
                                 <textarea id="add_notes" name="notes" rows="3" class="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm">{{ old('notes') }}</textarea>
                             </div>
 
-                            <button type="submit" class="w-full rounded-xl bg-brand-600 py-3 text-sm font-semibold text-white hover:bg-brand-700">
+                            <button type="submit" class="w-full rounded-xl bg-brand-500 py-3 text-sm font-semibold text-white hover:bg-brand-700">
                                 Add package
                             </button>
                         </form>

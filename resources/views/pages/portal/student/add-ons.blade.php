@@ -40,7 +40,7 @@
                 @foreach ($catalog as $addOn)
                     <div class="flex flex-col rounded-2xl border border-gray-200 bg-white p-5 transition hover:border-brand-300 hover:shadow-sm">
                         <div class="flex items-start justify-between gap-3">
-                            <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+                            <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-500">
                                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="{{ $iconPath($addOn['icon']) }}" />
                                 </svg>
@@ -52,7 +52,7 @@
                         <p class="mt-2 flex-1 text-sm leading-relaxed text-gray-600">{{ $addOn['description'] }}</p>
 
                         <a href="{{ $addOn['url'] }}" target="_blank" rel="noopener"
-                            class="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">
+                            class="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">
                             Add-On
                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M7 17L17 7M17 7H9M17 7v8" />
@@ -94,13 +94,13 @@
                                         · Requested {{ $purchase->requested_at->format('M j, Y') }}
                                     @endif
                                     @if ($purchase->tracksContainer())
-                                        · <span class="font-medium text-brand-600">Trackable · {{ $purchase->container->code }}</span>
+                                        · <span class="font-medium text-brand-500">Trackable · {{ $purchase->container->code }}</span>
                                     @endif
                                 </p>
                             </div>
                             <div class="flex items-center gap-2">
                                 <a href="{{ route('student.add-ons.show', $purchase) }}"
-                                    class="inline-flex items-center justify-center rounded-lg border border-brand-600 px-3 py-1.5 text-xs font-medium text-brand-600 hover:bg-brand-50">
+                                    class="inline-flex items-center justify-center rounded-lg border border-brand-500 px-3 py-1.5 text-xs font-medium text-brand-500 hover:bg-brand-50">
                                     View
                                 </a>
                             </div>

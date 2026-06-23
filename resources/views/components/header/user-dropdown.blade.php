@@ -8,26 +8,26 @@
 <div class="relative" x-data="{ dropdownOpen: false }" @click.away="dropdownOpen = false">
     <button
         type="button"
-        class="flex items-center gap-2 rounded-lg border border-gray-200 bg-white py-1 pl-1 pr-2 transition hover:border-brand-200 sm:gap-2.5 sm:pr-3"
+        class="flex items-center gap-3 rounded-lg py-1 pl-1 pr-1 transition hover:bg-gray-50 sm:pr-2"
         @click.prevent="dropdownOpen = !dropdownOpen"
     >
         @if ($avatarSrc)
             <img
                 src="{{ $avatarSrc }}"
                 alt="{{ $initials }}"
-                class="h-9 w-9 shrink-0 rounded-lg object-cover"
+                class="h-10 w-10 shrink-0 rounded-full object-cover"
             />
         @else
-            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-500 text-xs font-bold text-white">
+            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-50 text-sm font-semibold text-brand-700">
                 {{ $initials }}
             </span>
         @endif
-        <span class="hidden min-w-0 text-left sm:block">
+        <span class="hidden min-w-0 flex-1 text-left sm:block">
             <span class="block truncate text-sm font-semibold text-gray-900">{{ $userName }}</span>
-            <span class="block text-xs text-gray-500">{{ ucfirst($portal) }} account</span>
+            <span class="block truncate text-xs text-gray-500">{{ ucfirst($portal) }} account</span>
         </span>
-        <svg class="hidden h-4 w-4 shrink-0 text-gray-400 transition-transform duration-200 sm:block" :class="{ 'rotate-180': dropdownOpen }" viewBox="0 0 20 20" fill="none">
-            <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+        <svg class="hidden h-5 w-5 shrink-0 text-gray-700 transition-transform duration-200 sm:block" :class="{ 'rotate-180': dropdownOpen }" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
     </button>
 

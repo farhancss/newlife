@@ -10,7 +10,7 @@
                         <div class="mb-4 pt-8 sm:pt-10 lg:pt-12">
                             <a href="{{ route('login') }}" class="inline-block">
                                 <img src="{{ asset('images/logo/new-life-campus-logo.png') }}" alt="New Life Campus"
-                                    class="h-10 w-auto sm:h-12" />
+                                    class="h-10 w-auto sm:h-12 lg:h-16" />
                             </a>
                         </div>
 
@@ -50,7 +50,7 @@
                             </div>
 
                             <button type="submit"
-                                class="flex h-12 w-full items-center justify-center rounded-lg bg-brand-500 px-4 text-sm font-semibold text-white transition hover:bg-brand-600 focus:outline-hidden focus:ring-3 focus:ring-brand-500/30">
+                                class="flex h-12 w-full items-center justify-center rounded-lg bg-brand-500 px-4 text-sm font-semibold text-white transition hover:bg-brand-500 focus:outline-hidden focus:ring-3 focus:ring-brand-500/30">
                                 Reset Password
                             </button>
 
@@ -66,7 +66,7 @@
             {{-- Right: Image + testimonial overlay --}}
             <div class="relative hidden h-full w-full shrink-0 overflow-hidden lg:block lg:w-1/2">
                 <img src="{{ asset('images/login/background-image.jpg') }}" alt=""
-                    class="absolute inset-0 h-full w-full object-cover object-center" />
+                    class="absolute inset-0 h-full w-full object-cover object-top" />
 
                 <div class="absolute -right-20 -bottom-100 h-80 w-80 rounded-full border-[32px] border-[#0112EF] lg:-right-24 lg:-bottom-64 lg:h-96 lg:w-96 lg:border-[60px]"></div>
 

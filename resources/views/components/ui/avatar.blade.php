@@ -6,5 +6,5 @@
 @if ($src)
     <img src="{{ $src }}" alt="{{ $initials }}" {{ $attributes->class(['object-cover']) }} />
 @else
-    <span {{ $attributes }}>{{ $initials }}</span>
+    <span {{ $attributes->class(['inline-flex items-center justify-center']) }}>{{ $initials }}</span>
 @endif

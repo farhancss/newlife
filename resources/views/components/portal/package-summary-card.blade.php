@@ -12,14 +12,14 @@
         'border-gray-200 bg-white' => !$isFeatured || $compact,
     ])>
         @if ($isFeatured && !$compact)
-            <span class="absolute right-4 top-4 rounded-full bg-brand-600 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-white">
+            <span class="absolute right-4 top-4 rounded-full bg-brand-500 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-white">
                 Your package
             </span>
         @endif
 
         <div class="flex flex-wrap items-start justify-between gap-4">
             <div class="min-w-0 flex-1">
-                <p class="text-xs font-semibold uppercase tracking-wider text-brand-600">
+                <p class="text-xs font-semibold uppercase tracking-wider text-brand-500">
                     {{ $pkg->formattedPrice() }}<span class="font-normal text-brand-500">*</span>
                 </p>
                 <h2 class="mt-1 text-xl font-bold text-gray-900 sm:text-2xl">
@@ -42,7 +42,7 @@
             <ul class="mt-5 space-y-2 text-sm text-gray-700">
                 @foreach ($pkg->features as $feature)
                     <li class="flex items-start gap-2">
-                        <svg class="mt-0.5 h-4 w-4 shrink-0 text-brand-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <svg class="mt-0.5 h-4 w-4 shrink-0 text-brand-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
                         </svg>
                         <span>{{ $feature }}</span>

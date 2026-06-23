@@ -20,7 +20,7 @@
             <div x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen">
                 <img src="{{ asset('images/logo/new-life-campus-logo.png') }}" alt="New Life Campus" class="h-auto w-full max-w-[200px]" />
                 <div class="mt-4 rounded-xl border border-brand-100 bg-gradient-to-br from-brand-50 to-white p-3.5 shadow-theme-xs">
-                    <p class="text-xs font-semibold uppercase tracking-wide text-brand-600">Admin Portal</p>
+                    <p class="text-xs font-semibold uppercase tracking-wide text-brand-500">Admin Portal</p>
                     <p class="mt-1 text-sm font-semibold text-gray-900">Operations Dashboard</p>
                 </div>
             </div>

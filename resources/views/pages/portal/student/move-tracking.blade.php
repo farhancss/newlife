@@ -27,7 +27,7 @@
         @if (!$package)
             <p class="text-center text-sm text-gray-500">
                 Purchased on
-                <a href="https://www.newlifecampus.com" target="_blank" rel="noopener noreferrer" class="font-medium text-brand-600 hover:underline">newlifecampus.com</a>?
+                <a href="https://www.newlifecampus.com" target="_blank" rel="noopener noreferrer" class="font-medium text-brand-500 hover:underline">newlifecampus.com</a>?
                 Your package syncs automatically after checkout.
             </p>
         @endif
@@ -146,7 +146,7 @@
                         data-confirm-icon="question">
                         @csrf
                         <button type="submit"
-                            class="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-700">
+                            class="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-700">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                             I've started packing
                         </button>
@@ -185,7 +185,7 @@
                             data-confirm-icon="question">
                             @csrf
                             <button type="submit"
-                                class="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-700">
+                                class="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-700">
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                                 I'm packed — request pickup
                             </button>

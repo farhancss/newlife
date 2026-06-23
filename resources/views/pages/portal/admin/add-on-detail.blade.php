@@ -37,7 +37,7 @@
                         </span>
                         @if ($container)
                             <a href="{{ route('admin.containers', ['edit' => $container->id]) }}"
-                                class="inline-flex items-center justify-center rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-semibold text-white hover:bg-brand-700">
+                                class="inline-flex items-center justify-center rounded-lg bg-brand-500 px-3.5 py-2 text-sm font-semibold text-white hover:bg-brand-700">
                                 Edit container
                             </a>
                         @endif
@@ -62,7 +62,7 @@
                 </dl>
 
                 <div class="mt-5 border-t border-gray-100 pt-4">
-                    <a href="{{ $addOn->squarespace_url }}" target="_blank" rel="noopener" class="text-sm font-medium text-brand-600 hover:underline">
+                    <a href="{{ $addOn->squarespace_url }}" target="_blank" rel="noopener" class="text-sm font-medium text-brand-500 hover:underline">
                         View on newlifecampus.com →
                     </a>
                 </div>

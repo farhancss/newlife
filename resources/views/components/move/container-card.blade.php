@@ -56,7 +56,7 @@
             <dt>Outbound tracking</dt>
             <dd class="font-medium text-gray-900">
                 @if ($container->outbound_tracking)
-                    <a href="{{ $outUrl }}" target="_blank" rel="noopener noreferrer" class="font-semibold text-brand-600 hover:underline">
+                    <a href="{{ $outUrl }}" target="_blank" rel="noopener noreferrer" class="font-semibold text-brand-500 hover:underline">
                         {{ $container->outbound_tracking }}
                     </a>
                 @else

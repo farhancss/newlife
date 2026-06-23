@@ -12,14 +12,19 @@ class MenuHelper
         if ($portal === 'student') {
             return [
                 [
-                    'title' => '',
+                    'title' => 'Menu',
                     'items' => [
                         ['icon' => 'dashboard', 'name' => 'Dashboard', 'path' => $basePath . '/dashboard'],
                         ['icon' => 'user-profile', 'name' => 'My Profile', 'path' => $basePath . '/profile'],
                         ['icon' => 'task', 'name' => 'My Move', 'path' => $basePath . '/move-tracking'],
                         ['icon' => 'tables', 'name' => 'Retail Packages', 'path' => $basePath . '/retail-packages'],
-                        ['icon' => 'clock', 'name' => 'Add-Ons', 'path' => $basePath . '/add-ons'],
+                        ['icon' => 'clock', 'name' => 'Add on', 'path' => $basePath . '/add-ons'],
                         ['icon' => 'calendar', 'name' => 'Deadlines', 'path' => $basePath . '/deadlines'],
+                    ],
+                ],
+                [
+                    'title' => 'Support',
+                    'items' => [
                         ['icon' => 'bell', 'name' => 'Notifications', 'path' => $basePath . '/notifications'],
                     ],
                 ],

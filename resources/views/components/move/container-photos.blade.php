@@ -63,11 +63,11 @@
                     </div>
                     <label class="flex items-start gap-2 text-xs text-gray-600">
                         <input type="checkbox" name="acknowledge" value="1" {{ $canUpload ? 'required' : '' }}
-                            class="mt-0.5 rounded border-gray-300 text-brand-600 focus:ring-brand-500 disabled:cursor-not-allowed" />
+                            class="mt-0.5 rounded border-gray-300 text-brand-500 focus:ring-brand-500 disabled:cursor-not-allowed" />
                         <span>I understand failure to upload photos may impact damage claim processing.</span>
                     </label>
                     <button type="submit" {{ $canUpload ? '' : 'disabled' }}
-                        class="rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500 disabled:hover:bg-gray-300">
+                        class="rounded-xl bg-brand-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500 disabled:hover:bg-gray-300">
                         Upload photos
                     </button>
                 </fieldset>

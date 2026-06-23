@@ -35,7 +35,7 @@
                 <span class="rounded-lg bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-500">Active limit reached</span>
             @else
                 <a href="{{ route('student.retail-packages', ['add' => 1]) }}"
-                    class="inline-flex items-center justify-center rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700">
+                    class="inline-flex items-center justify-center rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700">
                     Add package
                 </a>
             @endif
@@ -69,7 +69,7 @@
                         <td>{{ $package->retailer }}</td>
                         <td class="font-mono text-xs">
                             @if ($trackUrl)
-                                <a href="{{ $trackUrl }}" target="_blank" rel="noopener noreferrer" class="text-brand-600 hover:underline">
+                                <a href="{{ $trackUrl }}" target="_blank" rel="noopener noreferrer" class="text-brand-500 hover:underline">
                                     {{ $package->tracking_number }}
                                 </a>
                             @else
@@ -87,7 +87,7 @@
                         <td class="text-right whitespace-nowrap">
                             @if ($package->isEditable())
                                 <a href="{{ route('student.retail-packages', ['edit' => $package->id]) }}"
-                                    class="inline-flex rounded-lg px-3 py-1.5 text-sm font-semibold text-brand-600 hover:bg-brand-50">
+                                    class="inline-flex rounded-lg px-3 py-1.5 text-sm font-semibold text-brand-500 hover:bg-brand-50">
                                     Edit
                                 </a>
                                 <form action="{{ route('student.retail-packages.destroy', $package) }}" method="POST" class="inline"
@@ -213,12 +213,12 @@
 
                             @unless ($acknowledged)
                                 <label class="flex items-start gap-2 rounded-xl bg-gray-50 p-3 text-sm text-gray-700">
-                                    <input type="checkbox" name="acknowledge" value="1" class="mt-0.5 rounded border-gray-300 text-brand-600" />
+                                    <input type="checkbox" name="acknowledge" value="1" class="mt-0.5 rounded border-gray-300 text-brand-500" />
                                     <span>I understand that only packages logged here can be accepted, and that prohibited or restricted items will be refused.</span>
                                 </label>
                             @endunless
 
-                            <button type="submit" class="w-full rounded-xl bg-brand-600 py-3 text-sm font-semibold text-white hover:bg-brand-700">
+                            <button type="submit" class="w-full rounded-xl bg-brand-500 py-3 text-sm font-semibold text-white hover:bg-brand-700">
                                 {{ $isEdit ? 'Save changes' : 'Log package' }}
                             </button>
                         </form>
