@@ -44,14 +44,21 @@
             @php
                 $priority = $priorityFor($deadline);
                 $styles = $priorityStyles[$priority];
+                $days = $deadline->daysRemaining();
             @endphp
             <li class="flex items-center justify-between gap-3 py-3.5 first:pt-0 last:pb-0">
                 <span class="flex min-w-0 items-center gap-2.5">
-                    <span class="inline-flex h-2 w-2 shrink-0 rounded-full {{ $styles['dot'] }}"></span>
+                    <span class="inline-flex h-2 w-2 shrink-0 rounded-full bg-brand-300"></span>
                     <span class="truncate text-sm text-gray-800">{{ $deadline->title }}</span>
                 </span>
-                <span class="inline-flex shrink-0 rounded-full px-2.5 py-1 text-xs font-medium {{ $styles['badge'] }}">
-                    {{ $deadline->due_at->format('M j, Y') }}
+                <span class="inline-flex shrink-0 rounded-full px-2.5 py-1 text-xs font-medium bg-brand-300 text-white">
+                    @if ($deadline->isOverdue())
+                        {{ abs($days) }} {{ \Illuminate\Support\Str::plural('day', abs($days)) }} overdue
+                    @elseif ($days <= 0)
+                        Due today
+                    @else
+                        {{ $days }} {{ \Illuminate\Support\Str::plural('day', $days) }} left
+                    @endif
                 </span>
             </li>
         @empty
