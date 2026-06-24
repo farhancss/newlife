@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Services\OnboardingService;
 use App\Services\ProfileCompletionService;
 use App\Services\StudentProfileService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -63,7 +64,7 @@ class StudentProfileController extends Controller
         );
     }
 
-    public function updateAvatar(Request $request): RedirectResponse
+    public function updateAvatar(Request $request): RedirectResponse|JsonResponse
     {
         /** @var User $user */
         $user = Auth::user();
@@ -86,12 +87,19 @@ class StudentProfileController extends Controller
             Storage::disk($disk)->delete($previous);
         }
 
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Profile photo updated.',
+                'avatar_url' => $user->fresh()->avatarUrl(),
+            ]);
+        }
+
         return redirect()
-            ->route('student.profile')
+            ->route('student.profile', ['section' => 1])
             ->with('status', 'Profile photo updated.');
     }
 
-    public function destroyAvatar(): RedirectResponse
+    public function destroyAvatar(Request $request): RedirectResponse|JsonResponse
     {
         /** @var User $user */
         $user = Auth::user();
@@ -101,8 +109,15 @@ class StudentProfileController extends Controller
             $user->forceFill(['avatar_path' => null])->save();
         }
 
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Profile photo removed.',
+                'avatar_url' => null,
+            ]);
+        }
+
         return redirect()
-            ->route('student.profile')
+            ->route('student.profile', ['section' => 1])
             ->with('status', 'Profile photo removed.');
     }
 
