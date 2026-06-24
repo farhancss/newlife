@@ -10,15 +10,6 @@
             default => 'bg-gray-100 text-gray-600 ring-gray-500/20',
         };
     };
-
-    $iconPath = function (string $icon): string {
-        return match ($icon) {
-            'truck' => 'M3 9h11v6H3zM14 11h3.5L21 14v1h-7zM6.5 19a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM17.5 19a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z',
-            'shield' => 'M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z',
-            'sparkles' => 'M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6L12 3zM18 14l.8 2.2L21 17l-2.2.8L18 20l-.8-2.2L15 17l2.2-.8L18 14z',
-            default => 'M3.5 8.5L12 4l8.5 4.5v7L12 20l-8.5-4.5v-7zM12 4v16M3.5 8.5L12 13l8.5-4.5',
-        };
-    };
 @endphp
 
 @section('content')
@@ -41,14 +32,12 @@
                     <div class="flex flex-col rounded-2xl border border-gray-200 bg-white p-5 transition hover:border-brand-300 hover:shadow-sm">
                         <div class="flex items-start justify-between gap-3">
                             <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-500">
-                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="{{ $iconPath($addOn['icon']) }}" />
-                                </svg>
+                                <img src="{{ asset('images/dashboard/' . $addOn['icon'] . '.svg') }}" alt="" class="h-6 w-6 shrink-0" aria-hidden="true" />
                             </span>
-                            <span class="rounded-full bg-gray-900 px-3 py-1 text-sm font-semibold text-white">{{ $addOn['formatted_price'] }}</span>
+                            <span class="rounded-full bg-[#F2F3FF] px-3 py-1 text-sm text-brand-300">{{ $addOn['formatted_price'] }}</span>
                         </div>
 
-                        <h3 class="mt-4 font-semibold text-gray-900">{{ $addOn['name'] }}</h3>
+                        <h3 class="mt-4 font-medium text-gray-600">{{ $addOn['name'] }}</h3>
                         <p class="mt-2 flex-1 text-sm leading-relaxed text-gray-600">{{ $addOn['description'] }}</p>
 
                         <a href="{{ $addOn['url'] }}" target="_blank" rel="noopener"

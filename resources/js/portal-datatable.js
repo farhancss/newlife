@@ -9,7 +9,20 @@ const defaultLabels = {
     info: 'Showing {start} to {end} of {rows} entries',
 };
 
-const portalTableTemplate = (options, dom) => {
+const buildPerPageSelect = (perPage, perPageSelectRaw) => {
+    const values = perPageSelectRaw
+        .split(',')
+        .map((value) => Number.parseInt(value.trim(), 10))
+        .filter((value) => !Number.isNaN(value));
+
+    if (!values.includes(perPage)) {
+        values.push(perPage);
+    }
+
+    return [...new Set(values)].sort((a, b) => a - b);
+};
+
+const createPortalTableTemplate = (layout) => (options, dom) => {
     const perPageControl =
         options.paging && options.perPageSelect
             ? `<div class="portal-dt-perpage ${options.classes.dropdown}">
@@ -35,28 +48,31 @@ const portalTableTemplate = (options, dom) => {
         </div>`
         : '';
 
+    const titleControl = layout.title
+        ? `<h2 class="portal-dt-title">${layout.title}</h2>`
+        : '';
+
+    const toolbarControls = layout.perPageAtBottom
+        ? `${titleControl}${searchControl}`
+        : `${titleControl}${perPageControl}${searchControl}`;
+
+    const footerStart = [
+        options.paging ? `<div class="${options.classes.info}"></div>` : '',
+        layout.perPageAtBottom ? perPageControl : '',
+    ].filter(Boolean).join('');
+
+    const paginationControl = options.paging && !layout.hidePagination
+        ? `<nav class="${options.classes.pagination}"></nav>`
+        : '';
+
     return `<div class="portal-dt-toolbar ${options.classes.top}">
-        ${perPageControl}
-        ${searchControl}
+        ${toolbarControls}
     </div>
     <div class="portal-dt-table-wrap ${options.classes.container}"${options.scrollY.length ? ` style="height: ${options.scrollY}; overflow-y: auto;"` : ''}></div>
     <div class="portal-dt-footer ${options.classes.bottom}">
-        ${options.paging ? `<div class="${options.classes.info}"></div>` : ''}
-        <nav class="${options.classes.pagination}"></nav>
+        <div class="portal-dt-footer-start">${footerStart}</div>
+        ${paginationControl}
     </div>`;
-};
-
-const buildPerPageSelect = (perPage, perPageSelectRaw) => {
-    const values = perPageSelectRaw
-        .split(',')
-        .map((value) => Number.parseInt(value.trim(), 10))
-        .filter((value) => !Number.isNaN(value));
-
-    if (!values.includes(perPage)) {
-        values.push(perPage);
-    }
-
-    return [...new Set(values)].sort((a, b) => a - b);
 };
 
 const initPortalDataTables = () => {
@@ -73,10 +89,20 @@ const initPortalDataTables = () => {
             wrapper.dataset.perPageSelect ?? '5,10,15,25,50',
         );
 
+        const paging = wrapper.dataset.paging !== 'false';
+        const layout = {
+            title: wrapper.dataset.title ?? '',
+            perPageAtBottom: wrapper.dataset.perPageAtBottom === 'true',
+            hidePagination: wrapper.dataset.hidePagination === 'true',
+        };
+
         const labels = {
             ...defaultLabels,
             ...(wrapper.dataset.searchPlaceholder
                 ? { placeholder: wrapper.dataset.searchPlaceholder }
+                : {}),
+            ...(layout.hidePagination
+                ? { info: 'Showing {start} to {end} of {rows}' }
                 : {}),
         };
 
@@ -96,10 +122,11 @@ const initPortalDataTables = () => {
         new DataTable(table, {
             searchable: true,
             sortable: true,
+            paging,
             perPage,
             perPageSelect,
             labels,
-            template: portalTableTemplate,
+            template: createPortalTableTemplate(layout),
             nextPrev: true,
             firstLast: false,
             ...(columnOptions.length ? { columns: columnOptions } : {}),
@@ -107,6 +134,14 @@ const initPortalDataTables = () => {
 
         table.dataset.datatableInitialized = 'true';
         wrapper.classList.add('portal-datatable-ready');
+
+        if (layout.perPageAtBottom) {
+            wrapper.classList.add('portal-datatable-perpage-bottom');
+        }
+
+        if (layout.hidePagination) {
+            wrapper.classList.add('portal-datatable-no-pagination');
+        }
     });
 };
 

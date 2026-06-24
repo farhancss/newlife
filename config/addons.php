@@ -23,7 +23,7 @@ return [
             'name' => 'Full-Service Summer Storage',
             'price_cents' => 70000,
             'description' => 'We pick everything up at the end of the semester, store it securely over the summer, and deliver it back for fall move-in. No hauling items home, no repacking, no starting from scratch next year.',
-            'icon' => 'box',
+            'icon' => 'storage',
             'url' => 'https://www.newlifecampus.com/reserve-packages/p/essential-package-zzsjx',
         ],
         [
@@ -47,7 +47,7 @@ return [
             'name' => 'Packing Material Removal',
             'price_cents' => 12500,
             'description' => "We remove boxes, wrapping, and leftover packing materials after your move-in is complete. You're left with a clean, organized space from day one.",
-            'icon' => 'sparkles',
+            'icon' => 'star',
             'url' => 'https://www.newlifecampus.com/reserve-packages/p/essential-package-zzsjx-lgsbn',
         ],
         [

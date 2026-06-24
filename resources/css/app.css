@@ -1000,6 +1000,36 @@ pre[class*='language-'] {
   @apply flex flex-col gap-3 border-b border-gray-200 px-4 pb-4 sm:flex-row sm:items-center sm:justify-between;
 }
 
+.portal-datatable-wrapper .portal-dt-title {
+  @apply m-0 text-base font-semibold text-gray-900;
+}
+
+.portal-datatable-wrapper.portal-datatable-retail .portal-dt-title {
+  @apply text-lg font-semibold text-gray-600 sm:text-xl;
+}
+
+.portal-datatable-wrapper.portal-datatable-retail .portal-dt-search-input,
+.portal-datatable-wrapper.portal-datatable-retail .datatable-input {
+  @apply bg-white;
+}
+
+.portal-datatable-wrapper .portal-dt-footer-start {
+  @apply flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4;
+}
+
+.portal-datatable-wrapper.portal-datatable-perpage-bottom .portal-dt-footer {
+  @apply sm:justify-between;
+}
+
+.portal-datatable-wrapper.portal-datatable-no-pagination .portal-dt-footer {
+  @apply sm:justify-start;
+}
+
+.portal-datatable-wrapper.portal-datatable-no-pagination .datatable-pagination,
+.portal-datatable-wrapper.portal-datatable-no-pagination nav.datatable-pagination {
+  @apply hidden;
+}
+
 .portal-datatable-wrapper .portal-dt-perpage {
   @apply flex items-center gap-2;
 }
@@ -1076,6 +1106,14 @@ pre[class*='language-'] {
 
 .portal-datatable-wrapper .datatable-table thead th button {
   @apply relative flex w-full items-center gap-1.5 border-0 bg-transparent p-0 text-left text-xs font-semibold tracking-wide text-gray-500 uppercase;
+}
+
+.portal-datatable-wrapper.portal-datatable-retail .datatable-table thead th {
+  @apply border-b border-gray-200 bg-white px-3 py-3 text-left text-sm font-medium normal-case tracking-normal text-gray-500 first:pl-4 last:pr-4;
+}
+
+.portal-datatable-wrapper.portal-datatable-retail .datatable-table thead th button {
+  @apply relative flex w-full items-center gap-1.5 border-0 bg-transparent p-0 text-left text-sm font-medium normal-case tracking-normal text-gray-500;
 }
 
 .portal-datatable-wrapper .datatable-table thead th button:hover {

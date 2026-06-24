@@ -22,10 +22,10 @@
         <div class="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <h1 class="text-xl font-semibold text-gray-900">Retail Packages</h1>
-                <p class="mt-1 text-sm text-gray-600">
+                <p class="mt-1 text-sm text-gray-500">
                     Log shipments from other retailers so our hub can accept and deliver them to your dorm.
                 </p>
-                <p class="mt-2 text-xs text-gray-500">
+                <p class="mt-2 text-sm text-gray-500">
                     Ship to <span class="font-semibold text-gray-700">{{ $profile->fullName() ?: $profile->user?->name }}</span>
                     · New Life ID <span class="font-mono font-semibold text-gray-700">{{ $profile->new_life_id }}</span>
                     · <span class="font-semibold text-gray-700">{{ $activeCount }} of {{ $activeCap }}</span> active
@@ -35,71 +35,89 @@
                 <span class="rounded-lg bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-500">Active limit reached</span>
             @else
                 <a href="{{ route('student.retail-packages', ['add' => 1]) }}"
-                    class="inline-flex items-center justify-center rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700">
+                    class="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-sm text-white hover:bg-brand-700">
                     Add package
+                    <img src="{{ asset('images/dashboard/add.svg') }}" alt="" class="h-4 w-4 shrink-0" aria-hidden="true" />
                 </a>
             @endif
         </div>
 
-        <div class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-            <p class="font-semibold">Before you ship</p>
-            <ul class="mt-1.5 list-disc space-y-1 pl-5 text-amber-700">
-                <li>Only packages logged here can be accepted at our hub — unlogged deliveries may be refused.</li>
-                <li>Packages arriving after your move-in window may not be guaranteed.</li>
-                <li>Prohibited and restricted items (hazardous materials, perishables, weapons) are not accepted.</li>
+        <div class="rounded-2xl border border-gray-200 bg-white p-5 sm:p-6">
+            <h2 class="text-base font-semibold text-gray-600">Before you ship</h2>
+            <ul class="mt-4 space-y-3 text-sm text-gray-500">
+                <li class="flex items-start gap-2.5">
+                    <img src="{{ asset('images/dashboard/bullet.svg') }}" alt="" class="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                    <span>Only packages logged here can be accepted at our hub — unlogged deliveries may be refused.</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                    <img src="{{ asset('images/dashboard/bullet.svg') }}" alt="" class="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                    <span>Packages arriving after your move-in window may not be guaranteed.</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                    <img src="{{ asset('images/dashboard/bullet.svg') }}" alt="" class="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                    <span>Prohibited and restricted items (hazardous materials, perishables, weapons) are not accepted.</span>
+                </li>
             </ul>
         </div>
 
-        <x-portal.data-table table-class="min-w-[820px]">
+        <x-portal.data-table
+            title="Retail item Activities"
+            variant="retail"
+            :paging="true"
+            :hide-pagination="true"
+            :per-page-at-bottom="true"
+            search-placeholder="Search or type command..."
+            table-class="min-w-[820px]"
+        >
             <thead>
                 <tr>
+                    <th>Tracking ID</th>
                     <th>Item</th>
-                    <th>Retailer</th>
-                    <th>Tracking #</th>
-                    <th>Status</th>
+                    <th>Retail</th>
                     <th>ETA</th>
+                    <th data-sortable="false">Status</th>
                     <th data-sortable="false"></th>
                 </tr>
             </thead>
             <tbody>
                 @forelse ($packages as $package)
                     @php $trackUrl = $package->tracking_url ?: $carrierLinkBuilder->build($package->retailer, $package->tracking_number); @endphp
-                    <tr class="hover:bg-gray-50/80">
-                        <td class="font-medium text-gray-900">{{ $package->description }}</td>
-                        <td>{{ $package->retailer }}</td>
-                        <td class="font-mono text-xs">
+                    <tr>
+                        <td class="font-medium text-gray-900">
                             @if ($trackUrl)
-                                <a href="{{ $trackUrl }}" target="_blank" rel="noopener noreferrer" class="text-brand-500 hover:underline">
-                                    {{ $package->tracking_number }}
+                                <a href="{{ $trackUrl }}" target="_blank" rel="noopener noreferrer" class="hover:text-brand-500 hover:underline">
+                                    #{{ $package->tracking_number }}
                                 </a>
                             @else
-                                {{ $package->tracking_number }}
+                                #{{ $package->tracking_number }}
                             @endif
+                        </td>
+                        <td class="text-gray-700">{{ $package->description }}</td>
+                        <td class="text-gray-500">{{ $package->retailer }}</td>
+                        <td class="text-gray-500">
+                            {{ $package->estimated_arrival ? $package->estimated_arrival->format('j M Y g:i a') : '—' }}
                         </td>
                         <td>
                             <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold {{ $statusBadge($package->status) }}">
                                 {{ $package->statusLabel() }}
                             </span>
                         </td>
-                        <td class="text-xs text-gray-700">
-                            {{ $package->estimated_arrival ? $package->estimated_arrival->format('M j, Y') : '—' }}
-                        </td>
-                        <td class="text-right whitespace-nowrap">
+                        <td class="whitespace-nowrap">
                             @if ($package->isEditable())
                                 <a href="{{ route('student.retail-packages', ['edit' => $package->id]) }}"
-                                    class="inline-flex rounded-lg px-3 py-1.5 text-sm font-semibold text-brand-500 hover:bg-brand-50">
+                                    class="text-sm font-medium text-brand-500 hover:underline">
                                     Edit
                                 </a>
                                 <form action="{{ route('student.retail-packages.destroy', $package) }}" method="POST" class="inline"
                                     onsubmit="return confirm('Remove this package?');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="inline-flex rounded-lg px-3 py-1.5 text-sm font-semibold text-red-600 hover:bg-red-50">
+                                    <button type="submit" class="ml-3 text-sm font-medium text-red-500 hover:underline">
                                         Remove
                                     </button>
                                 </form>
                             @else
-                                <span class="text-xs text-gray-400">Locked</span>
+                                <span class="inline-flex rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-500">Locked</span>
                             @endif
                         </td>
                     </tr>
