@@ -90,8 +90,14 @@ class AdminContainerController extends Controller
 
         $studentName = $container->studentProfile->fullName() ?: $container->studentProfile->user?->name;
 
+        $message = "Container {$container->code} for {$studentName} saved — status is now {$container->statusLabel()}.";
+
+        if (!empty(trim((string) ($validated['status_note'] ?? '')))) {
+            $message .= ' Audit note recorded.';
+        }
+
         return redirect()
             ->route('admin.containers')
-            ->with('status', "Container {$container->code} for {$studentName} saved — status is now {$container->statusLabel()}.");
+            ->with('status', $message);
     }
 }

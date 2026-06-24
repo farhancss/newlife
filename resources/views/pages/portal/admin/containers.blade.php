@@ -214,7 +214,25 @@
                             <div>
                                 <label for="status_note" class="mb-1.5 block text-sm font-medium text-gray-700">Status note (audit)</label>
                                 <input id="status_note" name="status_note" type="text" value="{{ old('status_note') }}"
+                                    placeholder="Add a note to log with this update…"
                                     class="h-11 w-full rounded-xl border border-gray-300 px-3 text-sm" />
+
+                                @php $savedNotes = $editing->statusHistories->filter(fn ($h) => filled($h->note)); @endphp
+                                @if ($savedNotes->isNotEmpty())
+                                    <div class="mt-2 space-y-2 rounded-xl border border-gray-100 bg-gray-50 p-3">
+                                        <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Saved notes</p>
+                                        <ul class="space-y-2">
+                                            @foreach ($savedNotes->take(6) as $history)
+                                                <li class="text-xs text-gray-700">
+                                                    <p>{{ $history->note }}</p>
+                                                    <p class="mt-0.5 text-[11px] text-gray-400">
+                                                        {{ $history->toStatusLabel() }} · {{ $history->created_at->format('M j, Y · g:i A') }}@if ($history->changedBy) · {{ $history->changedBy->name }}@endif
+                                                    </p>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
                             </div>
 
                             <div>
