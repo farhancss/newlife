@@ -13,12 +13,6 @@
                 <h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">My Move</h1>
                 <p class="mt-1 text-sm text-gray-600">Track containers from home shipment through dorm delivery.</p>
             </div>
-            @if ($package)
-                <div class="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-4 py-2 text-sm font-semibold text-brand-500">
-                    <span class="h-2 w-2 rounded-full bg-brand-500"></span>
-                    Move includes {{ $containerAllowance }} {{ \Illuminate\Support\Str::plural('container', $containerAllowance) }}
-                </div>
-            @endif
         </div>
 
         {{-- Package from Squarespace --}}
@@ -32,59 +26,54 @@
             </p>
         @endif
 
-        {{-- Move progress — inline horizontal state timeline --}}
-        <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-            <div class="border-b border-gray-100 bg-gradient-to-r from-slate-50 to-white px-5 py-5 sm:px-8">
-                <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        {{-- Move progress --}}
+        <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white">
+            <div class="border-b border-gray-200 px-5 py-5 sm:px-8">
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div>
-                        <h2 class="text-base font-semibold text-gray-900">Move progress</h2>
+                        <h2 class="text-base text-md font-medium text-gray-600">Move progress</h2>
                         @if ($primaryContainer)
                             @php
                                 $currentStepIndex = collect($timeline)->search(fn ($s) => $s['current']);
                                 $currentStepNumber = $currentStepIndex === false ? 1 : $currentStepIndex + 1;
                                 $lastUpdate = $primaryContainer->statusHistories->first();
                             @endphp
-                            <p class="mt-1 text-sm text-gray-600">
+                            <p class="mt-2 text-sm text-gray-500">
                                 Step {{ $currentStepNumber }} of 12
-                                <span class="text-gray-300">·</span>
-                                <span class="font-semibold text-green-700">{{ $primaryContainer->statusLabel() }}</span>
-                                <span class="text-gray-300">·</span>
-                                <span class="font-mono text-xs text-gray-500">{{ $primaryContainer->code }}</span>
+                                <span class="text-gray-400">·</span>
+                                <span class="font-semibold text-green-600">{{ $primaryContainer->statusLabel() }}</span>
+                                <span class="text-gray-400">·</span>
+                                <span class="text-gray-600">{{ $primaryContainer->code }}</span>
                             </p>
-                            <p class="mt-1.5 text-sm text-gray-500">
+                            <p class="mt-1 text-sm text-gray-500">
                                 Ship by
-                                <span class="font-semibold text-gray-700">{{ $primaryContainer->ship_by_date ? $primaryContainer->ship_by_date->format('M j, Y') : 'To be scheduled' }}</span>
-                                @if ($primaryContainer->ship_by_date)
-                                    <span class="text-xs text-gray-400">({{ $primaryContainer->ship_by_date->isFuture() ? $primaryContainer->ship_by_date->diffForHumans(null, \Carbon\CarbonInterface::DIFF_RELATIVE_TO_NOW) : 'date passed' }})</span>
-                                @endif
-                                <span class="text-gray-300">·</span>
+                                <span class="font-semibold text-brand-900">{{ $primaryContainer->ship_by_date ? $primaryContainer->ship_by_date->format('M j, Y') : 'To be scheduled' }}</span>
+                                <span class="text-gray-400">·</span>
                                 Updated
-                                <span class="font-semibold text-gray-700">{{ $lastUpdate ? $lastUpdate->created_at->format('M j, Y') : $primaryContainer->updated_at->format('M j, Y') }}</span>
+                                <span class="font-semibold text-brand-900">{{ $lastUpdate ? $lastUpdate->created_at->format('M j, Y') : $primaryContainer->updated_at->format('M j, Y') }}</span>
                             </p>
                         @else
-                            <p class="mt-1 text-sm text-amber-700">Waiting for your first container assignment.</p>
+                            <p class="mt-2 text-sm text-amber-700">Waiting for your first container assignment.</p>
                         @endif
                     </div>
-                    <div class="flex flex-wrap items-center gap-3 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs text-gray-600 shadow-sm">
-                        <span class="inline-flex items-center gap-1.5">
-                            <span class="h-2 w-2 rounded-full bg-brand-500"></span>
+                    <div class="flex shrink-0 flex-wrap items-center gap-4 rounded-full border border-gray-200 bg-white px-4 py-2 text-xs text-gray-600">
+                        <span class="inline-flex items-center gap-2">
+                            <span class="h-2.5 w-2.5 rounded-full bg-brand-300"></span>
                             Done
                         </span>
-                        <span class="h-3 w-px bg-gray-200" aria-hidden="true"></span>
-                        <span class="inline-flex items-center gap-1.5">
-                            <span class="h-2 w-2 rounded-full bg-green-500 ring-2 ring-green-100"></span>
+                        <span class="inline-flex items-center gap-2">
+                            <span class="h-2.5 w-2.5 rounded-full bg-green-500"></span>
                             Active
                         </span>
-                        <span class="h-3 w-px bg-gray-200" aria-hidden="true"></span>
-                        <span class="inline-flex items-center gap-1.5">
-                            <span class="h-2 w-2 rounded-full border border-gray-300 bg-white"></span>
+                        <span class="inline-flex items-center gap-2">
+                            <span class="h-2.5 w-2.5 rounded-full border border-gray-300 bg-white"></span>
                             Next
                         </span>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-gradient-to-b from-white to-slate-50/80 px-4 py-6 sm:px-6 sm:py-8">
+            <div class="px-4 py-6 sm:px-8 sm:py-8">
                 @php
                     $timelineActiveIndex = collect($timeline)->search(fn ($s) => $s['current']);
                     $timelineActiveIndex = $timelineActiveIndex === false ? 0 : (int) $timelineActiveIndex;
@@ -95,27 +84,26 @@
 
         {{-- Move shipment + container photos --}}
         @if ($primaryContainer)
-            <div class="grid gap-6 lg:grid-cols-3 lg:items-start">
-                <div class="lg:col-span-1">
-                    <h2 class="mb-4 text-lg font-semibold text-gray-900">Your move shipment</h2>
+            <div class="grid gap-6 lg:grid-cols-3 lg:items-stretch">
+                <div class="lg:col-span-1 flex">
                     <x-move.container-card
+                        class="w-full"
                         :container="$primaryContainer"
                         :fed-ex-link-service="$fedExLinkService"
                         :quantity="$containerAllowance"
                         :is-primary="true"
+                        section-title="Your move shipment"
                     />
                 </div>
 
                 @if ($containers->isNotEmpty())
-                    <div class="space-y-4 lg:col-span-2">
-                        <div>
-                            <h2 class="text-lg font-semibold text-gray-900">Container photos</h2>
-                            <p class="mt-1 text-sm text-gray-600">
-                                Upload exterior photos of your container while it is being packed. Failure to upload photos may impact damage claim processing.
-                            </p>
-                        </div>
+                    <div class="lg:col-span-2 flex flex-col">
                         @foreach ($containers as $container)
-                            <x-move.container-photos :container="$container" />
+                            <x-move.container-photos
+                                class="w-full flex-1"
+                                :container="$container"
+                                :show-section-header="$loop->first"
+                            />
                         @endforeach
                     </div>
                 @endif
