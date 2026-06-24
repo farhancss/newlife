@@ -31,23 +31,6 @@
         </a>
     </div>
 
-    {{-- Student portal + package card --}}
-    <div class="px-4" x-show="{{ $sidebarExpanded }}">
-        <div class="rounded-xl border border-brand-100 bg-gradient-to-br from-brand-50 to-white p-3.5 text-center shadow-theme-xs">
-            <p class="text-sm font-semibold text-gray-900">Student Portal</p>
-            @if ($packageLabel)
-                <span
-                    class="mt-3 inline-flex w-full items-center justify-center rounded-xl bg-brand-400 px-4 py-2.5 text-sm font-semibold text-white shadow-theme-xs">
-                    {{ $packageLabel }}
-                </span>
-            @else
-                <span
-                    class="mt-3 inline-flex w-full items-center justify-center rounded-xl border border-dashed border-gray-300 bg-white px-4 py-2.5 text-xs font-medium text-gray-500">
-                    No package assigned
-                </span>
-            @endif
-        </div>
-    </div>
 
     @if (!empty($profileCompletion) && !$profileCompletion['is_complete'])
         <div class="mx-4 mt-4 rounded-xl border border-warning-200 bg-warning-50 p-3"

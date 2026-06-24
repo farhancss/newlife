@@ -39,21 +39,6 @@
 <div {{ $attributes->merge(['class' => 'flex min-h-[220px] flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-theme-xs']) }}>
     <x-dashboard.summary-card-header title="Upcoming Deadlines" :href="route('student.deadlines')" />
 
-    <div class="mt-3 flex flex-wrap items-center justify-end gap-4 text-xs text-gray-500">
-        <span class="inline-flex items-center gap-1.5">
-            <span class="h-2.5 w-2.5 rounded-sm {{ $priorityStyles['high']['legend'] }}"></span>
-            High
-        </span>
-        <span class="inline-flex items-center gap-1.5">
-            <span class="h-2.5 w-2.5 rounded-sm {{ $priorityStyles['moderate']['legend'] }}"></span>
-            Moderate
-        </span>
-        <span class="inline-flex items-center gap-1.5">
-            <span class="h-2.5 w-2.5 rounded-sm {{ $priorityStyles['low']['legend'] }}"></span>
-            Low
-        </span>
-    </div>
-
     <ul class="mt-3 flex-1 divide-y divide-gray-100">
         @forelse ($deadlines->take(3) as $deadline)
             @php
@@ -70,7 +55,7 @@
                 </span>
             </li>
         @empty
-            <li class="py-6 text-sm text-gray-500">No active deadlines — you're all caught up.</li>
+            <li class="text-sm text-gray-500">No active deadlines — you're all caught up.</li>
         @endforelse
     </ul>
 </div>

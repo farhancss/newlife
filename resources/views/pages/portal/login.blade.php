@@ -71,10 +71,6 @@
 
                             <div class="flex flex-wrap items-center justify-between gap-3">
                                 <label class="inline-flex cursor-pointer items-center gap-2.5">
-                                    <input type="checkbox" name="remember" value="1"
-                                        {{ old('remember') ? 'checked' : '' }}
-                                        class="h-4 w-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500/20" />
-                                    <span class="text-sm text-gray-600">Keep me logged in</span>
                                 </label>
                                 <a href="{{ route('password.request') }}"
                                     class="text-sm font-medium text-brand-500 transition hover:text-brand-500">
