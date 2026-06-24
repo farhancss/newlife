@@ -41,7 +41,7 @@ final class ContainerStatus
     public static function label(string $status): string
     {
         return match ($status) {
-            self::CONTAINER_PREPARED => 'Container Prepared',
+            self::CONTAINER_PREPARED => 'Container Preparation',
             self::LABEL_GENERATED => 'Label Generated',
             self::SHIPPED_TO_HOME => 'Shipped to Home',
             self::DELIVERED_TO_HOME => 'Delivered to Home',

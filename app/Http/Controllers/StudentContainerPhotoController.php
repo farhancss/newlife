@@ -34,7 +34,7 @@ class StudentContainerPhotoController extends Controller
 
         if (count($files) > $remaining) {
             return back()->withErrors([
-                'photos' => "You can upload {$remaining} more photo(s) for this container.",
+                'photos' => "You can upload up to 5 photos per move.",
             ]);
         }
 

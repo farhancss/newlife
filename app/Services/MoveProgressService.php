@@ -91,6 +91,13 @@ class MoveProgressService
 
         foreach ($steps as $step) {
             if ($step['state'] === 'active') {
+                // The profile milestone is titled "Profile Completed" in the
+                // stepper, but while it's the active (in-progress) step the
+                // student is still onboarding and hasn't finished their profile.
+                if ($step['key'] === self::STEP_PROFILE && ! $profile->isOnboardingComplete()) {
+                    return 'Student Onboarding';
+                }
+
                 return $step['label'];
             }
         }

@@ -72,6 +72,12 @@ class ContainerWorkflowService
         $fromStatus = $container->status;
 
         if ($fromStatus === $toStatus) {
+            // Status unchanged: still persist the audit note (if any) so admins
+            // can log context without having to advance the workflow stage.
+            if ($note !== null && trim($note) !== '') {
+                $this->recordHistory($container, $fromStatus, $toStatus, $actor, $note);
+            }
+
             return $container;
         }
 
