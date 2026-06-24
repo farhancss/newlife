@@ -31,7 +31,7 @@
         </a>
     </div>
 
-    {{-- Student portal + package card --}}
+        {{-- Student portal + package card --}}
     <div class="px-4" x-show="{{ $sidebarExpanded }}">
         <div class="rounded-xl border border-brand-100 bg-gradient-to-br from-brand-50 to-white p-3.5 text-center shadow-theme-xs">
             <p class="text-sm font-semibold text-gray-900">Student Portal</p>

@@ -25,7 +25,7 @@
         </div>
 
         {{-- Quick links --}}
-        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             <x-dashboard.quick-link-card
                 :href="route('student.retail-packages')"
                 title="Retail Packages"
@@ -47,13 +47,13 @@
                 icon="addons"
                 arrow-class="h-7 w-7"
             />
-            <x-dashboard.quick-link-card
+            <!-- <x-dashboard.quick-link-card
                 :href="route('student.support')"
                 title="Help & Support"
                 subtitle="Get Help"
                 icon="phone"
                 arrow-class="h-7 w-7"
-            />
+            /> -->
         </div>
 
         {{-- Three summary cards --}}

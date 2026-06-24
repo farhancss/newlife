@@ -56,13 +56,6 @@
             @endforeach
         </ol>
 
-        {{-- Step numbers --}}
-        <ol class="mt-3 grid grid-cols-6 gap-2" aria-hidden="true">
-            @foreach ($steps as $step)
-                <li class="text-center text-xs font-medium text-[#475467]">{{ $step['number'] }}</li>
-            @endforeach
-        </ol>
-
         {{-- Step labels --}}
         <ol class="mt-2 grid grid-cols-6 gap-2">
             @foreach ($steps as $step)
