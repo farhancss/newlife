@@ -500,6 +500,20 @@
 .flatpickr-day.prevMonthDay {
   @apply !text-gray-400;
 }
+/* Disabled / out-of-range days (e.g. dates before minDate or after maxDate)
+   are greyed out and non-interactive across every calendar in the app. */
+.flatpickr-day.flatpickr-disabled,
+.flatpickr-day.flatpickr-disabled:hover,
+.flatpickr-day.flatpickr-disabled:focus,
+.flatpickr-day.prevMonthDay.flatpickr-disabled,
+.flatpickr-day.nextMonthDay.flatpickr-disabled,
+.flatpickr-day.notAllowed,
+.flatpickr-day.notAllowed:hover,
+.flatpickr-day.notAllowed.prevMonthDay,
+.flatpickr-day.notAllowed.nextMonthDay {
+  @apply !cursor-not-allowed !border-transparent !bg-transparent !text-gray-300 dark:!text-white/20;
+  opacity: 0.6;
+}
 .flatpickr-months .flatpickr-prev-month,
 .flatpickr-months .flatpickr-next-month {
   @apply !top-7 dark:!fill-white dark:!text-white;

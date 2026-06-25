@@ -181,6 +181,71 @@ class NotificationService
         });
     }
 
+    /**
+     * Notify every site admin that a student has requested an end-of-year dorm
+     * pickup so their containers can be moved into summer storage.
+     *
+     * @return \Illuminate\Support\Collection<int, PortalNotification>
+     */
+    public function storagePickupRequestedByStudent(\App\Models\StoragePickup $pickup, ?User $student = null): \Illuminate\Support\Collection
+    {
+        $profile = $pickup->studentProfile;
+        $studentName = $profile->fullName() ?: $profile->user?->name;
+        $newLifeId = $profile->new_life_id;
+        $pickupDate = $pickup->requested_pickup_date->format('M j, Y');
+
+        $admins = User::query()->where('role', UserRole::ADMIN)->get();
+
+        return $admins->map(function (User $admin) use ($pickup, $student, $studentName, $newLifeId, $pickupDate): PortalNotification {
+            return $this->notify(
+                recipient: $admin,
+                category: NotificationCategory::SHIPMENT,
+                type: 'storage.pickup_requested',
+                title: 'End-of-year pickup requested',
+                body: $studentName . ' (' . $newLifeId . ') requested an end-of-year dorm pickup for ' . $pickupDate
+                    . '. Collect their containers from ' . $pickup->pickup_location . ' and move them into storage.',
+                url: route('admin.storage-pickups', ['edit' => $pickup->id]),
+                actor: $student,
+                meta: ['storage_pickup_id' => $pickup->id, 'status' => $pickup->status],
+            );
+        });
+    }
+
+    /**
+     * Confirm an end-of-year pickup status change to the student (e.g. a date
+     * was confirmed, items were picked up, or returned for the new cycle).
+     */
+    public function storagePickupStatusChanged(\App\Models\StoragePickup $pickup): ?PortalNotification
+    {
+        $recipient = $pickup->studentProfile?->user;
+
+        if ($recipient === null) {
+            return null;
+        }
+
+        $date = $pickup->confirmed_pickup_date ?? $pickup->requested_pickup_date;
+
+        $body = match ($pickup->status) {
+            \App\Enums\StoragePickupStatus::SCHEDULED => 'Your end-of-year dorm pickup is confirmed for ' . $date->format('M j, Y') . '. Please have your containers ready.',
+            \App\Enums\StoragePickupStatus::PICKED_UP => 'We picked up your containers from your dorm. They are on the way to summer storage.',
+            \App\Enums\StoragePickupStatus::IN_STORAGE => 'Your containers are now safely in summer storage and will be re-delivered for the next academic cycle.',
+            \App\Enums\StoragePickupStatus::OUT_FOR_RETURN => 'Your stored containers are out for return delivery for the new academic cycle.',
+            \App\Enums\StoragePickupStatus::RETURNED => 'Your containers have been returned for the new academic cycle. Welcome back!',
+            \App\Enums\StoragePickupStatus::CANCELLED => 'Your end-of-year pickup request has been cancelled. Contact us if this was unexpected.',
+            default => 'Your end-of-year pickup status is now: ' . $pickup->statusLabel() . '.',
+        };
+
+        return $this->notify(
+            recipient: $recipient,
+            category: NotificationCategory::SHIPMENT,
+            type: 'storage.' . $pickup->status,
+            title: 'End-of-year pickup update',
+            body: $body,
+            url: route('student.move-tracking'),
+            meta: ['storage_pickup_id' => $pickup->id, 'status' => $pickup->status],
+        );
+    }
+
     public function retailPackageStatusChanged(RetailPackage $package, string $toStatus): ?PortalNotification
     {
         $event = self::RETAIL_EVENTS[$toStatus] ?? null;

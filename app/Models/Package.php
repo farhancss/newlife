@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $price_cents
  * @property int $container_count
  * @property bool $includes_move_out_cycle
+ * @property bool $includes_storage
  * @property bool $is_featured
  * @property int $sort_order
  * @property list<string>|null $features
@@ -26,6 +27,7 @@ class Package extends Model
         'price_cents',
         'container_count',
         'includes_move_out_cycle',
+        'includes_storage',
         'is_featured',
         'sort_order',
         'features',
@@ -37,10 +39,20 @@ class Package extends Model
             'price_cents' => 'integer',
             'container_count' => 'integer',
             'includes_move_out_cycle' => 'boolean',
+            'includes_storage' => 'boolean',
             'is_featured' => 'boolean',
             'sort_order' => 'integer',
             'features' => 'array',
         ];
+    }
+
+    /**
+     * Whether this package bundles end-of-year summer storage, which lets the
+     * student schedule a dorm pickup without buying a separate storage add-on.
+     */
+    public function includesStorage(): bool
+    {
+        return $this->includes_storage === true;
     }
 
     /** @return HasMany<StudentProfile, $this> */

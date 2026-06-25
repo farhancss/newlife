@@ -29,6 +29,9 @@ class StudentAddOn extends Model
     /** Catalog slug for the add-on that provisions a trackable container. */
     public const ADDITIONAL_CONTAINER_SLUG = 'additional-container';
 
+    /** Catalog slug for the end-of-year summer storage add-on. */
+    public const SUMMER_STORAGE_SLUG = 'full-service-summer-storage';
+
     protected $fillable = [
         'student_profile_id',
         'add_on_slug',

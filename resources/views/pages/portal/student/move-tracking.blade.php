@@ -4,9 +4,13 @@
     @php
         $address = $profile->shippingAddress;
         $assignedCount = $containers->count();
+        // The end-of-year section is collapsed by default; reveal it only after
+        // the student taps the CTA, or when there's an existing pickup / a
+        // validation error to surface.
+        $revealEndOfYear = ($activeStoragePickup ?? null) !== null || $errors->isNotEmpty() || old('requested_pickup_date') !== null;
     @endphp
 
-    <div class="space-y-6">
+    <div class="space-y-6" x-data="{ showEndOfYear: {{ $revealEndOfYear ? 'true' : 'false' }} }">
         {{-- Page header --}}
         <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
@@ -80,6 +84,18 @@
                 @endphp
                 <x-move.status-timeline :steps="$timeline" :active-index="$timelineActiveIndex" />
             </div>
+
+            @if (($showEndOfYearPickup ?? false) && $primaryContainer)
+                <div class="flex flex-col gap-3 border-t border-gray-200 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+                    <p class="text-sm text-gray-500">Your move is complete — ready to plan summer storage?</p>
+                    <a href="#end-of-year-pickup"
+                        x-on:click.prevent="showEndOfYear = true; $nextTick(() => document.getElementById('end-of-year-pickup')?.scrollIntoView({ behavior: 'smooth', block: 'start' }))"
+                        class="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-700">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3M4 11h16M5 5h14a1 1 0 011 1v13a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1z"/></svg>
+                        Schedule end-of-year pickup
+                    </a>
+                </div>
+            @endif
         </div>
 
         {{-- Move shipment + container photos --}}
@@ -107,6 +123,28 @@
                         @endforeach
                     </div>
                 @endif
+            </div>
+        @endif
+
+        @if (($showEndOfYearPickup ?? false) && $primaryContainer)
+            @php
+                $housing = $profile->housingInfo;
+                $dormAddress = $housing
+                    ? collect([$housing->residence_hall, $housing->building, $housing->room ? 'Room ' . $housing->room : null])
+                        ->filter()
+                        ->implode(', ')
+                    : '';
+            @endphp
+            <div id="end-of-year-pickup" class="scroll-mt-24" x-show="showEndOfYear" x-cloak>
+                <x-move.end-of-year-pickup
+                    :container="$primaryContainer"
+                    :eligible="$storageEligible ?? false"
+                    :storage-add-on="$storageAddOn ?? null"
+                    :active-pickup="$activeStoragePickup ?? null"
+                    :timeline="$storagePickupTimeline ?? []"
+                    :default-location="$dormAddress"
+                    :default-container-count="$containerAllowance ?? 1"
+                />
             </div>
         @endif
 

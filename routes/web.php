@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminDevToolsController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminNotificationController;
 use App\Http\Controllers\AdminRetailPackageController;
+use App\Http\Controllers\AdminStoragePickupController;
 use App\Http\Controllers\AdminStudentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChangePasswordController;
@@ -22,6 +23,7 @@ use App\Http\Controllers\StudentNotificationController;
 use App\Http\Controllers\StudentProfileController;
 use App\Http\Controllers\StudentRetailPackageController;
 use App\Http\Controllers\StudentSettingsController;
+use App\Http\Controllers\StudentStoragePickupController;
 use App\Mail\ResetPasswordMail;
 use App\Mail\OnboardingCompleteMail;
 use App\Mail\PasswordChangedMail;
@@ -135,6 +137,9 @@ Route::prefix('student')->name('student.')->middleware([
     Route::post('/move-tracking/containers/{container}/schedule-pickup', [StudentMoveTrackingController::class, 'schedulePickup'])
         ->middleware('throttle:10,1')
         ->name('move-tracking.schedule-pickup');
+    Route::post('/move-tracking/containers/{container}/end-of-year-pickup', [StudentStoragePickupController::class, 'store'])
+        ->middleware('throttle:10,1')
+        ->name('move-tracking.end-of-year-pickup');
 
     Route::get('/add-ons', [StudentAddOnController::class, 'index'])->name('add-ons');
     Route::get('/add-ons/purchases/{studentAddOn}', [StudentAddOnController::class, 'show'])->name('add-ons.show');
@@ -207,6 +212,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
 
     Route::get('/add-ons', [AdminAddOnController::class, 'index'])->name('add-ons');
     Route::get('/add-ons/{studentAddOn}', [AdminAddOnController::class, 'show'])->name('add-ons.show');
+
+    Route::get('/storage-pickups', [AdminStoragePickupController::class, 'index'])->name('storage-pickups');
+    Route::put('/storage-pickups/{storagePickup}', [AdminStoragePickupController::class, 'update'])
+        ->middleware('throttle:30,1')
+        ->name('storage-pickups.update');
 
     Route::get('/deadlines', [AdminDeadlineController::class, 'index'])->name('deadlines');
 

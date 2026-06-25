@@ -34,6 +34,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property-read HousingInfo|null $housingInfo
  * @property-read \Illuminate\Database\Eloquent\Collection<int, StudentSubscription> $subscriptions
  * @property-read \Illuminate\Database\Eloquent\Collection<int, StudentAddOn> $addOns
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, StoragePickup> $storagePickups
  */
 class StudentProfile extends Model
 {
@@ -120,6 +121,12 @@ class StudentProfile extends Model
     public function deadlines(): HasMany
     {
         return $this->hasMany(Deadline::class);
+    }
+
+    /** @return HasMany<StoragePickup, $this> */
+    public function storagePickups(): HasMany
+    {
+        return $this->hasMany(StoragePickup::class)->latest();
     }
 
     public function hasAcknowledgedRetailTerms(): bool

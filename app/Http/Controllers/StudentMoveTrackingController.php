@@ -9,6 +9,8 @@ use App\Services\ContainerWorkflowService;
 use App\Services\FedExLinkService;
 use App\Services\MoveProgressService;
 use App\Services\NotificationService;
+use App\Services\StorageEligibilityService;
+use App\Services\StoragePickupService;
 use App\Services\StudentPackageService;
 use App\Services\StudentProfileService;
 use Illuminate\Http\RedirectResponse;
@@ -25,6 +27,8 @@ class StudentMoveTrackingController extends Controller
         private readonly StudentPackageService $studentPackageService,
         private readonly MoveProgressService $moveProgressService,
         private readonly NotificationService $notifications,
+        private readonly StorageEligibilityService $storageEligibility,
+        private readonly StoragePickupService $storagePickupService,
     ) {
     }
 
@@ -33,7 +37,7 @@ class StudentMoveTrackingController extends Controller
         /** @var User $user */
         $user = Auth::user();
         $profile = $this->studentProfileService->ensureForUser($user);
-        $profile->load(['shippingAddress', 'package', 'containers.statusHistories', 'containers.photos']);
+        $profile->load(['shippingAddress', 'housingInfo', 'package', 'containers.statusHistories', 'containers.photos']);
 
         $package = $this->studentPackageService->resolve($profile);
         $containers = $profile->containers
@@ -45,6 +49,15 @@ class StudentMoveTrackingController extends Controller
             ? $this->workflowService->timelineFor($primary)
             : $this->defaultTimeline();
         $containerAllowance = $this->studentPackageService->containerAllowance($profile);
+
+        // End-of-year storage & return: the "next journey" that unlocks once the
+        // move container has reached the final stage (Delivered to Dorm).
+        $deliveredToDorm = $primary instanceof Container && $primary->status === ContainerStatus::DELIVERED_TO_DORM;
+        $storageEligible = $this->storageEligibility->isEligible($profile);
+        $activeStoragePickup = $this->storagePickupService->activeFor($profile);
+        $storagePickupTimeline = $activeStoragePickup !== null
+            ? $this->storagePickupService->timelineFor($activeStoragePickup)
+            : [];
 
         return view('pages.portal.student.move-tracking', [
             'title' => 'Move Tracking',
@@ -67,6 +80,11 @@ class StudentMoveTrackingController extends Controller
             'showPickupInstructions' => $primary && $primary->status === ContainerStatus::CUSTOMER_PACKING,
             'pickupPhotosUploaded' => $primary instanceof Container && $primary->photos->isNotEmpty(),
             'fedExLinkService' => $this->fedExLinkService,
+            'showEndOfYearPickup' => $deliveredToDorm,
+            'storageEligible' => $storageEligible,
+            'storageAddOn' => $storageEligible ? null : $this->storageEligibility->storageAddOn(),
+            'activeStoragePickup' => $activeStoragePickup,
+            'storagePickupTimeline' => $storagePickupTimeline,
         ]);
     }
 

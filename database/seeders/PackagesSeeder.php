@@ -17,6 +17,7 @@ class PackagesSeeder extends Seeder
                 'price_cents' => 135000,
                 'container_count' => 3,
                 'includes_move_out_cycle' => false,
+                'includes_storage' => false,
                 'is_featured' => false,
                 'sort_order' => 1,
                 'features' => [
@@ -32,6 +33,7 @@ class PackagesSeeder extends Seeder
                 'price_cents' => 230000,
                 'container_count' => 5,
                 'includes_move_out_cycle' => true,
+                'includes_storage' => true,
                 'is_featured' => true,
                 'sort_order' => 2,
                 'features' => [
@@ -47,6 +49,7 @@ class PackagesSeeder extends Seeder
                 'price_cents' => 310000,
                 'container_count' => 7,
                 'includes_move_out_cycle' => true,
+                'includes_storage' => true,
                 'is_featured' => false,
                 'sort_order' => 3,
                 'features' => [
