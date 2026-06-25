@@ -3,60 +3,65 @@
     'fedExLinkService',
     'isPrimary' => false,
     'quantity' => null,
+    'sectionTitle' => null,
 ])
 
 @php
     $outUrl = $fedExLinkService->trackingUrl($container->outbound_tracking);
+    $returnUrl = $fedExLinkService->trackingUrl($container->return_tracking);
 @endphp
 
-<article @class([
-    'flex flex-col rounded-2xl border bg-white p-5 shadow-sm transition hover:shadow-md',
-    'border-brand-300 ring-2 ring-brand-100' => $isPrimary,
-    'border-gray-200' => !$isPrimary,
-])>
-    <div class="flex items-start justify-between gap-3">
-        <div>
-            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">{{ $container->isAddOn() ? 'Add-on container' : 'Move shipment' }}</p>
-            <h3 class="text-lg font-bold text-gray-900">{{ $container->code }}</h3>
-            @if ($quantity)
-                <p class="mt-0.5 text-xs text-gray-500">Includes {{ $quantity }} {{ \Illuminate\Support\Str::plural('container', $quantity) }}</p>
-            @endif
+<article {{ $attributes->merge(['class' => 'flex h-full w-full flex-col rounded-2xl border border-gray-200 bg-white p-5 sm:p-6']) }}>
+    @if ($sectionTitle)
+        <h2 class="mb-4 text-lg font-medium text-gray-500">{{ $sectionTitle }}</h2>
+    @endif
+
+    <div class="rounded-xl bg-[#F3F5FF] px-4 py-4">
+        <div class="flex items-start justify-between gap-5">
+            <div class="min-w-0">
+                <p class="text-sm text-gray-500">{{ $container->isAddOn() ? 'Add-on container' : 'Move shipment' }}</p>
+                @if ($quantity)
+                    <p class="mt-2 text-sm text-gray-500">Includes {{ $quantity }} {{ \Illuminate\Support\Str::plural('container', $quantity) }}</p>
+                @endif
+            </div>
+            <p class="shrink-0 text-md font-medium text-gray-900">{{ $container->code }}</p>
         </div>
-        <span class="inline-flex shrink-0 rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-500">
-            {{ $container->statusLabel() }}
-        </span>
     </div>
 
-    <dl class="mt-4 flex-1 space-y-2 text-sm text-gray-600">
+    <dl class="mt-5 space-y-3 text-sm">
         @if ($container->location)
-            <div class="flex justify-between gap-2">
-                <dt>Location</dt>
-                <dd class="font-medium text-gray-900">{{ $container->location }}</dd>
+            <div class="flex items-start justify-between gap-4">
+                <dt class="text-gray-500">Location</dt>
+                <dd class="text-right text-gray-500">{{ $container->location }}</dd>
             </div>
         @endif
         @if ($container->ship_by_date)
-            <div class="flex justify-between gap-2">
-                <dt>Ship by</dt>
-                <dd class="font-medium text-gray-900">{{ $container->ship_by_date->format('M j, Y') }}</dd>
+            <div class="flex items-start justify-between gap-4">
+                <dt class="text-gray-500">Ship by</dt>
+                <dd class="text-right text-gray-500">{{ $container->ship_by_date->format('M j, Y') }}</dd>
             </div>
         @endif
-        @if ($container->shippedAt())
-            <div class="flex justify-between gap-2">
-                <dt>Shipped by</dt>
-                <dd class="font-medium text-gray-900">{{ $container->shippedAt()->format('M j, Y') }}</dd>
-            </div>
-        @endif
+        <div class="flex items-start justify-between gap-4">
+            <dt class="text-gray-500">Shipped</dt>
+            <dd class="text-right text-gray-500">
+                @if ($container->shippedAt())
+                    {{ $container->shippedAt()->format('M j, Y') }}
+                @else
+                    <span class="text-gray-500">—</span>
+                @endif
+            </dd>
+        </div>
         @if ($container->deliveredHomeAt())
-            <div class="flex justify-between gap-2">
-                <dt>Delivered home</dt>
-                <dd class="font-medium text-gray-900">{{ $container->deliveredHomeAt()->format('M j, Y') }}</dd>
+            <div class="flex items-start justify-between gap-4">
+                <dt class="text-gray-500">Delivered home</dt>
+                <dd class="text-right text-gray-500">{{ $container->deliveredHomeAt()->format('M j, Y') }}</dd>
             </div>
         @endif
-        <div class="flex justify-between gap-2">
-            <dt>Outbound tracking</dt>
-            <dd class="font-medium text-gray-900">
+        <div class="flex items-start justify-between gap-4">
+            <dt class="text-gray-500">Outbound tracking</dt>
+            <dd class="text-right text-gray-500">
                 @if ($container->outbound_tracking)
-                    <a href="{{ $outUrl }}" target="_blank" rel="noopener noreferrer" class="font-semibold text-brand-500 hover:underline">
+                    <a href="{{ $outUrl }}" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:underline">
                         {{ $container->outbound_tracking }}
                     </a>
                 @else
@@ -64,5 +69,23 @@
                 @endif
             </dd>
         </div>
+        <div class="flex items-start justify-between gap-4">
+            <dt class="text-gray-500">Return tracking</dt>
+            <dd class="text-right text-gray-500">
+                @if ($container->return_tracking)
+                    <a href="{{ $returnUrl }}" target="_blank" rel="noopener noreferrer" class=" text-brand-500 hover:underline">
+                        {{ $container->return_tracking }}
+                    </a>
+                @else
+                    <span class="text-gray-500">Added when shipped</span>
+                @endif
+            </dd>
+        </div>
     </dl>
+
+    <div class="mt-auto flex justify-end pt-5">
+        <span class="inline-flex rounded-full bg-[#E8EEFF] px-3 py-1 text-xs text-brand-300">
+            {{ $container->statusLabel() }}
+        </span>
+    </div>
 </article>

@@ -6,56 +6,67 @@
 @endphp
 
 @if ($pkg)
-    <div @class([
-        'relative overflow-hidden rounded-2xl border p-5 sm:p-6',
-        'border-brand-300 bg-brand-50' => $isFeatured && !$compact,
-        'border-gray-200 bg-white' => !$isFeatured || $compact,
-    ])>
-        @if ($isFeatured && !$compact)
-            <span class="absolute right-4 top-4 rounded-full bg-brand-500 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-white">
-                Your package
-            </span>
-        @endif
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 sm:p-6">
+        @unless ($compact)
+            <h2 class="text-base font-medium text-gray-600">Current plan</h2>
+        @endunless
 
-        <div class="flex flex-wrap items-start justify-between gap-4">
-            <div class="min-w-0 flex-1">
-                <p class="text-xs font-semibold uppercase tracking-wider text-brand-500">
-                    {{ $pkg->formattedPrice() }}<span class="font-normal text-brand-500">*</span>
-                </p>
-                <h2 class="mt-1 text-xl font-bold text-gray-900 sm:text-2xl">
-                    {{ $pkg->name }}
-                </h2>
-                @if ($pkg->tagline)
-                    <p class="mt-2 max-w-xl text-sm leading-relaxed text-gray-700">
-                        {{ $pkg->tagline }}
-                    </p>
-                @endif
-            </div>
+        <div @class([
+            'relative overflow-hidden rounded-2xl border border-brand-200 bg-brand-50',
+            'mt-3 p-5 sm:p-6' => !$compact,
+            'p-4 sm:p-5' => $compact,
+        ])>
+            <div class="flex flex-col gap-6 lg:flex-row lg:items-stretch lg:justify-between">
+                <div class="min-w-0 flex-1">
+                    <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                        @if ($isFeatured)
+                            <img src="{{ asset('images/dashboard/diamond.svg') }}" alt="" class="h-5 w-5 shrink-0" aria-hidden="true" />
+                        @endif
+                        <h3 class="text-lg font-medium text-brand-900 sm:text-xl">
+                            {{ $pkg->name }}
+                        </h3>
+                        <span class="text-base font-semibold text-brand-300 sm:text-lg">
+                            {{ $pkg->formattedPrice() }}<span class="font-normal">*</span>
+                        </span>
+                    </div>
 
-            <div class="flex shrink-0 flex-col items-center rounded-xl border border-brand-200 bg-white px-4 py-3 text-center shadow-sm">
-                <span class="text-2xl font-bold tabular-nums text-brand-700">{{ $pkg->container_count }}</span>
-                <span class="text-xs font-medium text-gray-500">containers</span>
+                    @if ($pkg->tagline)
+                        <p class="mt-2 max-w-2xl text-sm leading-relaxed text-gray-600">
+                            {{ $pkg->tagline }}
+                        </p>
+                    @endif
+
+                    @if (!$compact && is_array($pkg->features) && count($pkg->features) > 0)
+                        <ul class="mt-4 space-y-2.5 text-sm text-gray-700">
+                            @foreach ($pkg->features as $feature)
+                                <li class="flex items-start gap-2.5">
+                                    <img src="{{ asset('images/dashboard/bullet.svg') }}" alt="" class="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                                    <span>{{ $feature }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @endif
+
+                    @if ($pkg->includes_move_out_cycle && !$compact)
+                        <p class="mt-4 text-xs font-small text-brand-300">
+                            Includes move-out, summer storage, and return delivery for the school year.
+                        </p>
+                    @endif
+                </div>
+
+                <div class="flex shrink-0 flex-col rounded-xl border border-gray-200 bg-white px-4 py-4 text-center shadow-sm sm:min-w-[180px] lg:self-center">
+                    <span class="text-[12px] font-semibold uppercase tracking-[0.14em] text-brand-300">
+                        Your package
+                    </span>
+                    <div class="mt-3 rounded-xl bg-[#F3F5FF] px-5 py-4">
+                        <span class="block text-4xl font-bold tabular-nums leading-none text-brand-400">{{ $pkg->container_count }}</span>
+                        <span class="mt-1 block text-md font-medium text-gray-500">
+                            {{ \Illuminate\Support\Str::plural('Container', $pkg->container_count) }}
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
-
-        @if (!$compact && is_array($pkg->features) && count($pkg->features) > 0)
-            <ul class="mt-5 space-y-2 text-sm text-gray-700">
-                @foreach ($pkg->features as $feature)
-                    <li class="flex items-start gap-2">
-                        <svg class="mt-0.5 h-4 w-4 shrink-0 text-brand-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
-                        </svg>
-                        <span>{{ $feature }}</span>
-                    </li>
-                @endforeach
-            </ul>
-        @endif
-
-        @if ($pkg->includes_move_out_cycle)
-            <p class="mt-4 text-xs font-medium text-brand-700">
-                Includes move-out, summer storage, and return delivery for the school year.
-            </p>
-        @endif
     </div>
 @else
     <div class="rounded-2xl border border-amber-200 bg-amber-50 p-5">

@@ -3,6 +3,7 @@ import './portal-datatable';
 import './confirm';
 import './flash';
 import { extractTrackingNumber } from './tracking-number';
+import { registerContainerPhotoPicker } from './container-photo-picker';
 import Alpine from 'alpinejs';
 import flatpickr from 'flatpickr';
 
@@ -25,5 +26,7 @@ Alpine.data('trackingFields', (initialUrl = '', initialNumber = '') => ({
         }
     },
 }));
+
+registerContainerPhotoPicker();
 
 Alpine.start();

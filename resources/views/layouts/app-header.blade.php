@@ -5,6 +5,7 @@
     $portalLabel = $portal === 'admin' ? 'Admin' : 'Student';
     $user = auth()->user();
     $userName = $user->name ?? ucfirst($portal) . ' User';
+    $pageHeading = $pageHeading ?? ($title ?? 'Dashboard');
     $initials = collect(explode(' ', $userName))
         ->filter()
         ->take(2)
@@ -36,6 +37,10 @@
                     <path d="M1 1H15M1 6H9M1 11H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
                 </svg>
             </button>
+            <div class="min-w-0">
+                <p class="truncate text-xs text-gray-900 font-semibold">{{ $portalLabel }} Portal</p>
+                <h1 class="truncate text-base text-xs text-gray-500">{{ $pageHeading }}</h1>
+            </div>
         </div>
 
         <div class="flex shrink-0 items-center gap-3 sm:gap-4">

@@ -37,7 +37,7 @@ class AddOnService
                 'name' => (string) $item['name'],
                 'price_cents' => $priceCents,
                 'description' => (string) $item['description'],
-                'icon' => (string) ($item['icon'] ?? 'box'),
+                'icon' => (string) ($item['icon'] ?? 'storage'),
                 'url' => (string) $item['url'],
                 'formatted_price' => '$' . number_format($priceCents / 100, 2),
             ];
