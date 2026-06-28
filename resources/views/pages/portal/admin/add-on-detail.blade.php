@@ -105,10 +105,13 @@
                     <x-move.container-card :container="$container" :fed-ex-link-service="$fedExLinkService" :is-primary="true" />
                 </div>
                 <div class="space-y-4 lg:col-span-2">
-                    <h2 class="text-lg font-semibold text-gray-900">Packing photos ({{ $container->photos->count() }})</h2>
-                    @if ($container->photos->isNotEmpty())
+                    @php
+                        $packingPhotos = $container->photos->where('type', \App\Models\ContainerPhoto::TYPE_EXTERIOR)->values();
+                    @endphp
+                    <h2 class="text-lg font-semibold text-gray-900">Packing photos ({{ $packingPhotos->count() }})</h2>
+                    @if ($packingPhotos->isNotEmpty())
                         <div class="grid grid-cols-3 gap-2 sm:grid-cols-5">
-                            @foreach ($container->photos as $photo)
+                            @foreach ($packingPhotos as $photo)
                                 <a href="{{ $photo->url() }}" target="_blank" rel="noopener noreferrer" class="group relative block aspect-square overflow-hidden rounded-lg border border-gray-200">
                                     <img src="{{ $photo->url() }}" alt="{{ $photo->original_name ?: 'Container photo' }}" class="h-full w-full object-cover transition group-hover:scale-105" loading="lazy" />
                                 </a>
@@ -119,6 +122,8 @@
                             No photos uploaded yet.
                         </p>
                     @endif
+
+                    <x-admin.hub-photos :container="$container" />
                 </div>
             </div>
         @endif

@@ -7,6 +7,8 @@
     $remaining = $container->remainingPhotoSlots();
     $cap = $container->photoCap();
     $canUpload = $container->acceptsPhotos();
+    $exteriorPhotos = $container->photos->where('type', \App\Models\ContainerPhoto::TYPE_EXTERIOR)->values();
+    $hubPhotos = $container->photos->where('type', \App\Models\ContainerPhoto::TYPE_HUB_INTAKE)->values();
 @endphp
 
 <div {{ $attributes->class(['flex h-full w-full flex-col rounded-2xl border border-gray-200 bg-white p-5 sm:p-6', 'mt-6' => ! $showSectionHeader]) }}>
@@ -26,7 +28,7 @@
 
         <div class="shrink-0 rounded-xl bg-[#F3F5FF] px-4 py-3 text-right">
             <p class="text-base font-medium text-brand-900">{{ $container->code }}</p>
-            <p class="mt-0.5 text-xs text-gray-400">{{ $container->photos->count() }} of {{ $cap }} photos uploaded</p>
+            <p class="mt-0.5 text-xs text-gray-400">{{ $exteriorPhotos->count() }} of {{ $cap }} photos uploaded</p>
         </div>
     </div>
 
@@ -62,7 +64,7 @@
             @endif
 
             <div class="flex flex-wrap gap-3">
-                @foreach ($container->photos as $photo)
+                @foreach ($exteriorPhotos as $photo)
                     <div class="group relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-gray-100">
                         <a href="{{ $photo->url() }}" target="_blank" rel="noopener noreferrer" class="block h-full w-full">
                             <img
@@ -169,9 +171,9 @@
             @endif
         </div>
     @else
-        @if ($container->photos->isNotEmpty())
+        @if ($exteriorPhotos->isNotEmpty())
             <div class="mt-5 flex flex-wrap gap-3">
-                @foreach ($container->photos as $photo)
+                @foreach ($exteriorPhotos as $photo)
                     <div class="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-gray-100">
                         <a href="{{ $photo->url() }}" target="_blank" rel="noopener noreferrer" class="block h-full w-full">
                             <img
@@ -186,5 +188,31 @@
             </div>
         @endif
         <p class="mt-4 text-sm text-gray-500">You have uploaded the maximum number of photos for this container.</p>
+    @endif
+
+    @if ($hubPhotos->isNotEmpty())
+        <div class="mt-6 border-t border-gray-100 pt-5">
+            <div class="flex items-center gap-2">
+                <svg class="h-4 w-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <h3 class="text-sm font-medium text-gray-700">New Life hub photos</h3>
+            </div>
+            <p class="mt-1 text-xs text-gray-500">
+                Photos taken by New Life when your container arrived at our hub, kept on file as proof of condition.
+            </p>
+            <div class="mt-4 flex flex-wrap gap-3">
+                @foreach ($hubPhotos as $photo)
+                    <div class="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-gray-100">
+                        <a href="{{ $photo->url() }}" target="_blank" rel="noopener noreferrer" class="block h-full w-full">
+                            <img
+                                src="{{ $photo->url() }}"
+                                alt="{{ $photo->original_name ?? 'Hub evidence photo' }}"
+                                class="h-full w-full object-cover"
+                                loading="lazy"
+                            />
+                        </a>
+                    </div>
+                @endforeach
+            </div>
+        </div>
     @endif
 </div>

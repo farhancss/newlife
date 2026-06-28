@@ -84,6 +84,31 @@ class Container extends Model
         return $this->hasMany(ContainerPhoto::class)->orderBy('created_at');
     }
 
+    /**
+     * Exterior photos uploaded by the student while packing.
+     *
+     * @return HasMany<ContainerPhoto, $this>
+     */
+    public function exteriorPhotos(): HasMany
+    {
+        return $this->hasMany(ContainerPhoto::class)
+            ->where('type', ContainerPhoto::TYPE_EXTERIOR)
+            ->orderBy('created_at');
+    }
+
+    /**
+     * Evidence photos uploaded by an admin once the container is received at
+     * the New Life hub. Visible to the student as proof of condition.
+     *
+     * @return HasMany<ContainerPhoto, $this>
+     */
+    public function hubPhotos(): HasMany
+    {
+        return $this->hasMany(ContainerPhoto::class)
+            ->where('type', ContainerPhoto::TYPE_HUB_INTAKE)
+            ->orderBy('created_at');
+    }
+
     public function statusLabel(): string
     {
         return ContainerStatus::label($this->status);
@@ -120,13 +145,32 @@ class Container extends Model
         return $this->status === ContainerStatus::CUSTOMER_PACKING;
     }
 
+    /**
+     * Admins may upload hub evidence photos only once the container has been
+     * delivered to the dorm. Existing photos remain viewable afterwards.
+     */
+    public function acceptsHubPhotos(): bool
+    {
+        return $this->status === ContainerStatus::DELIVERED_TO_DORM;
+    }
+
     public function photoCap(): int
     {
         return (int) config('portal.container_photos.max_per_container', 5);
     }
 
+    public function hubPhotoCap(): int
+    {
+        return (int) config('portal.container_photos.hub_max_per_container', $this->photoCap());
+    }
+
     public function remainingPhotoSlots(): int
     {
-        return max(0, $this->photoCap() - $this->photos()->count());
+        return max(0, $this->photoCap() - $this->exteriorPhotos()->count());
+    }
+
+    public function remainingHubPhotoSlots(): int
+    {
+        return max(0, $this->hubPhotoCap() - $this->hubPhotos()->count());
     }
 }

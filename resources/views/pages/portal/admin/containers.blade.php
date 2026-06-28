@@ -251,13 +251,16 @@
                         </form>
 
                         {{-- Student container photos --}}
+                        @php
+                            $studentPhotos = $editing->photos->where('type', \App\Models\ContainerPhoto::TYPE_EXTERIOR)->values();
+                        @endphp
                         <div class="mt-8 border-t border-gray-100 pt-6">
                             <h3 class="text-sm font-semibold text-gray-900">Container photos
-                                <span class="font-normal text-gray-500">({{ $editing->photos->count() }})</span>
+                                <span class="font-normal text-gray-500">({{ $studentPhotos->count() }})</span>
                             </h3>
-                            @if ($editing->photos->isNotEmpty())
+                            @if ($studentPhotos->isNotEmpty())
                                 <div class="mt-3 grid grid-cols-3 gap-2">
-                                    @foreach ($editing->photos as $photo)
+                                    @foreach ($studentPhotos as $photo)
                                         <a href="{{ $photo->url() }}" target="_blank" rel="noopener noreferrer"
                                             class="group relative block overflow-hidden rounded-lg border border-gray-200">
                                             <img src="{{ $photo->url() }}" alt="Container photo"
@@ -270,6 +273,9 @@
                                 <p class="mt-3 text-sm text-gray-500">No photos uploaded yet. Students can upload exterior photos once the container reaches Student Packing.</p>
                             @endif
                         </div>
+
+                        {{-- New Life hub evidence photos (admin upload) --}}
+                        <x-admin.hub-photos :container="$editing" class="mt-8 border-0 p-0" />
 
                         @if ($editing->statusHistories->isNotEmpty())
                             <div class="mt-8 border-t border-gray-100 pt-6">

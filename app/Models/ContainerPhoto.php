@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 /**
  * @property int $id
  * @property int $container_id
+ * @property string $type
  * @property int|null $uploaded_by_user_id
  * @property string $disk
  * @property string $path
@@ -21,14 +22,25 @@ use Illuminate\Support\Facades\Storage;
  */
 class ContainerPhoto extends Model
 {
+    /** Exterior photo uploaded by the student while packing. */
+    public const TYPE_EXTERIOR = 'exterior';
+
+    /** Evidence photo uploaded by an admin once received at the New Life hub. */
+    public const TYPE_HUB_INTAKE = 'hub_intake';
+
     protected $fillable = [
         'container_id',
+        'type',
         'uploaded_by_user_id',
         'disk',
         'path',
         'original_name',
         'mime',
         'size',
+    ];
+
+    protected $attributes = [
+        'type' => self::TYPE_EXTERIOR,
     ];
 
     protected function casts(): array

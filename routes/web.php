@@ -3,9 +3,11 @@
 use App\Http\Controllers\AdminAddOnController;
 use App\Http\Controllers\AdminDeadlineController;
 use App\Http\Controllers\AdminContainerController;
+use App\Http\Controllers\AdminContainerPhotoController;
 use App\Http\Controllers\AdminDevToolsController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminNotificationController;
+use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\AdminRetailPackageController;
 use App\Http\Controllers\AdminSquarespaceController;
 use App\Http\Controllers\AdminSquarespaceOAuthController;
@@ -202,6 +204,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::put('/containers/{container}', [AdminContainerController::class, 'update'])
         ->middleware('throttle:30,1')
         ->name('containers.update');
+    Route::post('/containers/{container}/photos', [AdminContainerPhotoController::class, 'store'])
+        ->middleware('throttle:30,1')
+        ->name('containers.photos.store');
+    Route::delete('/containers/{container}/photos/{photo}', [AdminContainerPhotoController::class, 'destroy'])
+        ->middleware('throttle:30,1')
+        ->name('containers.photos.destroy');
 
     Route::get('/retail-packages', [AdminRetailPackageController::class, 'index'])->name('retail-packages');
     Route::post('/retail-packages', [AdminRetailPackageController::class, 'store'])
@@ -275,12 +283,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
         ]);
     })->name('settings');
 
-    Route::get('/profile', function () {
-        return view('pages.portal.common.profile', [
-            'title' => 'Admin Profile',
-            'portal' => 'admin',
-        ]);
-    })->name('profile');
+    Route::get('/profile', [AdminProfileController::class, 'show'])->name('profile');
+    Route::put('/profile', [AdminProfileController::class, 'update'])
+        ->middleware('throttle:30,1')
+        ->name('profile.update');
+    Route::post('/profile/avatar', [AdminProfileController::class, 'updateAvatar'])
+        ->middleware('throttle:20,1')
+        ->name('profile.avatar.update');
+    Route::delete('/profile/avatar', [AdminProfileController::class, 'destroyAvatar'])
+        ->middleware('throttle:20,1')
+        ->name('profile.avatar.destroy');
 
     Route::get('/change-password', [ChangePasswordController::class, 'show'])->name('change-password');
     Route::post('/change-password', [ChangePasswordController::class, 'update'])

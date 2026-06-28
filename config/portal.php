@@ -15,6 +15,7 @@ return [
     'container_photos' => [
         'disk' => env('CONTAINER_PHOTO_DISK', 'public'),
         'max_per_container' => (int) env('CONTAINER_PHOTO_MAX', 5),
+        'hub_max_per_container' => (int) env('CONTAINER_HUB_PHOTO_MAX', 5),
         'max_size_kb' => (int) env('CONTAINER_PHOTO_MAX_KB', 5120),
         'allowed_mimes' => ['jpeg', 'jpg', 'png'],
     ],

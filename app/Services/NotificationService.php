@@ -246,6 +246,33 @@ class NotificationService
         );
     }
 
+    /**
+     * Notify the student that New Life uploaded hub evidence photos of their
+     * container (proof of condition on arrival at the receiving hub).
+     */
+    public function containerHubEvidenceAdded(Container $container, int $photoCount, ?User $actor = null): ?PortalNotification
+    {
+        $recipient = $container->studentProfile?->user;
+
+        if ($recipient === null || $photoCount < 1) {
+            return null;
+        }
+
+        $noun = $photoCount === 1 ? 'photo' : 'photos';
+
+        return $this->notify(
+            recipient: $recipient,
+            category: NotificationCategory::SHIPMENT,
+            type: 'container.hub_evidence_added',
+            title: 'New container photos available',
+            body: 'New Life added ' . $photoCount . ' evidence ' . $noun . ' of container ' . $container->code
+                . ' on delivery to your dorm. View them from the My Move page.',
+            url: route('student.move-tracking'),
+            actor: $actor,
+            meta: ['container_id' => $container->id, 'photo_type' => \App\Models\ContainerPhoto::TYPE_HUB_INTAKE],
+        );
+    }
+
     public function retailPackageStatusChanged(RetailPackage $package, string $toStatus): ?PortalNotification
     {
         $event = self::RETAIL_EVENTS[$toStatus] ?? null;
