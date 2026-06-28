@@ -30,10 +30,15 @@ class SquarespaceSignatureVerifier
 
             $rawHmac = hash_hmac('sha256', $payload, $secret, true);
 
+            // Squarespace sends the signature as uppercase hex; compare hex
+            // case-insensitively. Also accept base64 for forward compatibility.
             $hex = bin2hex($rawHmac);
             $base64 = base64_encode($rawHmac);
 
-            if (hash_equals($hex, $signature) || hash_equals($base64, $signature)) {
+            if (
+                hash_equals($hex, strtolower($signature))
+                || hash_equals($base64, $signature)
+            ) {
                 return true;
             }
         }

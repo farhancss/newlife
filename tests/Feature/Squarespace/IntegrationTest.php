@@ -93,6 +93,8 @@ test('signature verifier accepts hex and base64 against a stored subscription se
     $verifier = app(SquarespaceSignatureVerifier::class);
 
     expect($verifier->verify($payload, $hex))->toBeTrue()
+        // Squarespace sends uppercase hex — must still verify.
+        ->and($verifier->verify($payload, strtoupper($hex)))->toBeTrue()
         ->and($verifier->verify($payload, $base64))->toBeTrue()
         ->and($verifier->verify($payload, 'nope'))->toBeFalse();
 });
