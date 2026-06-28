@@ -38,6 +38,9 @@
                             </p>
                         @elseif ($connected)
                             <p class="mt-1 text-sm text-emerald-700">Connected and ready.</p>
+                            @unless ($canRefresh)
+                                <p class="mt-1 text-xs text-amber-700">No refresh token was returned — the access token will expire and you'll need to reconnect. Ensure the app requests offline access.</p>
+                            @endunless
                         @else
                             <p class="mt-1 text-sm text-gray-600">Not connected yet. Authorize access to start receiving data.</p>
                         @endif

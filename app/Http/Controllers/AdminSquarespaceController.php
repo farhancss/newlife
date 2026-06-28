@@ -28,6 +28,7 @@ class AdminSquarespaceController extends Controller
             'portal' => 'admin',
             'configured' => $this->oauth->isConfigured(),
             'connected' => $this->oauth->isConnected(),
+            'canRefresh' => $this->oauth->canRefresh(),
             'credential' => $credential,
             'scopes' => $this->oauth->scopes(),
             'redirectUri' => $this->oauth->redirectUri(),

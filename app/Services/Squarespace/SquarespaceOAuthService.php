@@ -36,7 +36,22 @@ class SquarespaceOAuthService
     {
         $credential = $this->current();
 
-        return $credential !== null && $credential->refresh_token !== null;
+        return $credential !== null
+            && is_string($credential->access_token)
+            && $credential->access_token !== '';
+    }
+
+    /**
+     * Whether we hold a refresh token (needed to keep the connection alive past
+     * the access token's short lifetime).
+     */
+    public function canRefresh(): bool
+    {
+        $credential = $this->current();
+
+        return $credential !== null
+            && is_string($credential->refresh_token)
+            && $credential->refresh_token !== '';
     }
 
     public function redirectUri(): string
