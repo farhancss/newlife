@@ -73,6 +73,16 @@ return [
             'replace_placeholders' => true,
         ],
 
+        // Dedicated channel for Squarespace webhook & API traffic. Viewable in
+        // the Log Viewer (admin → Squarespace → Open log viewer).
+        'squarespace' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/squarespace.log'),
+            'level' => 'debug',
+            'days' => env('SQUARESPACE_LOG_DAYS', 30),
+            'replace_placeholders' => true,
+        ],
+
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),

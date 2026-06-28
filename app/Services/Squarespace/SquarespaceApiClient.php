@@ -2,77 +2,101 @@
 
 namespace App\Services\Squarespace;
 
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 use RuntimeException;
 
 class SquarespaceApiClient
 {
+    public function __construct(
+        private readonly SquarespaceOAuthService $oauth,
+        private readonly SquarespaceLogger $logger,
+    ) {
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
     public function getOrder(string $orderId): array
     {
-        $response = Http::withToken($this->accessToken())
-            ->acceptJson()
-            ->get($this->baseUrl() . '/commerce/orders/' . $orderId);
-
-        if (!$response->successful()) {
-            throw new RuntimeException(
-                'Failed to fetch Squarespace order: ' . $response->status() . ' ' . $response->body()
-            );
-        }
-
-        return $response->json() ?? [];
+        return $this->get('/commerce/orders/' . $orderId, 'api.getOrder');
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getContact(string $contactId): array
     {
-        $response = Http::withToken($this->accessToken())
-            ->acceptJson()
-            ->get($this->baseUrl() . '/commerce/contacts/' . $contactId);
+        return $this->get('/commerce/contacts/' . $contactId, 'api.getContact');
+    }
 
-        if (!$response->successful()) {
+    /**
+     * Shared, OAuth-authenticated, logged GET helper.
+     *
+     * @return array<string, mixed>
+     */
+    private function get(string $path, string $label): array
+    {
+        $url = $this->baseUrl() . $path;
+        $start = microtime(true);
+
+        try {
+            $response = $this->request()->get($url);
+        } catch (\Throwable $e) {
+            $this->logger->logOutgoing($label, 'GET', $url, [], null, $this->ms($start), $e->getMessage());
+            throw new RuntimeException('Squarespace API request failed: ' . $e->getMessage(), previous: $e);
+        }
+
+        $this->logger->logOutgoing($label, 'GET', $url, [], $response, $this->ms($start));
+
+        if (! $response->successful()) {
             throw new RuntimeException(
-                'Failed to fetch Squarespace contact: ' . $response->status() . ' ' . $response->body()
+                'Squarespace API request failed: ' . $response->status() . ' ' . $response->body()
             );
         }
 
         return $response->json() ?? [];
     }
 
-    private function accessToken(): string
+    /**
+     * A pending request pre-authenticated with the mandatory User-Agent header
+     * and a bearer token: the OAuth access token when connected, otherwise the
+     * configured private API key.
+     */
+    public function request(): PendingRequest
     {
-        return Cache::remember('squarespace_access_token', 3500, function (): string {
-            $clientId = config('squarespace.client_id');
-            $clientSecret = config('squarespace.client_secret');
-
-            if (!$clientId || !$clientSecret) {
-                throw new RuntimeException('Squarespace API credentials are not configured.');
-            }
-
-            $response = Http::asForm()
-                ->post($this->baseUrl() . '/oauth/token', [
-                    'grant_type' => 'client_credentials',
-                    'client_id' => $clientId,
-                    'client_secret' => $clientSecret,
-                ]);
-
-            if (!$response->successful()) {
-                throw new RuntimeException(
-                    'Failed to obtain Squarespace access token: ' . $response->status()
-                );
-            }
-
-            $token = $response->json('access_token');
-
-            if (!is_string($token) || $token === '') {
-                throw new RuntimeException('Squarespace access token missing from response.');
-            }
-
-            return $token;
-        });
+        return Http::withToken($this->authToken())
+            ->withHeaders(['User-Agent' => (string) config('squarespace.user_agent')])
+            ->acceptJson();
     }
 
-    private function baseUrl(): string
+    /**
+     * Prefer the OAuth access token (required for webhook subscriptions and the
+     * recommended auth for all calls); fall back to the private API key for
+     * read endpoints when OAuth has not been connected yet.
+     */
+    private function authToken(): string
+    {
+        if ($this->oauth->isConnected()) {
+            return $this->oauth->validAccessToken();
+        }
+
+        $apiKey = config('squarespace.api_key');
+
+        if (is_string($apiKey) && $apiKey !== '') {
+            return $apiKey;
+        }
+
+        throw new RuntimeException('No Squarespace credentials available. Connect over OAuth or set SQUARESPACE_API_KEY.');
+    }
+
+    public function baseUrl(): string
     {
         return rtrim((string) config('squarespace.api_base_url'), '/');
+    }
+
+    private function ms(float $start): int
+    {
+        return (int) round((microtime(true) - $start) * 1000);
     }
 }

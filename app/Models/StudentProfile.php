@@ -99,6 +99,12 @@ class StudentProfile extends Model
         return $this->hasMany(StudentSubscription::class);
     }
 
+    /** @return HasMany<SquarespaceOrder, $this> */
+    public function squarespaceOrders(): HasMany
+    {
+        return $this->hasMany(SquarespaceOrder::class)->latest('placed_at');
+    }
+
     /** @return HasMany<Container, $this> */
     public function containers(): HasMany
     {

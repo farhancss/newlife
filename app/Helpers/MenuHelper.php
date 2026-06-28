@@ -40,6 +40,7 @@ class MenuHelper
             ['icon' => 'storage', 'name' => 'Storage Pickups', 'path' => $basePath . '/storage-pickups'],
             ['icon' => 'calendar', 'name' => 'Deadlines', 'path' => $basePath . '/deadlines'],
             ['icon' => 'bell', 'name' => 'Notifications', 'path' => $basePath . '/notifications'],
+            ['icon' => 'plug', 'name' => 'Squarespace', 'path' => $basePath . '/squarespace'],
         ];
 
         if (config('devtools.enabled')) {
@@ -99,6 +100,8 @@ class MenuHelper
             'clock' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
 
             'storage' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 7l9-4 9 4-9 4-9-4zm0 0v10l9 4 9-4V7M12 11v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+
+            'plug' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 2v6m6-6v6M6 8h12v3a6 6 0 01-6 6 6 6 0 01-6-6V8zm6 9v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
         ];
 
         return $icons[$iconName] ?? '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/></svg>';

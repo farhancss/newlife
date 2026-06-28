@@ -102,6 +102,58 @@ class AddOnService
     }
 
     /**
+     * Activate an add-on that was purchased through Squarespace. Idempotent per
+     * order + slug so re-delivered order webhooks don't create duplicates. The
+     * "Additional Container" add-on provisions one trackable container per unit.
+     *
+     * @param  array{slug: string, name: string, price_cents: int, url: string}  $addOn
+     */
+    public function activateFromSquarespace(
+        StudentProfile $profile,
+        array $addOn,
+        string $squarespaceOrderId,
+        int $quantity = 1,
+    ): void {
+        $alreadyActivated = $profile->addOns()
+            ->where('add_on_slug', $addOn['slug'])
+            ->where('squarespace_order_id', $squarespaceOrderId)
+            ->exists();
+
+        if ($alreadyActivated) {
+            return;
+        }
+
+        $isContainer = $addOn['slug'] === StudentAddOn::ADDITIONAL_CONTAINER_SLUG;
+        $units = $isContainer ? max(1, $quantity) : 1;
+
+        for ($i = 0; $i < $units; $i++) {
+            $record = DB::transaction(function () use ($profile, $addOn, $squarespaceOrderId, $isContainer): StudentAddOn {
+                $containerId = $isContainer
+                    ? $this->containerWorkflow->createForStudent($profile, null, Container::SOURCE_ADD_ON)->id
+                    : null;
+
+                /** @var StudentAddOn $record */
+                $record = $profile->addOns()->create([
+                    'add_on_slug' => $addOn['slug'],
+                    'name' => $addOn['name'],
+                    'price_cents' => $addOn['price_cents'],
+                    'squarespace_url' => $addOn['url'],
+                    'status' => AddOnStatus::ACTIVE,
+                    'container_id' => $containerId,
+                    'squarespace_order_id' => $squarespaceOrderId,
+                    'requested_at' => Carbon::now(),
+                    'activated_at' => Carbon::now(),
+                ]);
+
+                return $record;
+            });
+
+            $record->setRelation('studentProfile', $profile->loadMissing('user'));
+            $this->notifications->addOnPurchased($record);
+        }
+    }
+
+    /**
      * Student's purchased / requested add-ons, newest first.
      *
      * @return Collection<int, StudentAddOn>

@@ -11,6 +11,7 @@ use App\Models\StudentProfile;
 use App\Models\StudentSubscription;
 use App\Models\User;
 use App\Services\Squarespace\PackageTierMapper;
+use App\Services\Squarespace\SquarespaceOrderImporter;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -24,6 +25,7 @@ class AccountProvisioningService
         private readonly StudentPackageService $studentPackageService,
         private readonly UserStatusService $userStatusService,
         private readonly DeadlineService $deadlineService,
+        private readonly SquarespaceOrderImporter $orderImporter,
     ) {
     }
 
@@ -164,6 +166,10 @@ class AccountProvisioningService
 
             $this->syncShippingFromOrder($profile, $order);
             $this->upsertSubscription($profile, $order);
+
+            // Persist the full purchase (header + line items) and activate any
+            // add-ons whose SKU is mapped in config.
+            $this->orderImporter->import($order, $profile);
 
             $fresh = $profile->fresh(['subscriptions', 'shippingAddress']);
 

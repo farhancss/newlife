@@ -7,6 +7,8 @@ use App\Http\Controllers\AdminDevToolsController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminNotificationController;
 use App\Http\Controllers\AdminRetailPackageController;
+use App\Http\Controllers\AdminSquarespaceController;
+use App\Http\Controllers\AdminSquarespaceOAuthController;
 use App\Http\Controllers\AdminStoragePickupController;
 use App\Http\Controllers\AdminStudentController;
 use App\Http\Controllers\AuthController;
@@ -32,11 +34,6 @@ use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/login');
-
-Route::get('/squarespace/callback', function () {
-    return response()->json(['message' => 'success'], 200);
-})->name('squarespace.callback');
-
 
 if (app()->environment('local')) {
     Route::prefix('dev/email-preview')->group(function () {
@@ -103,6 +100,13 @@ Route::middleware('guest')->group(function () {
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Squarespace OAuth callback. The path must match the redirect URI registered
+// on the Squarespace developer app exactly. Squarespace redirects the admin's
+// browser here, so the session (OAuth state) and admin auth are available.
+Route::get('/squarespace/callback', [AdminSquarespaceOAuthController::class, 'callback'])
+    ->middleware(['auth', 'role:admin'])
+    ->name('squarespace.callback');
 
 Route::prefix('student')->name('student.')->middleware([
     'auth',
@@ -219,6 +223,26 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
         ->name('storage-pickups.update');
 
     Route::get('/deadlines', [AdminDeadlineController::class, 'index'])->name('deadlines');
+
+    // Squarespace integration: OAuth connection, webhook subscriptions & logs.
+    Route::prefix('squarespace')->group(function () {
+        Route::get('/', [AdminSquarespaceController::class, 'index'])->name('squarespace');
+        Route::get('/connect', [AdminSquarespaceOAuthController::class, 'redirect'])->name('squarespace.connect');
+        Route::post('/disconnect', [AdminSquarespaceController::class, 'disconnect'])->name('squarespace.disconnect');
+
+        Route::post('/webhooks/register', [AdminSquarespaceController::class, 'registerWebhook'])
+            ->middleware('throttle:20,1')
+            ->name('squarespace.webhooks.register');
+        Route::delete('/webhooks/{subscription}', [AdminSquarespaceController::class, 'deleteWebhook'])
+            ->middleware('throttle:20,1')
+            ->name('squarespace.webhooks.delete');
+        Route::post('/webhooks/{subscription}/test', [AdminSquarespaceController::class, 'testWebhook'])
+            ->middleware('throttle:20,1')
+            ->name('squarespace.webhooks.test');
+        Route::post('/webhooks/{subscription}/rotate', [AdminSquarespaceController::class, 'rotateSecret'])
+            ->middleware('throttle:20,1')
+            ->name('squarespace.webhooks.rotate');
+    });
 
     Route::get('/communications', function () {
         return view('pages.portal.admin.communications', [
