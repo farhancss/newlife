@@ -50,84 +50,11 @@
             @if ($activeSection === 1)
                 {{-- Optional profile photo, grouped with Student Information --}}
                 <div
-                    x-data="{
-                        avatarUrl: @js($user->avatarUrl()),
-                        initials: @js($user->initials()),
-                        preview: null,
-                        uploading: false,
-                        error: null,
-                        async uploadAvatar(file) {
-                            this.error = null;
-                            this.preview = URL.createObjectURL(file);
-                            this.uploading = true;
-
-                            const formData = new FormData();
-                            formData.append('avatar', file);
-                            formData.append('_token', @js(csrf_token()));
-
-                            try {
-                                const response = await fetch(@js(route('student.profile.avatar.update')), {
-                                    method: 'POST',
-                                    body: formData,
-                                    headers: {
-                                        Accept: 'application/json',
-                                        'X-Requested-With': 'XMLHttpRequest',
-                                    },
-                                });
-
-                                const data = await response.json();
-
-                                if (!response.ok) {
-                                    throw new Error(data.errors?.avatar?.[0] ?? data.message ?? 'Upload failed.');
-                                }
-
-                                this.avatarUrl = data.avatar_url;
-                                this.preview = null;
-                            } catch (error) {
-                                this.preview = null;
-                                this.error = error.message ?? 'Upload failed.';
-                            } finally {
-                                this.uploading = false;
-                                if (this.$refs.avatarInput) {
-                                    this.$refs.avatarInput.value = '';
-                                }
-                            }
-                        },
-                        async removeAvatar() {
-                            if (!confirm('Remove your profile photo?')) {
-                                return;
-                            }
-
-                            this.error = null;
-                            this.uploading = true;
-
-                            try {
-                                const response = await fetch(@js(route('student.profile.avatar.destroy')), {
-                                    method: 'DELETE',
-                                    headers: {
-                                        Accept: 'application/json',
-                                        'Content-Type': 'application/json',
-                                        'X-CSRF-TOKEN': @js(csrf_token()),
-                                        'X-Requested-With': 'XMLHttpRequest',
-                                    },
-                                });
-
-                                const data = await response.json();
-
-                                if (!response.ok) {
-                                    throw new Error(data.message ?? 'Remove failed.');
-                                }
-
-                                this.avatarUrl = null;
-                                this.preview = null;
-                            } catch (error) {
-                                this.error = error.message ?? 'Remove failed.';
-                            } finally {
-                                this.uploading = false;
-                            }
-                        },
-                    }"
-                    class="mb-6 border-b border-gray-100 pb-6">
+                    class="mb-6 border-b border-gray-100 pb-6"
+                    x-data="profileAvatar"
+                    data-update-url="{{ route('student.profile.avatar.update') }}"
+                    data-destroy-url="{{ route('student.profile.avatar.destroy') }}"
+                >
                     <h2 class="text-lg font-semibold text-gray-600">Student Information</h2>
                     <p class="mt-1 text-sm text-gray-500">Your contact and school details.</p>
 
@@ -139,16 +66,16 @@
                                     <img :src="preview" alt="Preview" class="h-full w-full object-cover" />
                                 </div>
                             </template>
-                            <template x-if="!preview && avatarUrl">
+                            <template x-if="!preview && $store.userAvatar.url">
                                 <div class="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-white ring-2 ring-brand-50"
                                     :class="uploading ? 'opacity-60' : ''">
-                                    <img :src="avatarUrl" alt="Profile photo" class="h-full w-full object-cover" />
+                                    <img :src="$store.userAvatar.url" alt="Profile photo" class="h-full w-full object-cover" />
                                 </div>
                             </template>
-                            <template x-if="!preview && !avatarUrl">
+                            <template x-if="!preview && !$store.userAvatar.url">
                                 <div :class="uploading ? 'opacity-60' : ''">
                                     <span class="flex h-16 w-16 items-center justify-center rounded-full bg-brand-100 text-lg font-bold text-brand-500 ring-2 ring-brand-50"
-                                        x-text="initials"></span>
+                                        x-text="$store.userAvatar.initials"></span>
                                 </div>
                             </template>
                         </div>
@@ -170,12 +97,12 @@
                                         :disabled="uploading"
                                         @change="const file = $event.target.files[0]; if (file) uploadAvatar(file);"
                                         class="sr-only" />
-                                    <span x-text="avatarUrl ? 'Change photo' : 'Upload photo'"></span>
+                                    <span x-text="uploadLabel()"></span>
                                 </label>
                                 <p x-show="uploading" x-cloak class="text-xs font-medium text-brand-600">Uploading...</p>
                                 <button
                                     type="button"
-                                    x-show="avatarUrl"
+                                    x-show="$store.userAvatar.url"
                                     x-cloak
                                     @click="removeAvatar()"
                                     :disabled="uploading"
@@ -184,6 +111,9 @@
                                 </button>
                             </div>
                             <p x-show="error" x-cloak x-text="error" class="mt-2 text-xs text-error-600"></p>
+                            @error('avatar')
+                                <p class="mt-2 text-xs text-error-600">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
                 </div>
@@ -372,16 +302,16 @@
                     </div>
                 @endif
 
-                <div class="flex items-center justify-between gap-3 md:col-span-2">
+                <div class="flex flex-col gap-3 md:col-span-2 min-[576px]:flex-row min-[576px]:items-center min-[576px]:justify-between">
                     {{-- Back (left) --}}
                     @if ($activeSection > 1)
                         <a href="{{ route('student.profile', ['section' => $activeSection - 1]) }}"
-                            class="rounded-lg border border-gray-300 px-5 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+                            class="w-full rounded-lg border border-gray-300 px-5 py-2.5 text-center text-sm font-semibold text-gray-700 hover:bg-gray-50 min-[576px]:w-auto">
                             Back
                         </a>
                     @else
                         <a href="{{ route('student.dashboard') }}"
-                            class="rounded-lg border border-gray-300 px-5 py-2.5 text-sm text-gray-600 hover:bg-gray-50">
+                            class="w-full rounded-lg border border-gray-300 px-5 py-2.5 text-center text-sm text-gray-600 hover:bg-gray-50 min-[576px]:w-auto">
                             Back to Dashboard
                         </a>
                     @endif
@@ -389,12 +319,12 @@
                     {{-- Primary action (right) --}}
                     @if ($activeSection === 4)
                         <button type="submit" name="action" value="{{ $completion['is_complete'] ? 'save' : 'next' }}"
-                            class="rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">
+                            class="w-full rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700 min-[576px]:w-auto">
                             Save
                         </button>
                     @else
                         <button type="submit" name="action" value="next"
-                            class="rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">
+                            class="w-full rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700 min-[576px]:w-auto">
                             Save and Continue
                         </button>
                     @endif

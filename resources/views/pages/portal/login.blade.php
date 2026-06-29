@@ -7,10 +7,10 @@
             <div class="flex h-full w-full flex-1 flex-col overflow-y-auto lg:w-1/2">
                 <div class="flex flex-1 flex-col justify-center px-6 pb-10 sm:px-10 lg:px-14 lg:pb-12">
                     <div class="mx-auto w-full max-w-md">
-                    <div class="pt-8 sm:pt-10 lg:pt-12 mb-4">
+                    <div class="pt-8 sm:pt-10 lg:pt-12 mb-4 text-center lg:text-left">
                         <a href="{{ route('login') }}" class="inline-block">
                             <img src="{{ asset('images/logo/new-life-campus-logo.png') }}" alt="New Life Campus"
-                                class="h-12 w-auto sm:h-14 lg:h-16" />
+                                class="h-20 w-auto" />
                         </a>
                     </div>
                         <div class="mb-8">

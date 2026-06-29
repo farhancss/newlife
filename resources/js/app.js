@@ -5,6 +5,7 @@ import './flash';
 import './lightbox';
 import { extractTrackingNumber } from './tracking-number';
 import { registerContainerPhotoPicker } from './container-photo-picker';
+import { registerProfileAvatar } from './profile-avatar';
 import Alpine from 'alpinejs';
 import flatpickr from 'flatpickr';
 
@@ -29,5 +30,6 @@ Alpine.data('trackingFields', (initialUrl = '', initialNumber = '') => ({
 }));
 
 registerContainerPhotoPicker();
+registerProfileAvatar();
 
 Alpine.start();
