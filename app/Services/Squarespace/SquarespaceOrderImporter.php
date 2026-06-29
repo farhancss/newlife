@@ -81,19 +81,18 @@ class SquarespaceOrderImporter
     }
 
     /**
-     * Activate add-ons for any line item whose SKU is mapped in
-     * config('squarespace.addon_sku_map'). Idempotent per order + slug.
+     * Activate add-ons for any line item that maps to the add-on catalog. A line
+     * item resolves to an add-on either via an explicit SKU map
+     * (config('squarespace.addon_sku_map')) or by matching its product name
+     * against the catalog (so add-on purchases activate without per-SKU config).
+     * Idempotent per order + slug.
      *
      * @param  array<int, mixed>  $lineItems
      */
     private function activateAddOns(StudentProfile $profile, array $lineItems, string $orderId): void
     {
-        /** @var array<string, string> $map */
-        $map = config('squarespace.addon_sku_map', []);
-
-        if ($map === []) {
-            return;
-        }
+        /** @var array<string, string> $skuMap */
+        $skuMap = config('squarespace.addon_sku_map', []);
 
         foreach ($lineItems as $item) {
             if (! is_array($item)) {
@@ -101,7 +100,7 @@ class SquarespaceOrderImporter
             }
 
             $sku = (string) ($item['sku'] ?? '');
-            $slug = $map[$sku] ?? null;
+            $slug = $skuMap[$sku] ?? $this->matchAddOnSlug((string) ($item['productName'] ?? $item['name'] ?? ''));
 
             if ($slug === null) {
                 continue;
@@ -120,6 +119,46 @@ class SquarespaceOrderImporter
                 max(1, (int) ($item['quantity'] ?? 1)),
             );
         }
+    }
+
+    /**
+     * Match a line-item product name against the add-on catalog. Matches when the
+     * product name contains the catalog name (or vice versa), case-insensitive,
+     * after normalising punctuation/whitespace — e.g. "Additional Container",
+     * "Add-on: Additional Container", "Protection Coverage 2026".
+     */
+    private function matchAddOnSlug(string $productName): ?string
+    {
+        $name = $this->normalize($productName);
+
+        if ($name === '') {
+            return null;
+        }
+
+        /** @var array<int, array<string, mixed>> $catalog */
+        $catalog = config('addons.catalog', []);
+
+        foreach ($catalog as $entry) {
+            $catalogName = $this->normalize((string) ($entry['name'] ?? ''));
+
+            if ($catalogName === '') {
+                continue;
+            }
+
+            if (str_contains($name, $catalogName) || str_contains($catalogName, $name)) {
+                return (string) ($entry['slug'] ?? '') ?: null;
+            }
+        }
+
+        return null;
+    }
+
+    private function normalize(string $value): string
+    {
+        $value = strtolower(trim($value));
+
+        // Collapse any non-alphanumeric run to a single space for tolerant matching.
+        return trim((string) preg_replace('/[^a-z0-9]+/', ' ', $value));
     }
 
     /**

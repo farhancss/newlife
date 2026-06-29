@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property string|null $incoming_year
  * @property string|null $package_tier
  * @property int|null $package_id
+ * @property int|null $package_price_cents
  * @property-read Package|null $package
  * @property int $onboarding_step
  * @property \Illuminate\Support\Carbon|null $onboarding_completed_at
@@ -49,6 +50,7 @@ class StudentProfile extends Model
         'incoming_year',
         'package_tier',
         'package_id',
+        'package_price_cents',
         'onboarding_step',
         'onboarding_completed_at',
         'move_container_quantity',
@@ -62,6 +64,7 @@ class StudentProfile extends Model
         return [
             'onboarding_completed_at' => 'datetime',
             'onboarding_step' => 'integer',
+            'package_price_cents' => 'integer',
             'move_container_quantity' => 'integer',
             'move_address_confirmed_at' => 'datetime',
             'move_shipment_triggered_at' => 'datetime',

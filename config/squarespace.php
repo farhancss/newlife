@@ -83,13 +83,11 @@ return [
         // 'SQSP-PROTECTION' => 'protection-coverage',
     ],
 
+    // A single order webhook carries everything needed to provision a student
+    // (email, billing address, package, and checkout form answers), so we only
+    // subscribe to order topics. Contact/address handlers remain in the code
+    // but are no longer subscribed.
     'webhook_topics' => [
-        'contact.create',
-        'contact.update',
-        'contact.delete',
-        'address.create',
-        'address.update',
-        'address.delete',
         'order.create',
         'order.update',
     ],

@@ -3,6 +3,12 @@
 @php
     $pkg = $package ?? $profile?->package;
     $isFeatured = $pkg?->is_featured ?? false;
+    // Prefer what the student actually paid (Squarespace order grand total);
+    // fall back to the catalogue list price when no order total is stored.
+    $paidCents = $profile?->package_price_cents;
+    $priceLabel = $paidCents !== null
+        ? '$' . number_format($paidCents / 100, 2)
+        : ($pkg?->formattedPrice());
 @endphp
 
 @if ($pkg)
@@ -26,7 +32,7 @@
                             {{ $pkg->name }}
                         </h3>
                         <span class="text-base font-semibold text-brand-300 sm:text-lg">
-                            {{ $pkg->formattedPrice() }}<span class="font-normal">*</span>
+                            {{ $priceLabel }}<span class="font-normal">*</span>
                         </span>
                     </div>
 
