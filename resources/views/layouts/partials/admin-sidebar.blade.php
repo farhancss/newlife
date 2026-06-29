@@ -26,7 +26,7 @@
             </div>
             <div x-show="!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen" class="hidden xl:flex xl:justify-center">
                 <img src="{{ asset('images/logo/new-life-campus-mark.png') }}" alt="New Life Campus"
-                    class="h-11 w-11 object-contain" />
+                    class="h-16 w-16 object-contain" />
             </div>
         </a>
     </div>
