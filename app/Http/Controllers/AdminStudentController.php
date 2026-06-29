@@ -29,7 +29,7 @@ class AdminStudentController extends Controller
         $search = trim((string) $request->query('q', ''));
 
         $students = StudentProfile::query()
-            ->with(['user', 'package', 'housingInfo', 'containers'])
+            ->with(['user', 'package', 'housingInfo'])
             ->when($search !== '', function ($query) use ($search): void {
                 $query->where(function ($inner) use ($search): void {
                     $inner->where('new_life_id', 'like', "%{$search}%")
@@ -41,18 +41,9 @@ class AdminStudentController extends Controller
             ->orderBy('first_name')
             ->get();
 
-        $rows = $students->map(function (StudentProfile $profile): array {
-            $primary = $profile->containers
-                ->where('source', \App\Models\Container::SOURCE_MOVE)
-                ->sortBy('id')
-                ->first();
-
-            return [
-                'profile' => $profile,
-                'status' => $this->moveProgressService->currentLabel($profile),
-                'eta' => $primary?->ship_by_date,
-            ];
-        });
+        $rows = $students->map(fn (StudentProfile $profile): array => [
+            'profile' => $profile,
+        ]);
 
         return view('pages.portal.admin.students', [
             'title' => 'Student Management',

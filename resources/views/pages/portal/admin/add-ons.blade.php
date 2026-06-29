@@ -52,7 +52,7 @@
                         <th>Status</th>
                         <th>Purchased</th>
                         <th>Container</th>
-                        <th data-sortable="false"></th>
+                        <th data-sortable="false">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -83,17 +83,11 @@
                                     <span class="text-gray-400">—</span>
                                 @endif
                             </td>
-                            <td class="text-right">
-                                <div class="inline-flex items-center gap-1">
-                                    <a href="{{ route('admin.add-ons.show', $addOn) }}"
-                                        class="inline-flex rounded-lg px-3 py-1.5 text-sm font-semibold text-brand-500 hover:bg-brand-50">
-                                        View
-                                    </a>
+                            <td>
+                                <div class="inline-flex items-center gap-1.5">
+                                    <x-portal.action-button :href="route('admin.add-ons.show', $addOn)" icon="eye">View</x-portal.action-button>
                                     @if ($addOn->container)
-                                        <a href="{{ route('admin.containers', ['edit' => $addOn->container->id]) }}"
-                                            class="inline-flex rounded-lg px-3 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-100">
-                                            Edit
-                                        </a>
+                                        <x-portal.action-button :href="route('admin.containers', ['edit' => $addOn->container->id])" icon="box" variant="neutral">Container</x-portal.action-button>
                                     @endif
                                 </div>
                             </td>

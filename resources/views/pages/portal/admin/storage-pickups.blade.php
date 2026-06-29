@@ -56,7 +56,7 @@
                         <th>Requested date</th>
                         <th>Confirmed date</th>
                         <th>Status</th>
-                        <th data-sortable="false"></th>
+                        <th data-sortable="false">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -82,11 +82,8 @@
                                     {{ $pickup->statusLabel() }}
                                 </span>
                             </td>
-                            <td class="text-right">
-                                <a href="{{ route('admin.storage-pickups', ['edit' => $pickup->id, 'q' => $search ?: null]) }}"
-                                    class="inline-flex rounded-lg px-3 py-1.5 text-sm font-semibold text-brand-500 hover:bg-brand-50">
-                                    Manage
-                                </a>
+                            <td>
+                                <x-portal.action-button :href="route('admin.storage-pickups', ['edit' => $pickup->id, 'q' => $search ?: null])" icon="edit">Manage</x-portal.action-button>
                             </td>
                         </tr>
                     @empty

@@ -59,7 +59,7 @@
                         <th>Tracking #</th>
                         <th>Status</th>
                         <th>ETA</th>
-                        <th data-sortable="false"></th>
+                        <th data-sortable="false">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -88,11 +88,8 @@
                                 </span>
                             </td>
                             <td class="text-xs text-gray-700">{{ $package->estimated_arrival ? $package->estimated_arrival->format('M j, Y') : '—' }}</td>
-                            <td class="text-right">
-                                <a href="{{ route('admin.retail-packages', array_merge($filters, ['edit' => $package->id])) }}"
-                                    class="inline-flex rounded-lg px-3 py-1.5 text-sm font-semibold text-brand-500 hover:bg-brand-50">
-                                    Manage
-                                </a>
+                            <td>
+                                <x-portal.action-button :href="route('admin.retail-packages', array_merge($filters, ['edit' => $package->id]))" icon="edit">Manage</x-portal.action-button>
                             </td>
                         </tr>
                     @empty

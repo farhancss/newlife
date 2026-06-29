@@ -87,10 +87,7 @@
                                 </p>
                             </div>
                             <div class="flex items-center gap-2">
-                                <a href="{{ route('student.add-ons.show', $purchase) }}"
-                                    class="inline-flex items-center justify-center rounded-lg border border-brand-500 px-3 py-1.5 text-xs font-medium text-brand-500 hover:bg-brand-50">
-                                    View
-                                </a>
+                                <x-portal.action-button :href="route('student.add-ons.show', $purchase)" icon="eye">View</x-portal.action-button>
                             </div>
                         </div>
                     @endforeach

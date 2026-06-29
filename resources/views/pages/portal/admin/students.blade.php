@@ -11,10 +11,9 @@
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Move ID</th>
+                    <th>New Life ID</th>
                     <th>University</th>
                     <th>Package</th>
-                    <th>Ship by</th>
                     <th data-sortable="false">Actions</th>
                 </tr>
             </thead>
@@ -30,25 +29,15 @@
                         <td>{{ $student->new_life_id }}</td>
                         <td>{{ $student->housingInfo?->university ?: $student->school ?: '—' }}</td>
                         <td>{{ $student->package?->shortLabel() ?: '—' }}</td>
-                        <td>{{ $row['eta'] ? $row['eta']->format('M j, Y') : '—' }}</td>
                         <td>
-                            <div class="flex items-center gap-2 whitespace-nowrap">
-                                <a href="{{ route('admin.students.show', $student) }}"
-                                    class="inline-flex items-center gap-1 rounded-lg bg-brand-500 px-2.5 py-1 text-xs font-semibold text-white hover:bg-brand-700">
-                                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/>
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                    </svg>
-                                    View
-                                </a>
-                                <a href="{{ route('admin.containers', ['q' => $student->new_life_id]) }}"
-                                    class="rounded-lg bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700 hover:bg-gray-200">Containers</a>
+                            <div class="flex items-center gap-2">
+                                <x-portal.action-button :href="route('admin.students.show', $student)" icon="eye">View</x-portal.action-button>
                             </div>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="py-16 text-center">
+                        <td colspan="5" class="py-16 text-center">
                             <p class="text-sm font-medium text-gray-900">No students found</p>
                             <p class="mt-1 text-sm text-gray-500">Students appear here after they are provisioned from Squarespace.</p>
                         </td>

@@ -37,7 +37,7 @@
                     <th>Email</th>
                     <th>Read</th>
                     <th>Sent</th>
-                    <th data-sortable="false"></th>
+                    <th data-sortable="false">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -77,12 +77,10 @@
                             @endif
                         </td>
                         <td class="text-xs text-gray-500">{{ $notification->created_at->format('M j, g:i A') }}</td>
-                        <td class="text-right whitespace-nowrap">
+                        <td class="whitespace-nowrap">
                             <form action="{{ route('admin.notifications.resend', $notification) }}" method="POST" class="inline">
                                 @csrf
-                                <button type="submit" class="inline-flex rounded-lg px-3 py-1.5 text-sm font-semibold text-brand-500 hover:bg-brand-50">
-                                    Resend
-                                </button>
+                                <x-portal.action-button type="submit" icon="send">Resend</x-portal.action-button>
                             </form>
                         </td>
                     </tr>

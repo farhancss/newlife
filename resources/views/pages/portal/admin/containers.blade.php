@@ -45,8 +45,7 @@
                                 <th>Student / package</th>
                                 <th>Status</th>
                                 <th>Ship by</th>
-                                <th>Tracking</th>
-                                <th data-sortable="false"></th>
+                                <th data-sortable="false">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -75,7 +74,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <span class="inline-flex max-w-[140px] rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold leading-snug text-gray-800">
+                                        <span class="inline-flex whitespace-nowrap rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-800">
                                             {{ $container->statusLabel() }}
                                         </span>
                                         @if ($container->location)
@@ -85,20 +84,8 @@
                                     <td class="text-xs text-gray-700">
                                         {{ $container->ship_by_date ? $container->ship_by_date->format('M j, Y') : '—' }}
                                     </td>
-                                    <td class="text-xs">
-                                        @if ($container->outbound_tracking)
-                                            <a href="{{ $outUrl }}" target="_blank" rel="noopener noreferrer" class="font-medium text-brand-500 hover:underline">
-                                                {{ $container->outbound_tracking }}
-                                            </a>
-                                        @else
-                                            <span class="text-gray-400">—</span>
-                                        @endif
-                                    </td>
-                                    <td class="text-right">
-                                        <a href="{{ route('admin.containers', ['edit' => $container->id, 'q' => $search ?: null]) }}"
-                                            class="inline-flex rounded-lg px-3 py-1.5 text-sm font-semibold text-brand-500 hover:bg-brand-50">
-                                            Edit
-                                        </a>
+                                    <td>
+                                        <x-portal.action-button :href="route('admin.containers', ['edit' => $container->id, 'q' => $search ?: null])" icon="edit">Edit</x-portal.action-button>
                                     </td>
                                 </tr>
                             @empty
@@ -193,6 +180,23 @@
                                 <label for="return_tracking" class="mb-1.5 block text-sm font-medium text-gray-700">Return FedEx tracking</label>
                                 <input id="return_tracking" name="return_tracking" type="text" value="{{ old('return_tracking', $editing->return_tracking) }}"
                                     class="h-11 w-full rounded-xl border border-gray-300 px-3 text-sm font-mono" />
+                            </div>
+
+                            <div>
+                                <label class="mb-1.5 block text-sm font-medium text-gray-700" for="ship_by_date">Ship by date</label>
+                                <x-form.flatpickr-input
+                                    name="ship_by_date"
+                                    :value="old('ship_by_date', $editing->ship_by_date?->format('Y-m-d'))"
+                                    placeholder="Select a date"
+                                    icon="calendar"
+                                    class="h-11 w-full rounded-xl border border-gray-300 px-3 pr-10 text-sm focus:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-200"
+                                    :options="[
+                                        'dateFormat' => 'Y-m-d',
+                                        'altInput' => true,
+                                        'altFormat' => 'F j, Y',
+                                        'minDate' => 'today',
+                                    ]"
+                                />
                             </div>
 
                             <div>

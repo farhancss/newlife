@@ -133,7 +133,7 @@
                     <th>Retail</th>
                     <th>ETA</th>
                     <th data-sortable="false">Status</th>
-                    <th data-sortable="false"></th>
+                    <th data-sortable="false">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -161,20 +161,23 @@
                         </td>
                         <td class="whitespace-nowrap">
                             @if ($package->isEditable())
-                                <a href="{{ route('student.retail-packages', ['edit' => $package->id]) }}"
-                                    class="text-sm font-medium text-brand-500 hover:underline">
-                                    Edit
-                                </a>
-                                <form action="{{ route('student.retail-packages.destroy', $package) }}" method="POST" class="inline"
-                                    onsubmit="return confirm('Remove this package?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="ml-3 text-sm font-medium text-red-500 hover:underline">
-                                        Remove
-                                    </button>
-                                </form>
+                                <div class="inline-flex items-center gap-1.5">
+                                    <x-portal.action-button :href="route('student.retail-packages', ['edit' => $package->id])" icon="edit">Edit</x-portal.action-button>
+                                    <form action="{{ route('student.retail-packages.destroy', $package) }}" method="POST" class="inline"
+                                        onsubmit="return confirm('Remove this package?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <x-portal.action-button type="submit" icon="trash" variant="danger">Remove</x-portal.action-button>
+                                    </form>
+                                </div>
                             @else
-                                <span class="inline-flex rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-500">Locked</span>
+                                <span class="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg bg-gray-100 px-2.5 py-1.5 text-xs font-semibold text-gray-500 ring-1 ring-inset ring-gray-200"
+                                    title="This package is already on its way and can no longer be edited.">
+                                    <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 0h10.5a2.25 2.25 0 012.25 2.25v6a2.25 2.25 0 01-2.25 2.25H6.75a2.25 2.25 0 01-2.25-2.25v-6a2.25 2.25 0 012.25-2.25z"/>
+                                    </svg>
+                                    Locked
+                                </span>
                             @endif
                         </td>
                     </tr>
