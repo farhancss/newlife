@@ -22,15 +22,15 @@
         <div class="flex flex-row gap-3">
             <div class="min-w-0 flex-1 rounded-2xl border border-gray-200 bg-white px-4 py-4 sm:px-5 sm:py-5">
                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Move shipments</p>
-                <p class="mt-1 text-2xl font-bold text-gray-900 sm:text-3xl">{{ $totalContainers }}</p>
+                <p class="mt-1 text-2xl font-bold text-brand-500 sm:text-3xl">{{ $totalContainers }}</p>
             </div>
             <div class="min-w-0 flex-1 rounded-2xl border border-gray-200 bg-white px-4 py-4 sm:px-5 sm:py-5">
                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">In transit</p>
-                <p class="mt-1 text-2xl font-bold text-brand-700 sm:text-3xl">{{ $inTransit }}</p>
+                <p class="mt-1 text-2xl font-bold text-brand-500 sm:text-3xl">{{ $inTransit }}</p>
             </div>
             <div class="min-w-0 flex-1 rounded-2xl border border-gray-200 bg-white px-4 py-4 sm:px-5 sm:py-5">
                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Students loaded</p>
-                <p class="mt-1 text-2xl font-bold text-gray-900 sm:text-3xl">{{ $studentsLoaded }}</p>
+                <p class="mt-1 text-2xl font-bold text-brand-500 sm:text-3xl">{{ $studentsLoaded }}</p>
             </div>
         </div>
 
@@ -69,7 +69,7 @@
                                         <span class="font-medium text-gray-900">{{ $student->fullName() ?: $student->user?->name }}</span>
                                         <span class="mt-0.5 block text-xs text-gray-500">{{ $student->new_life_id }}</span>
                                         @if ($pkg)
-                                            <span class="mt-1 inline-flex rounded-full bg-brand-50 px-2 py-0.5 text-xs font-semibold text-brand-700">
+                                            <span class="mt-1 inline-flex rounded-full bg-brand-50 px-2 py-0.5 text-xs font-semibold text-brand-500">
                                                 {{ $pkg->shortLabel() }}
                                             </span>
                                         @endif

@@ -25,19 +25,19 @@
         <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
             <div class="min-w-0 rounded-2xl border border-gray-200 bg-white px-4 py-4 sm:px-5 sm:py-5">
                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Total purchases</p>
-                <p class="mt-1 text-2xl font-bold text-gray-900 sm:text-3xl">{{ $stats['total'] }}</p>
+                <p class="mt-1 text-2xl font-bold text-brand-500 sm:text-3xl">{{ $stats['total'] }}</p>
             </div>
             <div class="min-w-0 rounded-2xl border border-gray-200 bg-white px-4 py-4 sm:px-5 sm:py-5">
                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Active</p>
-                <p class="mt-1 text-2xl font-bold text-emerald-700 sm:text-3xl">{{ $stats['active'] }}</p>
+                <p class="mt-1 text-2xl font-bold text-brand-500 sm:text-3xl">{{ $stats['active'] }}</p>
             </div>
             <div class="min-w-0 rounded-2xl border border-gray-200 bg-white px-4 py-4 sm:px-5 sm:py-5">
                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Trackable containers</p>
-                <p class="mt-1 text-2xl font-bold text-brand-700 sm:text-3xl">{{ $stats['trackable'] }}</p>
+                <p class="mt-1 text-2xl font-bold text-brand-500 sm:text-3xl">{{ $stats['trackable'] }}</p>
             </div>
             <div class="min-w-0 rounded-2xl border border-gray-200 bg-white px-4 py-4 sm:px-5 sm:py-5">
                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Active revenue</p>
-                <p class="mt-1 text-2xl font-bold text-gray-900 sm:text-3xl">{{ $revenue }}</p>
+                <p class="mt-1 text-2xl font-bold text-brand-500 sm:text-3xl">{{ $revenue }}</p>
             </div>
         </div>
 

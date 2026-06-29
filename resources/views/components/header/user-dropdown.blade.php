@@ -19,7 +19,7 @@
             />
         </template>
         <template x-if="!$store.userAvatar.url">
-            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-50 text-sm font-semibold text-brand-700"
+            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-50 text-sm font-semibold text-brand-500"
                 x-text="$store.userAvatar.initials"></span>
         </template>
         <span class="hidden min-w-0 flex-1 text-left sm:block">

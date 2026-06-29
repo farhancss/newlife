@@ -30,19 +30,19 @@
         <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
             <div class="min-w-0 rounded-2xl border border-gray-200 bg-white px-4 py-4 sm:px-5 sm:py-5">
                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Total</p>
-                <p class="mt-1 text-2xl font-bold text-gray-900 sm:text-3xl">{{ $stats['total'] }}</p>
+                <p class="mt-1 text-2xl font-bold text-brand-500 sm:text-3xl">{{ $stats['total'] }}</p>
             </div>
             <div class="min-w-0 rounded-2xl border border-gray-200 bg-white px-4 py-4 sm:px-5 sm:py-5">
                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Awaiting confirmation</p>
-                <p class="mt-1 text-2xl font-bold text-amber-700 sm:text-3xl">{{ $stats['requested'] }}</p>
+                <p class="mt-1 text-2xl font-bold text-brand-500 sm:text-3xl">{{ $stats['requested'] }}</p>
             </div>
             <div class="min-w-0 rounded-2xl border border-gray-200 bg-white px-4 py-4 sm:px-5 sm:py-5">
                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">In storage</p>
-                <p class="mt-1 text-2xl font-bold text-brand-700 sm:text-3xl">{{ $stats['in_storage'] }}</p>
+                <p class="mt-1 text-2xl font-bold text-brand-500 sm:text-3xl">{{ $stats['in_storage'] }}</p>
             </div>
             <div class="min-w-0 rounded-2xl border border-gray-200 bg-white px-4 py-4 sm:px-5 sm:py-5">
                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Returned</p>
-                <p class="mt-1 text-2xl font-bold text-emerald-700 sm:text-3xl">{{ $stats['returned'] }}</p>
+                <p class="mt-1 text-2xl font-bold text-brand-500 sm:text-3xl">{{ $stats['returned'] }}</p>
             </div>
         </div>
 

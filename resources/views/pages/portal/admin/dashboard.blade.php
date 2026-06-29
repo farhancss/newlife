@@ -11,8 +11,8 @@
         <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             @foreach ($summaryCards as $stat)
                 <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-theme-xs">
-                    <p class="text-sm font-medium text-gray-500">{{ $stat['label'] }}</p>
-                    <p class="mt-2 text-3xl font-semibold tracking-tight text-gray-900">{{ number_format($stat['value']) }}</p>
+                    <p class="text-sm font-medium text-bran-500">{{ $stat['label'] }}</p>
+                    <p class="mt-2 text-3xl font-semibold tracking-tight text-brand-500">{{ number_format($stat['value']) }}</p>
                     <p class="mt-2 text-xs text-gray-500">{{ $stat['trend'] }}</p>
                 </div>
             @endforeach
@@ -51,7 +51,7 @@
                                 <td>
                                     @php
                                         $typeStyles = match ($row['type']) {
-                                            'Student' => 'bg-brand-50 text-brand-700',
+                                            'Student' => 'bg-brand-50 text-brand-500',
                                             'Package' => 'bg-blue-light-50 text-blue-light-700',
                                             'Container' => 'bg-warning-50 text-warning-700',
                                             'Delivery' => 'bg-success-50 text-success-700',

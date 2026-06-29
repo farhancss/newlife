@@ -23,7 +23,7 @@
                 >
                     <button
                         type="submit"
-                        class="w-fit rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
+                        class="w-fit rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-20"
                         x-bind:disabled="!canSubmit"
                     >
                         Update Password
