@@ -27,7 +27,7 @@ class UserDropdown extends Component
         $user = auth()->user();
 
         $this->portal = $portal ?? (request()->segment(1) === 'admin' ? 'admin' : 'student');
-        $this->userName = $userName ?? $user?->name ?? ucfirst($this->portal) . ' User';
+        $this->userName = $userName ?? $user->name ?? ucfirst($this->portal) . ' User';
         $this->initials = $initials ?? $user?->initials() ?? 'NL';
         $this->avatarSrc = $avatarSrc ?? $user?->avatarUrl();
     }

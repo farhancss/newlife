@@ -40,7 +40,6 @@ class MenuHelper
             ['icon' => 'storage', 'name' => 'Storage Pickups', 'path' => $basePath . '/storage-pickups'],
             ['icon' => 'calendar', 'name' => 'Deadlines', 'path' => $basePath . '/deadlines'],
             ['icon' => 'bell', 'name' => 'Notifications', 'path' => $basePath . '/notifications'],
-            ['icon' => 'plug', 'name' => 'Squarespace', 'path' => $basePath . '/squarespace'],
         ];
 
         if (config('devtools.enabled')) {

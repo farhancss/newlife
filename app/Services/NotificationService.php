@@ -217,7 +217,7 @@ class NotificationService
      */
     public function storagePickupStatusChanged(\App\Models\StoragePickup $pickup): ?PortalNotification
     {
-        $recipient = $pickup->studentProfile?->user;
+        $recipient = $pickup->studentProfile->user;
 
         if ($recipient === null) {
             return null;
@@ -252,7 +252,7 @@ class NotificationService
      */
     public function containerHubEvidenceAdded(Container $container, int $photoCount, ?User $actor = null): ?PortalNotification
     {
-        $recipient = $container->studentProfile?->user;
+        $recipient = $container->studentProfile->user;
 
         if ($recipient === null || $photoCount < 1) {
             return null;
@@ -299,7 +299,7 @@ class NotificationService
      */
     public function addOnPurchased(\App\Models\StudentAddOn $addOn): ?PortalNotification
     {
-        $recipient = $addOn->studentProfile?->user;
+        $recipient = $addOn->studentProfile->user;
 
         if ($recipient === null) {
             return null;

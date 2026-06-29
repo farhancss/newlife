@@ -17,8 +17,7 @@
         <div class="rounded-2xl border border-gray-200 bg-white p-5">
             <h1 class="text-xl font-semibold text-gray-900">Add-Ons</h1>
             <p class="mt-1 text-sm text-gray-600">
-                Enhance your move with optional services. Payment is completed securely on the
-                <span class="font-medium text-gray-700">New Life Campus</span> store, then our team activates your add-on.
+            Select an add-on below to complete your purchase on the New Life Campus store.
             </p>
         </div>
 

@@ -111,9 +111,11 @@ class StoragePickupService
         ]);
 
         // Stamp who confirmed the schedule the first time we leave "requested".
-        if ($previousStatus === StoragePickupStatus::REQUESTED
+        if (
+            $previousStatus === StoragePickupStatus::REQUESTED
             && $newStatus !== StoragePickupStatus::REQUESTED
-            && $pickup->confirmed_at === null) {
+            && $pickup->confirmed_at === null
+        ) {
             $pickup->confirmed_by_user_id = $actor?->id;
             $pickup->confirmed_at = Carbon::now();
         }

@@ -87,7 +87,7 @@ test('incomplete student can access profile route', function () {
     $this->actingAs($user)
         ->get(route('student.profile'))
         ->assertOk()
-        ->assertSee('Sections to complete', false);
+        ->assertSee('Complete the remaining sections', false);
 });
 
 test('profile respects section query param for direct navigation', function () {
