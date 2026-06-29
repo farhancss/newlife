@@ -121,6 +121,39 @@ class SquarespaceLogger
     }
 
     /**
+     * Record the outcome of processing an incoming webhook (e.g. an order being
+     * fetched and a student provisioned), so the full chain — webhook in, API
+     * call out, and the processing result — is visible in the Log Viewer.
+     *
+     * @param  array<string, mixed>  $context
+     */
+    public function logProcessing(
+        string $label,
+        string $message,
+        array $context = [],
+        ?string $error = null,
+    ): void {
+        if (! $this->enabled()) {
+            return;
+        }
+
+        $payload = array_merge(
+            [
+                'direction' => SquarespaceLogDirection::PROCESSING,
+                'label' => $label,
+                'error' => $error,
+            ],
+            $this->mask($context),
+        );
+
+        $line = sprintf('PROCESS %s %s%s', $label, $message, $error !== null ? ' (failed)' : '');
+
+        $error !== null
+            ? $this->channel()->error($line, $payload)
+            : $this->channel()->info($line, $payload);
+    }
+
+    /**
      * @param  array<string, mixed>  $headers
      * @return array<string, mixed>
      */

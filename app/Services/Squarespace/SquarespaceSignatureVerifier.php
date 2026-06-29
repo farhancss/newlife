@@ -9,9 +9,14 @@ class SquarespaceSignatureVerifier
     /**
      * Verify the `Squarespace-Signature` header against the HMAC-SHA256 of the
      * raw payload. We try every known signing secret — the per-subscription
-     * secrets returned by the API first, then the configured fallback — and
-     * accept either hex or base64 encodings to stay compatible across
-     * Squarespace's formats.
+     * secrets returned by the API first, then the configured fallback.
+     *
+     * Per Squarespace's spec the secret is hex-encoded and the HMAC key is the
+     * decoded bytes (`HMAC-SHA256(hexToBytes(secret), payload)`). We try the
+     * hex-decoded key first and fall back to using the secret as a raw string
+     * key for backward compatibility, and accept hex or base64 digests.
+     *
+     * @see https://developers.squarespace.com/webhooks/verifying-notifications
      */
     public function verify(string $payload, ?string $signature): bool
     {
@@ -28,22 +33,47 @@ class SquarespaceSignatureVerifier
                 continue;
             }
 
-            $rawHmac = hash_hmac('sha256', $payload, $secret, true);
+            foreach ($this->candidateKeys($secret) as $key) {
+                $rawHmac = hash_hmac('sha256', $payload, $key, true);
 
-            // Squarespace sends the signature as uppercase hex; compare hex
-            // case-insensitively. Also accept base64 for forward compatibility.
-            $hex = bin2hex($rawHmac);
-            $base64 = base64_encode($rawHmac);
+                // Squarespace sends the signature as uppercase hex; compare hex
+                // case-insensitively. Also accept base64 for forward compatibility.
+                $hex = bin2hex($rawHmac);
+                $base64 = base64_encode($rawHmac);
 
-            if (
-                hash_equals($hex, strtolower($signature))
-                || hash_equals($base64, $signature)
-            ) {
-                return true;
+                if (
+                    hash_equals($hex, strtolower($signature))
+                    || hash_equals($base64, $signature)
+                ) {
+                    return true;
+                }
             }
         }
 
         return false;
+    }
+
+    /**
+     * Candidate HMAC keys for a stored secret: the hex-decoded bytes (the
+     * documented Squarespace key) first, then the raw secret string.
+     *
+     * @return list<string>
+     */
+    private function candidateKeys(string $secret): array
+    {
+        $keys = [];
+
+        if (strlen($secret) % 2 === 0 && ctype_xdigit($secret)) {
+            $decoded = hex2bin($secret);
+
+            if (is_string($decoded) && $decoded !== '') {
+                $keys[] = $decoded;
+            }
+        }
+
+        $keys[] = $secret;
+
+        return array_values(array_unique($keys));
     }
 
     /**

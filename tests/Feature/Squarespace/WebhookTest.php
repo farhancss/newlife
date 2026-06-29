@@ -35,6 +35,26 @@ test('squarespace webhook rejects invalid signature', function () {
     $response->assertUnauthorized();
 });
 
+test('squarespace webhook accepts a hex-encoded subscription secret', function () {
+    Queue::fake();
+
+    // Squarespace secrets are hex strings; the HMAC key is the decoded bytes.
+    $secret = bin2hex(random_bytes(16));
+    config(['squarespace.webhook_secret' => $secret]);
+
+    $notification = fixtureNotification('contact-create.json');
+    $payload = json_encode($notification);
+    $signature = strtoupper(hash_hmac('sha256', $payload, hex2bin($secret)));
+
+    $response = $this->call('POST', '/api/webhooks/squarespace', [], [], [], [
+        'HTTP_Squarespace-Signature' => $signature,
+        'CONTENT_TYPE' => 'application/json',
+    ], $payload);
+
+    $response->assertOk();
+    Queue::assertPushed(ProcessSquarespaceContactWebhook::class);
+});
+
 test('squarespace contact webhook provisions student account', function () {
     Queue::fake();
 
@@ -104,6 +124,7 @@ test('squarespace order webhook enriches package and subscription', function () 
     (new ProcessSquarespaceOrderWebhook($orderEvent->id))->handle(
         app(\App\Services\AccountProvisioningService::class),
         app(\App\Services\Squarespace\SquarespaceApiClient::class),
+        app(\App\Services\Squarespace\SquarespaceLogger::class),
     );
 
     $profile = StudentProfile::query()->where('squarespace_contact_id', 'sq-contact-fixture-001')->first();

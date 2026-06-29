@@ -5,8 +5,10 @@ use App\Jobs\Squarespace\ProcessSquarespaceAddressWebhook;
 use App\Jobs\Squarespace\ProcessSquarespaceContactWebhook;
 use App\Jobs\Squarespace\ProcessSquarespaceOrderWebhook;
 use App\Models\SquarespaceWebhookEvent;
+use App\Models\StudentProfile;
 use App\Services\AccountProvisioningService;
 use App\Services\Squarespace\SquarespaceApiClient;
+use App\Services\Squarespace\SquarespaceLogger;
 
 /**
  * @param array<string, mixed> $payload
@@ -60,23 +62,23 @@ it('handles the order webhook via embedded order, api lookup and missing data', 
     // Embedded order payload: no API call.
     $embedded = makeWebhookEvent(['data' => ['order' => ['id' => 'o-1']]]);
     $prov1 = Mockery::mock(AccountProvisioningService::class);
-    $prov1->shouldReceive('enrichFromOrder')->once();
-    (new ProcessSquarespaceOrderWebhook($embedded->id))->handle($prov1, $apiClient);
+    $prov1->shouldReceive('enrichFromOrder')->once()->andReturn(new StudentProfile());
+    (new ProcessSquarespaceOrderWebhook($embedded->id))->handle($prov1, $apiClient, app(SquarespaceLogger::class));
     expect($embedded->fresh()->status)->toBe(WebhookEventStatus::PROCESSED);
 
     // Order id only: fetched through the API client.
     $byId = makeWebhookEvent(['data' => ['orderId' => 'o-2']]);
     $apiClient->shouldReceive('getOrder')->with('o-2')->once()->andReturn(['id' => 'o-2']);
     $prov2 = Mockery::mock(AccountProvisioningService::class);
-    $prov2->shouldReceive('enrichFromOrder')->once();
-    (new ProcessSquarespaceOrderWebhook($byId->id))->handle($prov2, $apiClient);
+    $prov2->shouldReceive('enrichFromOrder')->once()->andReturn(new StudentProfile());
+    (new ProcessSquarespaceOrderWebhook($byId->id))->handle($prov2, $apiClient, app(SquarespaceLogger::class));
     expect($byId->fresh()->status)->toBe(WebhookEventStatus::PROCESSED);
 
     // Missing both: fails.
     $empty = makeWebhookEvent(['data' => []]);
     $prov3 = Mockery::mock(AccountProvisioningService::class);
     $prov3->shouldNotReceive('enrichFromOrder');
-    expect(fn () => (new ProcessSquarespaceOrderWebhook($empty->id))->handle($prov3, $apiClient))
+    expect(fn () => (new ProcessSquarespaceOrderWebhook($empty->id))->handle($prov3, $apiClient, app(SquarespaceLogger::class)))
         ->toThrow(RuntimeException::class);
     expect($empty->fresh()->status)->toBe(WebhookEventStatus::FAILED);
 });

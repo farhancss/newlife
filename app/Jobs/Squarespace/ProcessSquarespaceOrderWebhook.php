@@ -6,6 +6,7 @@ use App\Enums\WebhookEventStatus;
 use App\Models\SquarespaceWebhookEvent;
 use App\Services\AccountProvisioningService;
 use App\Services\Squarespace\SquarespaceApiClient;
+use App\Services\Squarespace\SquarespaceLogger;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -29,13 +30,15 @@ class ProcessSquarespaceOrderWebhook implements ShouldQueue, ShouldBeUnique
     public function handle(
         AccountProvisioningService $provisioning,
         SquarespaceApiClient $apiClient,
+        SquarespaceLogger $logger,
     ): void {
         $event = SquarespaceWebhookEvent::query()->findOrFail($this->webhookEventId);
         $event->update(['status' => WebhookEventStatus::PROCESSING]);
 
+        $data = $event->payload['data'] ?? [];
+        $orderId = (string) ($data['orderId'] ?? '');
+
         try {
-            $data = $event->payload['data'] ?? [];
-            $orderId = (string) ($data['orderId'] ?? '');
             $embeddedOrder = $data['order'] ?? null;
 
             if (is_array($embeddedOrder) && $embeddedOrder !== []) {
@@ -50,11 +53,19 @@ class ProcessSquarespaceOrderWebhook implements ShouldQueue, ShouldBeUnique
                 throw new \RuntimeException('Order webhook missing orderId and order payload.');
             }
 
-            $provisioning->enrichFromOrder($order);
+            $profile = $provisioning->enrichFromOrder($order);
             $event->update([
                 'status' => WebhookEventStatus::PROCESSED,
                 'processed_at' => now(),
                 'error' => null,
+            ]);
+
+            $logger->logProcessing('order.provisioned', 'order ' . $orderId, [
+                'order_id' => $orderId,
+                'order_number' => $order['orderNumber'] ?? null,
+                'student_email' => $profile->user?->email,
+                'package_tier' => $profile->package_tier,
+                'package_price_cents' => $profile->package_price_cents,
             ]);
         } catch (Throwable $e) {
             $event->update([
@@ -62,6 +73,10 @@ class ProcessSquarespaceOrderWebhook implements ShouldQueue, ShouldBeUnique
                 'processed_at' => now(),
                 'error' => $e->getMessage(),
             ]);
+
+            $logger->logProcessing('order.failed', 'order ' . $orderId, [
+                'order_id' => $orderId,
+            ], $e->getMessage());
 
             throw $e;
         }
