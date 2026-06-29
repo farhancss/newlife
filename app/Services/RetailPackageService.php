@@ -15,6 +15,7 @@ class RetailPackageService
     public function __construct(
         private readonly NotificationService $notifications,
         private readonly DeadlineService $deadlines,
+        private readonly RetailEligibilityService $eligibility,
     ) {
     }
 
@@ -26,9 +27,17 @@ class RetailPackageService
      */
     public function create(StudentProfile $profile, array $data, ?User $actor = null): RetailPackage
     {
-        if ($this->activeCount($profile) >= $this->activeCap()) {
+        if (! $this->eligibility->isEligible($profile)) {
             throw ValidationException::withMessages([
-                'tracking_number' => "You can track up to {$this->activeCap()} active packages at a time. Mark delivered packages complete or contact support.",
+                'tracking_number' => 'Retail package tracking is available on the Legacy package or after purchasing an add-on.',
+            ]);
+        }
+
+        $cap = $this->capFor($profile);
+
+        if ($this->purchasedCount($profile) >= $cap) {
+            throw ValidationException::withMessages([
+                'tracking_number' => "You can log up to {$cap} retail packages. Remove one or contact support to add more.",
             ]);
         }
 
@@ -146,6 +155,23 @@ class RetailPackageService
         return $profile->retailPackages()
             ->where('status', '!=', RetailPackageStatus::DELIVERED_TO_DORM)
             ->count();
+    }
+
+    /**
+     * Number of retail packages currently logged (counts toward the cap).
+     */
+    public function purchasedCount(StudentProfile $profile): int
+    {
+        return $profile->retailPackages()->count();
+    }
+
+    /**
+     * The retail-package cap for this student, driven by their package tier or
+     * add-on purchase. Zero means the feature is locked.
+     */
+    public function capFor(StudentProfile $profile): int
+    {
+        return $this->eligibility->maxPackages($profile);
     }
 
     public function activeCap(): int

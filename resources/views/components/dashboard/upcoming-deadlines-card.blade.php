@@ -45,13 +45,16 @@
                 $priority = $priorityFor($deadline);
                 $styles = $priorityStyles[$priority];
                 $days = $deadline->daysRemaining();
+                $overdue = $deadline->isOverdue();
+                $dotClass = $overdue ? 'bg-orange-500' : 'bg-brand-300';
+                $badgeClass = $overdue ? 'bg-orange-500 text-white' : 'bg-brand-300 text-white';
             @endphp
             <li class="flex items-center justify-between gap-3 py-3.5 first:pt-0 last:pb-0">
                 <span class="flex min-w-0 items-center gap-2.5">
-                    <span class="inline-flex h-2 w-2 shrink-0 rounded-full bg-brand-300"></span>
+                    <span class="inline-flex h-2 w-2 shrink-0 rounded-full {{ $dotClass }}"></span>
                     <span class="truncate text-sm text-gray-800">{{ $deadline->title }}</span>
                 </span>
-                <span class="inline-flex shrink-0 rounded-full px-2.5 py-1 text-xs font-medium bg-brand-300 text-white">
+                <span class="inline-flex shrink-0 rounded-full px-2.5 py-1 text-xs font-medium {{ $badgeClass }}">
                     @if ($deadline->isOverdue())
                         {{ abs($days) }} {{ \Illuminate\Support\Str::plural('day', abs($days)) }} overdue
                     @elseif ($days <= 0)

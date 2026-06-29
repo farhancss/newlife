@@ -196,9 +196,9 @@
                     @if ($container->photos->isNotEmpty())
                         <div class="mt-4">
                             <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">Packing photos ({{ $container->photos->count() }})</p>
-                            <div class="grid grid-cols-3 gap-2 sm:grid-cols-5">
+                            <div class="flex flex-wrap gap-2">
                                 @foreach ($container->photos as $photo)
-                                    <a href="{{ $photo->url() }}" data-gallery="detail-container-{{ $container->id }}" class="glightbox group relative block aspect-square overflow-hidden rounded-lg border border-gray-200">
+                                    <a href="{{ $photo->url() }}" data-gallery="detail-container-{{ $container->id }}" class="glightbox group relative block h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-gray-200">
                                         <img src="{{ $photo->url() }}" alt="{{ $photo->original_name ?: 'Container photo' }}" class="h-full w-full object-cover transition group-hover:scale-105" loading="lazy" />
                                     </a>
                                 @endforeach
@@ -247,13 +247,13 @@
                 <h2 class="text-base font-semibold text-gray-900">Deadlines</h2>
                 <div class="flex flex-wrap gap-2 text-xs">
                     <span class="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 font-semibold text-amber-800">
-                        {{ $deadlines['overdue']->count() }} overdue
+                        {{ $deadlines['overdue']->count() }} Overdue
                     </span>
                     <span class="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2.5 py-1 font-semibold text-brand-700">
-                        {{ $deadlines['upcoming']->count() }} upcoming
+                        {{ $deadlines['upcoming']->count() }} Upcoming
                     </span>
                     <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 font-semibold text-emerald-700">
-                        {{ $deadlines['completed']->count() }} completed
+                        {{ $deadlines['completed']->count() }} Completed
                     </span>
                 </div>
             </div>
@@ -282,17 +282,6 @@
             </div>
 
             <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xs">
-                <h2 class="mb-2 text-base font-semibold text-gray-900">Account</h2>
-                <dl class="divide-y divide-gray-100">
-                    {!! $row('Role', $user ? ucfirst($user->role) : null) !!}
-                    {!! $row('Status', $user ? ucfirst($user->status) : null) !!}
-                    {!! $row('Must reset password', $user ? ($user->must_reset_password ? 'Yes' : 'No') : null) !!}
-                    {!! $row('Password changed', $fmtDateTime($user?->password_changed_at)) !!}
-                    {!! $row('Squarespace contact', $profile->squarespace_contact_id) !!}
-                </dl>
-            </div>
-
-            <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xs">
                 <h2 class="mb-2 text-base font-semibold text-gray-900">Parent / Guardian</h2>
                 @if ($parent)
                     <dl class="divide-y divide-gray-100">
@@ -315,7 +304,6 @@
                         {!! $row('State / Region', $shipping->region) !!}
                         {!! $row('Postal code', $shipping->postal_code) !!}
                         {!! $row('Country', $shipping->country_code) !!}
-                        {!! $row('Confirmed', $fmtDateTime($shipping->confirmed_at)) !!}
                     </dl>
                     @if ($shipping->shipping_notes)
                         <p class="mt-3 rounded-lg bg-gray-50 p-3 text-sm text-gray-600">{{ $shipping->shipping_notes }}</p>
@@ -344,27 +332,6 @@
                 @endif
             </div>
 
-            <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xs">
-                <h2 class="mb-2 text-base font-semibold text-gray-900">Onboarding &amp; milestones</h2>
-                <dl class="divide-y divide-gray-100">
-                    {!! $row('Onboarding step', (string) $profile->onboarding_step) !!}
-                    {!! $row('Onboarding completed', $fmtDateTime($profile->onboarding_completed_at)) !!}
-                    {!! $row('Address confirmed', $fmtDateTime($profile->move_address_confirmed_at)) !!}
-                    {!! $row('Shipment triggered', $fmtDateTime($profile->move_shipment_triggered_at)) !!}
-                    {!! $row('Retail terms accepted', $fmtDateTime($profile->retail_packages_acknowledged_at)) !!}
-                </dl>
-                @php $incomplete = collect($completion['sections'])->where('complete', false); @endphp
-                @if ($incomplete->isNotEmpty())
-                    <div class="mt-3 rounded-lg bg-amber-50 p-3 text-xs text-amber-800">
-                        <p class="font-semibold">Outstanding profile items</p>
-                        <ul class="mt-1 list-disc space-y-0.5 pl-4">
-                            @foreach ($incomplete as $section)
-                                <li>{{ $section['label'] }}: {{ implode(', ', $section['missing']) }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-            </div>
         </div>
 
         {{-- Retail packages --}}
@@ -408,7 +375,6 @@
         <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xs sm:p-6">
             <div class="mb-4 flex items-center justify-between">
                 <h2 class="text-base font-semibold text-gray-900">Add-ons</h2>
-                <a href="{{ route('admin.add-ons', ['q' => $profile->new_life_id]) }}" class="text-sm font-medium text-brand-500 hover:underline">View all</a>
             </div>
             @if ($addOns->isNotEmpty())
                 @php

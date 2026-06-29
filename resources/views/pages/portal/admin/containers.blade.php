@@ -184,22 +184,6 @@
                             </div>
 
                             <div>
-                                <label class="mb-1.5 block text-sm font-medium text-gray-700" for="ship_by_date">Ship by date</label>
-                                <x-form.flatpickr-input
-                                    name="ship_by_date"
-                                    :value="old('ship_by_date', $editing->ship_by_date?->format('Y-m-d'))"
-                                    placeholder="Select a date"
-                                    icon="calendar"
-                                    class="h-11 w-full rounded-xl border border-gray-300 px-3 pr-10 text-sm focus:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-200"
-                                    :options="[
-                                        'dateFormat' => 'Y-m-d',
-                                        'altInput' => true,
-                                        'altFormat' => 'F j, Y',
-                                    ]"
-                                />
-                            </div>
-
-                            <div>
                                 <label for="outbound_tracking" class="mb-1.5 block text-sm font-medium text-gray-700">Outbound FedEx tracking</label>
                                 <input id="outbound_tracking" name="outbound_tracking" type="text" value="{{ old('outbound_tracking', $editing->outbound_tracking) }}"
                                     class="h-11 w-full rounded-xl border border-gray-300 px-3 text-sm font-mono" placeholder="7946…" />

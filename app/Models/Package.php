@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $container_count
  * @property bool $includes_move_out_cycle
  * @property bool $includes_storage
+ * @property bool $allows_retail_packages
+ * @property int $max_retail_packages
  * @property bool $is_featured
  * @property int $sort_order
  * @property list<string>|null $features
@@ -28,6 +30,8 @@ class Package extends Model
         'container_count',
         'includes_move_out_cycle',
         'includes_storage',
+        'allows_retail_packages',
+        'max_retail_packages',
         'is_featured',
         'sort_order',
         'features',
@@ -40,6 +44,8 @@ class Package extends Model
             'container_count' => 'integer',
             'includes_move_out_cycle' => 'boolean',
             'includes_storage' => 'boolean',
+            'allows_retail_packages' => 'boolean',
+            'max_retail_packages' => 'integer',
             'is_featured' => 'boolean',
             'sort_order' => 'integer',
             'features' => 'array',
@@ -53,6 +59,23 @@ class Package extends Model
     public function includesStorage(): bool
     {
         return $this->includes_storage === true;
+    }
+
+    /**
+     * Whether this package bundles the retail-package receiving feature, which
+     * lets a student log shipments from other retailers for hub delivery.
+     */
+    public function allowsRetailPackages(): bool
+    {
+        return $this->allows_retail_packages === true;
+    }
+
+    /**
+     * How many retail packages a student on this package may log at once.
+     */
+    public function maxRetailPackages(): int
+    {
+        return (int) $this->max_retail_packages;
     }
 
     /** @return HasMany<StudentProfile, $this> */

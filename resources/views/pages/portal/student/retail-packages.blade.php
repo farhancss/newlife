@@ -14,7 +14,6 @@
         };
     };
 
-    $atCap = $activeCount >= $activeCap;
 @endphp
 
 @section('content')
@@ -28,11 +27,18 @@
                 <p class="mt-2 text-sm text-gray-500">
                     Ship to <span class="font-semibold text-gray-700">{{ $profile->fullName() ?: $profile->user?->name }}</span>
                     · New Life ID <span class="font-mono font-semibold text-gray-700">{{ $profile->new_life_id }}</span>
-                    · <span class="font-semibold text-gray-700">{{ $activeCount }} of {{ $activeCap }}</span> active
+                    @if ($eligible)
+                        · <span class="font-semibold text-gray-700">{{ $purchasedCount }} of {{ $cap }}</span> logged
+                    @endif
                 </p>
             </div>
-            @if ($atCap)
-                <span class="rounded-lg bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-500">Active limit reached</span>
+            @if (! $eligible)
+                <span class="inline-flex items-center gap-1.5 rounded-lg bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-700">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 0h10.5a2.25 2.25 0 012.25 2.25v6a2.25 2.25 0 01-2.25 2.25H6.75a2.25 2.25 0 01-2.25-2.25v-6a2.25 2.25 0 012.25-2.25z"/></svg>
+                    Locked
+                </span>
+            @elseif ($atCap)
+                <span class="rounded-lg bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-500">Package limit reached</span>
             @else
                 <a href="{{ route('student.retail-packages', ['add' => 1]) }}"
                     class="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-sm text-white hover:bg-brand-700">
@@ -41,6 +47,53 @@
                 </a>
             @endif
         </div>
+
+        @unless ($eligible)
+            <div class="rounded-2xl border border-amber-200 bg-amber-50/60 p-5 sm:p-6">
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                    <div class="flex items-start gap-3">
+                        <span class="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-700">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/></svg>
+                        </span>
+                        <div>
+                            <h2 class="text-base font-semibold text-gray-900">Retail package tracking isn't included in your plan</h2>
+                            <p class="mt-1 text-sm text-gray-600">
+                                This feature is included with the <span class="font-semibold">Legacy</span> package. On the
+                                <span class="font-semibold">Essentials</span> and <span class="font-semibold">Summit</span> plans you can unlock it
+                                by purchasing an add-on. Once unlocked, you'll be able to log up to {{ (int) config('portal.retail_packages.addon_cap', 5) }} retail packages.
+                            </p>
+                        </div>
+                    </div>
+                    <a href="{{ route('student.add-ons') }}"
+                        class="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700">
+                        Browse add-ons
+                    </a>
+                </div>
+            </div>
+        @endunless
+
+        @if ($eligible && $atCap)
+            <div class="rounded-2xl border border-brand-200 bg-brand-50/60 p-5 sm:p-6">
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                    <div class="flex items-start gap-3">
+                        <span class="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-100 text-brand-700">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/></svg>
+                        </span>
+                        <div>
+                            <h2 class="text-base font-semibold text-gray-900">You've reached your retail package limit</h2>
+                            <p class="mt-1 text-sm text-gray-600">
+                                You've logged all <span class="font-semibold">{{ $cap }}</span> of your retail packages. Need to send more?
+                                Purchase an add-on to unlock {{ (int) config('portal.retail_packages.addon_cap', 5) }} additional retail packages.
+                            </p>
+                        </div>
+                    </div>
+                    <a href="{{ route('student.add-ons') }}"
+                        class="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700">
+                        Browse add-ons
+                    </a>
+                </div>
+            </div>
+        @endif
 
         <div class="rounded-2xl border border-gray-200 bg-white p-5 sm:p-6">
             <h2 class="text-base font-semibold text-gray-600">Before you ship</h2>
@@ -56,6 +109,10 @@
                 <li class="flex items-start gap-2.5">
                     <img src="{{ asset('images/dashboard/bullet.svg') }}" alt="" class="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
                     <span>Prohibited and restricted items (hazardous materials, perishables, weapons) are not accepted.</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                    <img src="{{ asset('images/dashboard/bullet.svg') }}" alt="" class="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                    <span>Only packages addressed using your assigned New Life ID <span class="font-semibold">{{ $profile->new_life_id }}</span> can be matched to your account.</span>
                 </li>
             </ul>
         </div>

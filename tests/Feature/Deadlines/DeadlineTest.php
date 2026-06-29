@@ -37,6 +37,7 @@ function makeDeadlineStudent(bool $onboarded = true): array
         'phone' => '757-555-0190',
         'school' => 'ODU',
         'incoming_year' => '2026',
+        'package_tier' => 'legacy',
         'onboarding_completed_at' => $onboarded ? now() : null,
     ]);
 

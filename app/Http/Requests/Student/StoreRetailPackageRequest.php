@@ -5,6 +5,7 @@ namespace App\Http\Requests\Student;
 use App\Http\Requests\Concerns\ResolvesTrackingNumber;
 use App\Models\StudentProfile;
 use App\Models\User;
+use App\Services\RetailEligibilityService;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -14,7 +15,17 @@ class StoreRetailPackageRequest extends FormRequest
 
     public function authorize(): bool
     {
-        return true;
+        /** @var User|null $user */
+        $user = $this->user();
+
+        if ($user === null) {
+            return false;
+        }
+
+        $profile = StudentProfile::query()->where('user_id', $user->id)->first();
+
+        return $profile !== null
+            && app(RetailEligibilityService::class)->isEligible($profile);
     }
 
     protected function prepareForValidation(): void

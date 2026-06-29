@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\AddOnStatus;
 use App\Enums\UserRole;
 use App\Enums\UserStatus;
 use App\Enums\ContainerStatus;
@@ -9,6 +10,7 @@ use App\Models\Package;
 use App\Models\HousingInfo;
 use App\Models\ParentGuardian;
 use App\Models\ShippingAddress;
+use App\Models\StudentAddOn;
 use App\Models\StudentProfile;
 use App\Models\User;
 use App\Enums\RetailPackageStatus;
@@ -104,6 +106,20 @@ class PortalUsersSeeder extends Seeder
                 force: true,
             );
         }
+
+        // Demo: a Summit student who unlocked retail-package receiving by
+        // purchasing an add-on (Summit doesn't include it out of the box).
+        StudentAddOn::query()->updateOrCreate(
+            ['student_profile_id' => $profile->id, 'add_on_slug' => StudentAddOn::SUMMER_STORAGE_SLUG],
+            [
+                'name' => 'Full-Service Summer Storage',
+                'price_cents' => 19900,
+                'squarespace_url' => 'https://www.newlifecampus.com/',
+                'status' => AddOnStatus::ACTIVE,
+                'requested_at' => now(),
+                'activated_at' => now(),
+            ]
+        );
 
         $this->seedRetailPackages($profile->fresh() ?? $profile);
 
