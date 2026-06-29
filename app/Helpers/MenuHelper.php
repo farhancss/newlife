@@ -31,9 +31,9 @@ class MenuHelper
             ];
         }
 
-        $supportItems = [
-            ['icon' => 'plug', 'name' => 'Squarespace', 'path' => $basePath . '/squarespace'],
-        ];
+        // Squarespace is intentionally omitted from the sidebar; it remains
+        // reachable directly via its URL ({basePath}/squarespace).
+        $supportItems = [];
 
         if (config('devtools.enabled')) {
             $supportItems[] = ['icon' => 'lock', 'name' => 'Dev Tools', 'path' => $basePath . '/dev-tools'];
@@ -53,11 +53,14 @@ class MenuHelper
                     ['icon' => 'bell', 'name' => 'Notifications', 'path' => $basePath . '/notifications'],
                 ],
             ],
-            [
+        ];
+
+        if ($supportItems !== []) {
+            $adminItems[] = [
                 'title' => 'Tools',
                 'items' => $supportItems,
-            ],
-        ];
+            ];
+        }
 
         return $adminItems;
     }
