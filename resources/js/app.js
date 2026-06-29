@@ -3,6 +3,7 @@ import './portal-datatable';
 import './confirm';
 import './flash';
 import './lightbox';
+import './dashboard-charts';
 import { extractTrackingNumber } from './tracking-number';
 import { registerContainerPhotoPicker } from './container-photo-picker';
 import Alpine from 'alpinejs';
