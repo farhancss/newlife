@@ -18,6 +18,8 @@ class PackagesSeeder extends Seeder
                 'container_count' => 3,
                 'includes_move_out_cycle' => false,
                 'includes_storage' => false,
+                'allows_retail_packages' => false,
+                'max_retail_packages' => 0,
                 'is_featured' => false,
                 'sort_order' => 1,
                 'features' => [
@@ -34,6 +36,8 @@ class PackagesSeeder extends Seeder
                 'container_count' => 5,
                 'includes_move_out_cycle' => true,
                 'includes_storage' => true,
+                'allows_retail_packages' => false,
+                'max_retail_packages' => 0,
                 'is_featured' => true,
                 'sort_order' => 2,
                 'features' => [
@@ -50,6 +54,8 @@ class PackagesSeeder extends Seeder
                 'container_count' => 7,
                 'includes_move_out_cycle' => true,
                 'includes_storage' => true,
+                'allows_retail_packages' => true,
+                'max_retail_packages' => 5,
                 'is_featured' => false,
                 'sort_order' => 3,
                 'features' => [

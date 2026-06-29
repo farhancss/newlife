@@ -7,6 +7,7 @@ use App\Http\Requests\Student\UpdateRetailPackageRequest;
 use App\Models\RetailPackage;
 use App\Models\User;
 use App\Services\CarrierLinkBuilder;
+use App\Services\RetailEligibilityService;
 use App\Services\RetailPackageService;
 use App\Services\StudentProfileService;
 use Illuminate\Http\RedirectResponse;
@@ -20,6 +21,7 @@ class StudentRetailPackageController extends Controller
     public function __construct(
         private readonly StudentProfileService $studentProfileService,
         private readonly RetailPackageService $retailPackageService,
+        private readonly RetailEligibilityService $retailEligibility,
         private readonly CarrierLinkBuilder $carrierLinkBuilder,
     ) {
     }
@@ -32,8 +34,12 @@ class StudentRetailPackageController extends Controller
 
         $packages = $profile->retailPackages()->get();
 
+        $eligible = $this->retailEligibility->isEligible($profile);
+        $cap = $this->retailEligibility->maxPackages($profile);
+        $purchasedCount = $this->retailPackageService->purchasedCount($profile);
+
         $editing = null;
-        if ($request->filled('edit')) {
+        if ($eligible && $request->filled('edit')) {
             $editing = $profile->retailPackages()->find($request->integer('edit'));
         }
 
@@ -43,10 +49,13 @@ class StudentRetailPackageController extends Controller
             'profile' => $profile,
             'packages' => $packages,
             'editing' => $editing,
-            'showForm' => $request->boolean('add') || $editing !== null,
+            'showForm' => $eligible && ($request->boolean('add') || $editing !== null),
             'retailers' => config('portal.retail_packages.retailers', []),
-            'activeCount' => $this->retailPackageService->activeCount($profile),
-            'activeCap' => $this->retailPackageService->activeCap(),
+            'eligible' => $eligible,
+            'eligibilityReason' => $this->retailEligibility->reason($profile),
+            'cap' => $cap,
+            'purchasedCount' => $purchasedCount,
+            'atCap' => $cap > 0 && $purchasedCount >= $cap,
             'acknowledged' => $profile->hasAcknowledgedRetailTerms(),
             'carrierLinkBuilder' => $this->carrierLinkBuilder,
         ]);

@@ -63,8 +63,8 @@
             "@php artisan config:clear --ansi",
             "@php artisan test"
         ],
-        "lint": "phpcs",
-        "lint:fix": "phpcbf",
+        "lint": "phpcs --standard=phpcs.xml.dist",
+        "lint:fix": "phpcbf --standard=phpcs.xml.dist",
         "phpstan": "phpstan analyse --memory-limit=512M",
         "ci": [
             "@lint",

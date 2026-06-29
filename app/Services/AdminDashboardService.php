@@ -2,12 +2,17 @@
 
 namespace App\Services;
 
+use App\Enums\AddOnStatus;
 use App\Enums\ContainerStatus;
+use App\Enums\DeadlineStatus;
+use App\Enums\PackageTier;
 use App\Enums\RetailPackageStatus;
 use App\Models\Container;
 use App\Models\ContainerStatusHistory;
+use App\Models\Deadline;
 use App\Models\RetailPackage;
 use App\Models\RetailPackageStatusHistory;
+use App\Models\StudentAddOn;
 use App\Models\StudentProfile;
 use Illuminate\Support\Collection;
 
@@ -35,7 +40,7 @@ class AdminDashboardService
     ];
 
     /**
-     * @return list<array{label: string, value: int, trend: string}>
+     * @return list<array{label: string, value: int, trend: string, icon: string, tone: string}>
      */
     public function summaryCards(): array
     {
@@ -63,22 +68,108 @@ class AdminDashboardService
                 'label' => 'Total Students',
                 'value' => $totalStudents,
                 'trend' => $newStudents > 0 ? "+{$newStudents} this week" : 'No new signups this week',
+                'icon' => 'users',
+                'tone' => 'brand',
             ],
             [
                 'label' => 'Active Moves',
                 'value' => $activeMoves,
                 'trend' => "{$deliveredMoves} completed",
+                'icon' => 'truck',
+                'tone' => 'info',
             ],
             [
                 'label' => 'Containers In Transit',
                 'value' => $inTransit,
                 'trend' => $arrivingToday > 0 ? "{$arrivingToday} arriving today" : 'None due today',
+                'icon' => 'box',
+                'tone' => 'warning',
             ],
             [
                 'label' => 'Pending Deliveries',
                 'value' => $pendingContainers + $pendingPackages,
                 'trend' => $dueThisWeek > 0 ? "{$dueThisWeek} due this week" : 'None due this week',
+                'icon' => 'clock',
+                'tone' => 'success',
             ],
+        ];
+    }
+
+    /**
+     * Weekly student signups for the trailing window, oldest week first, ready
+     * for the growth area chart.
+     *
+     * @return array{categories: list<string>, data: list<int>, total: int}
+     */
+    public function signupTrend(int $weeks = 8): array
+    {
+        $categories = [];
+        $data = [];
+        $cursor = now()->startOfWeek()->subWeeks($weeks - 1);
+
+        for ($i = 0; $i < $weeks; $i++) {
+            $start = $cursor->copy();
+            $end = $cursor->copy()->endOfWeek();
+
+            $count = StudentProfile::query()
+                ->whereBetween('created_at', [$start, $end])
+                ->count();
+
+            $categories[] = $start->format('M j');
+            $data[] = $count;
+
+            $cursor->addWeek();
+        }
+
+        return [
+            'categories' => $categories,
+            'data' => $data,
+            'total' => array_sum($data),
+        ];
+    }
+
+    /**
+     * Student count per package tier for the package-mix donut.
+     *
+     * @return array{labels: list<string>, series: list<int>, colors: list<string>, total: int}
+     */
+    public function packageMix(): array
+    {
+        /** @var array<string, int> $raw */
+        $raw = StudentProfile::query()
+            ->selectRaw('package_tier, count(*) as aggregate')
+            ->groupBy('package_tier')
+            ->pluck('aggregate', 'package_tier')
+            ->all();
+
+        $normalized = [];
+        foreach ($raw as $tier => $count) {
+            $key = PackageTier::normalize($tier === '' ? null : (string) $tier);
+            $normalized[$key] = ($normalized[$key] ?? 0) + (int) $count;
+        }
+
+        $tiers = [
+            [PackageTier::ESSENTIAL, 'Essentials', '#a7b5f9'],
+            [PackageTier::SUMMIT, 'Summit', '#4f6bf3'],
+            [PackageTier::LEGACY, 'Legacy', '#0827be'],
+            [PackageTier::UNKNOWN, 'Unassigned', '#d0d5dd'],
+        ];
+
+        $labels = [];
+        $series = [];
+        $colors = [];
+
+        foreach ($tiers as [$key, $label, $color]) {
+            $labels[] = $label;
+            $series[] = $normalized[$key] ?? 0;
+            $colors[] = $color;
+        }
+
+        return [
+            'labels' => $labels,
+            'series' => $series,
+            'colors' => $colors,
+            'total' => array_sum($series),
         ];
     }
 
@@ -225,6 +316,94 @@ class AdminDashboardService
             ->orderByRaw('ship_by_date is null, ship_by_date asc')
             ->limit($limit)
             ->get();
+    }
+
+    /**
+     * Deadline counts grouped by their effective status (a still-open deadline
+     * past its due date reads as overdue immediately).
+     *
+     * @return array{upcoming: int, completed: int, overdue: int, dueThisWeek: int}
+     */
+    public function deadlineSnapshot(): array
+    {
+        $now = now();
+
+        $completed = Deadline::query()
+            ->where('status', DeadlineStatus::COMPLETED)
+            ->count();
+
+        $overdue = Deadline::query()
+            ->where('status', '!=', DeadlineStatus::COMPLETED)
+            ->where(function ($query) use ($now): void {
+                $query->where('status', DeadlineStatus::OVERDUE)
+                    ->orWhere('due_at', '<', $now);
+            })
+            ->count();
+
+        $upcoming = Deadline::query()
+            ->where('status', '!=', DeadlineStatus::COMPLETED)
+            ->where('status', '!=', DeadlineStatus::OVERDUE)
+            ->where('due_at', '>=', $now)
+            ->count();
+
+        $dueThisWeek = Deadline::query()
+            ->where('status', '!=', DeadlineStatus::COMPLETED)
+            ->where('status', '!=', DeadlineStatus::OVERDUE)
+            ->whereBetween('due_at', [$now, $now->copy()->addDays(7)])
+            ->count();
+
+        return [
+            'upcoming' => $upcoming,
+            'completed' => $completed,
+            'overdue' => $overdue,
+            'dueThisWeek' => $dueThisWeek,
+        ];
+    }
+
+    /**
+     * Operational items that typically need an admin's attention, each linked
+     * to the screen where it can be resolved.
+     *
+     * @return list<array{label: string, value: int, href: string, tone: string}>
+     */
+    public function actionItems(): array
+    {
+        $deadlines = $this->deadlineSnapshot();
+
+        $stagedPackages = RetailPackage::query()
+            ->where('status', RetailPackageStatus::STAGED_FOR_DELIVERY)
+            ->count();
+
+        $activeAddOns = StudentAddOn::query()
+            ->where('status', AddOnStatus::ACTIVE)
+            ->count();
+
+        return [
+            [
+                'label' => 'Overdue deadlines',
+                'value' => $deadlines['overdue'],
+                'href' => route('admin.deadlines'),
+                'tone' => $deadlines['overdue'] > 0 ? 'warning' : 'muted',
+            ],
+            [
+                'label' => 'Deadlines due this week',
+                'value' => $deadlines['dueThisWeek'],
+                'href' => route('admin.deadlines'),
+                'tone' => 'info',
+            ],
+            [
+                'label' => 'Packages staged for delivery',
+                'value' => $stagedPackages,
+                'href' => route('admin.retail-packages'),
+                'tone' => 'info',
+            ],
+            [
+                'label' => 'Active add-ons',
+                'value' => $activeAddOns,
+                'href' => route('admin.add-ons'),
+                'tone' => 'success',
+            ],
+        ];
     }
 
     private function studentName(?StudentProfile $profile): string

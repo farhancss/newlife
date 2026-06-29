@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\PackageTier;
 use App\Enums\SubscriptionStatus;
 use App\Enums\UserRole;
 use App\Enums\UserStatus;
@@ -10,8 +11,8 @@ use App\Models\SquarespaceAddressEntry;
 use App\Models\StudentProfile;
 use App\Models\StudentSubscription;
 use App\Models\User;
-use App\Services\Squarespace\PackageTierMapper;
 use App\Services\Squarespace\SquarespaceOrderImporter;
+use App\Services\Squarespace\SquarespaceOrderMapper;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -21,11 +22,11 @@ class AccountProvisioningService
     public function __construct(
         private readonly NewLifeIdGenerator $newLifeIdGenerator,
         private readonly InvitationMailService $invitationMailService,
-        private readonly PackageTierMapper $packageTierMapper,
         private readonly StudentPackageService $studentPackageService,
         private readonly UserStatusService $userStatusService,
         private readonly DeadlineService $deadlineService,
         private readonly SquarespaceOrderImporter $orderImporter,
+        private readonly SquarespaceOrderMapper $orderMapper,
     ) {
     }
 
@@ -125,60 +126,236 @@ class AccountProvisioningService
     }
 
     /**
+     * Backwards-compatible entry point used by the order webhook job.
+     *
      * @param array<string, mixed> $order
      */
     public function enrichFromOrder(array $order): StudentProfile
     {
-        return DB::transaction(function () use ($order): StudentProfile {
-            $orderId = (string) ($order['id'] ?? $order['orderId'] ?? '');
-            $customerId = (string) ($order['customerId'] ?? '');
-            $email = (string) ($order['customerEmail'] ?? $order['billingAddress']['email'] ?? '');
-            $lineItems = $order['lineItems'] ?? [];
+        return $this->provisionFromOrder($order)->profile;
+    }
 
-            $profile = null;
+    /**
+     * Provision (or update) a student account entirely from a single Squarespace
+     * order. The order carries the customer email + id, billing address, the
+     * purchased package, and the checkout form answers — enough to create the
+     * account, send the invitation (only for brand-new accounts), and pre-fill
+     * every onboarding step with sensible defaults the student can later edit.
+     *
+     * @param array<string, mixed> $order
+     */
+    public function provisionFromOrder(array $order): ProvisionedAccount
+    {
+        $mapped = $this->orderMapper->map($order);
 
-            if ($customerId) {
-                $profile = StudentProfile::query()
-                    ->where('squarespace_contact_id', $customerId)
-                    ->first();
+        $email = (string) $mapped['email'];
+        $orderId = (string) $mapped['order_id'];
+
+        if ($email === '') {
+            throw new \RuntimeException('Order ' . $orderId . ' is missing a customer email; cannot provision a student.');
+        }
+
+        return DB::transaction(function () use ($order, $mapped, $email, $orderId): ProvisionedAccount {
+            $contactId = (string) $mapped['contact_id'];
+            /** @var array<string, mixed> $student */
+            $student = $mapped['student'];
+
+            $user = User::query()->where('email', $email)->first();
+            $isNewUser = $user === null;
+            $tempPassword = null;
+
+            if ($isNewUser) {
+                $tempPassword = Str::password(16);
+                $fullName = trim(((string) ($student['first_name'] ?? '')) . ' ' . ((string) ($student['last_name'] ?? '')));
+
+                $user = User::query()->create([
+                    'name' => $fullName !== '' ? $fullName : $email,
+                    'email' => $email,
+                    'role' => UserRole::STUDENT,
+                    'status' => UserStatus::INVITED,
+                    'password' => Hash::make($tempPassword),
+                    'must_reset_password' => true,
+                    'squarespace_contact_id' => $contactId ?: null,
+                ]);
+            } elseif ($contactId && ! $user->squarespace_contact_id) {
+                $user->squarespace_contact_id = $contactId;
+                $user->save();
             }
 
-            if (!$profile instanceof StudentProfile && $email !== '') {
-                $user = User::query()->where('email', $email)->first();
-                $profile = $user?->studentProfile;
+            $profile = StudentProfile::query()->firstOrNew(['user_id' => $user->id]);
+
+            if (! $profile->exists) {
+                $profile->new_life_id = $this->newLifeIdGenerator->generate();
             }
 
-            if (!$profile instanceof StudentProfile && $email !== '') {
-                $profile = $this->upsertFromContact([
-                    'contactId' => $customerId,
-                    'firstName' => $order['shippingAddress']['firstName'] ?? '',
-                    'lastName' => $order['shippingAddress']['lastName'] ?? '',
-                    'primaryEmail' => ['value' => $email],
-                ], true);
+            if ($contactId) {
+                $profile->squarespace_contact_id = $contactId;
             }
 
-            if (!$profile instanceof StudentProfile) {
-                throw new \RuntimeException('Unable to resolve student profile for order ' . $orderId);
+            // Pre-fill the student basics as editable defaults (never clobber a
+            // value the student has already entered during onboarding).
+            $this->prefillStudent($profile, $student);
+            $profile->save();
+
+            // Only assign the package when this order actually contains one. An
+            // add-on-only order (same webhook, existing student) must never wipe
+            // the student's existing package.
+            if ((string) $mapped['tier'] !== PackageTier::UNKNOWN) {
+                $this->studentPackageService->assignFromTier($profile, (string) $mapped['tier']);
+
+                // Show what the student actually paid (order grand total) rather
+                // than the catalogue list price.
+                $grandTotalCents = $mapped['grand_total_cents'];
+                if ($grandTotalCents !== null) {
+                    $profile->forceFill(['package_price_cents' => (int) $grandTotalCents])->save();
+                }
             }
 
-            $tier = $this->packageTierMapper->mapFromLineItems($lineItems);
-            $this->studentPackageService->assignFromTier($profile, $tier);
+            // Remaining onboarding sections are defaults only while the student
+            // has not yet completed onboarding.
+            if (! $profile->isOnboardingComplete()) {
+                /** @var array<string, mixed> $parent */
+                $parent = $mapped['parent'];
+                /** @var array<string, mixed> $homeAddress */
+                $homeAddress = $mapped['home_address'];
+                /** @var array<string, mixed> $housing */
+                $housing = $mapped['housing'];
 
-            $this->syncShippingFromOrder($profile, $order);
+                $this->prefillParent($profile, $parent);
+                $this->prefillHomeAddress($profile, $homeAddress);
+                $this->prefillHousing($profile, $housing);
+            }
+
             $this->upsertSubscription($profile, $order);
 
             // Persist the full purchase (header + line items) and activate any
             // add-ons whose SKU is mapped in config.
             $this->orderImporter->import($order, $profile);
 
-            $fresh = $profile->fresh(['subscriptions', 'shippingAddress']);
+            if ($isNewUser) {
+                $this->userStatusService->markInvited($user);
 
-            if (!$fresh instanceof StudentProfile) {
+                // Case 01: start the 7-day profile-completion countdown.
+                $this->deadlineService->openProfileCompletion($profile);
+
+                if ($tempPassword !== null) {
+                    $this->invitationMailService->send($user, $tempPassword);
+                }
+            }
+
+            $fresh = $profile->fresh(['user', 'parentGuardian', 'shippingAddress', 'housingInfo', 'subscriptions']);
+
+            if (! $fresh instanceof StudentProfile) {
                 throw new \RuntimeException('Failed to reload student profile for order ' . $orderId);
             }
 
-            return $fresh;
+            return new ProvisionedAccount(
+                profile: $fresh,
+                user: $user->fresh() ?? $user,
+                isNewUser: $isNewUser,
+                temporaryPassword: $tempPassword,
+            );
         });
+    }
+
+    /**
+     * @param array<string, mixed> $student
+     */
+    private function prefillStudent(StudentProfile $profile, array $student): void
+    {
+        $profile->first_name = $this->firstFilled($profile->first_name, $student['first_name'] ?? null);
+        $profile->last_name = $this->firstFilled($profile->last_name, $student['last_name'] ?? null);
+        $profile->phone = $this->firstFilled($profile->phone, $student['phone'] ?? null);
+        $profile->school = $this->firstFilled($profile->school, $student['school'] ?? null);
+        $profile->incoming_year = $this->firstFilled($profile->incoming_year, $student['incoming_year'] ?? null);
+    }
+
+    /**
+     * @param array<string, mixed> $parent
+     */
+    private function prefillParent(StudentProfile $profile, array $parent): void
+    {
+        $model = $profile->parentGuardian()->firstOrNew([]);
+
+        $model->name = $this->firstFilled($model->name, $parent['name'] ?? null);
+        $model->email = $this->firstFilled($model->email, $parent['email'] ?? null);
+        $model->phone = $this->firstFilled($model->phone, $parent['phone'] ?? null);
+        $model->relationship = $this->firstFilled($model->relationship, $parent['relationship'] ?? null);
+
+        if ($model->name !== null || $model->email !== null || $model->phone !== null) {
+            $model->student_profile_id = $profile->id;
+            $model->save();
+        }
+    }
+
+    /**
+     * @param array<string, mixed> $address
+     */
+    private function prefillHomeAddress(StudentProfile $profile, array $address): void
+    {
+        if ($this->isEmptyAddress($address)) {
+            return;
+        }
+
+        $model = ShippingAddress::query()->firstOrNew([
+            'student_profile_id' => $profile->id,
+            'type' => 'home',
+        ]);
+
+        $model->line1 = $this->firstFilled($model->line1, $address['line1'] ?? null);
+        $model->line2 = $this->firstFilled($model->line2, $address['line2'] ?? null);
+        $model->city = $this->firstFilled($model->city, $address['city'] ?? null);
+        $model->region = $this->firstFilled($model->region, $address['region'] ?? null);
+        $model->postal_code = $this->firstFilled($model->postal_code, $address['postal_code'] ?? null);
+        $model->country_code = $this->firstFilled($model->country_code, $address['country_code'] ?? null);
+        $model->phone = $this->firstFilled($model->phone, $address['phone'] ?? null);
+        $model->save();
+    }
+
+    /**
+     * @param array<string, mixed> $housing
+     */
+    private function prefillHousing(StudentProfile $profile, array $housing): void
+    {
+        $university = $housing['university'] ?? null;
+        $residenceHall = $housing['residence_hall'] ?? null;
+
+        if (($university === null || $university === '') && ($residenceHall === null || $residenceHall === '')) {
+            return;
+        }
+
+        $model = $profile->housingInfo()->firstOrNew([]);
+
+        $model->university = $this->firstFilled($model->university, $university);
+        $model->residence_hall = $this->firstFilled($model->residence_hall, $residenceHall);
+        $model->student_profile_id = $profile->id;
+        $model->save();
+    }
+
+    /**
+     * @param array<string, mixed> $address
+     */
+    private function isEmptyAddress(array $address): bool
+    {
+        foreach (['line1', 'city', 'region', 'postal_code'] as $key) {
+            if (! empty($address[$key])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Keep an existing non-empty value; otherwise adopt the incoming default.
+     */
+    private function firstFilled(?string $current, ?string $incoming): ?string
+    {
+        if ($current !== null && $current !== '') {
+            return $current;
+        }
+
+        return ($incoming !== null && $incoming !== '') ? $incoming : $current;
     }
 
     /**
@@ -262,24 +439,6 @@ class AccountProvisioningService
         }
 
         $this->upsertHomeShipping($profile, $default);
-    }
-
-    /**
-     * @param array<string, mixed> $order
-     */
-    private function syncShippingFromOrder(StudentProfile $profile, array $order): void
-    {
-        if ($profile->isOnboardingComplete()) {
-            return;
-        }
-
-        $shipping = $order['shippingAddress'] ?? null;
-
-        if (!is_array($shipping)) {
-            return;
-        }
-
-        $this->upsertHomeShipping($profile, $shipping);
     }
 
     /**

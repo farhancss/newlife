@@ -31,6 +31,7 @@ function makeRetailStudent(): array
         'phone' => '757-555-0100',
         'school' => 'ODU',
         'incoming_year' => '2026',
+        'package_tier' => 'legacy',
         'onboarding_completed_at' => now(),
     ]);
 
@@ -123,10 +124,12 @@ test('acknowledgement is required on the first package but skipped afterward', f
     expect(RetailPackage::query()->where('student_profile_id', $profile->id)->count())->toBe(1);
 });
 
-test('the active package cap is enforced', function () {
+test('the retail package cap is enforced', function () {
     [, $profile] = makeRetailStudent();
     $service = app(RetailPackageService::class);
-    $cap = $service->activeCap();
+    $cap = $service->capFor($profile);
+
+    expect($cap)->toBe(5);
 
     for ($i = 0; $i < $cap; $i++) {
         $service->create($profile, [
@@ -143,6 +146,68 @@ test('the active package cap is enforced', function () {
         'tracking_number' => 'TBA9999999999',
         'estimated_arrival' => now()->addDays(5)->toDateString(),
     ]))->toThrow(\Illuminate\Validation\ValidationException::class);
+});
+
+test('students without a retail-enabled package cannot log packages', function () {
+    [$user, $profile] = makeRetailStudent();
+    $profile->forceFill(['package_tier' => 'essential', 'package_id' => null])->save();
+
+    $this->actingAs($user)
+        ->post(route('student.retail-packages.store'), [
+            'retailer' => 'Amazon',
+            'description' => 'Mini fridge',
+            'tracking_number' => 'TBA1234567890',
+            'estimated_arrival' => now()->addDays(7)->toDateString(),
+            'acknowledge' => '1',
+        ])
+        ->assertForbidden();
+
+    expect(RetailPackage::query()->where('student_profile_id', $profile->id)->count())->toBe(0);
+});
+
+test('purchasing an add-on unlocks retail packages for non-legacy students', function () {
+    [$user, $profile] = makeRetailStudent();
+    $profile->forceFill(['package_tier' => 'summit', 'package_id' => null])->save();
+
+    \App\Models\StudentAddOn::query()->create([
+        'student_profile_id' => $profile->id,
+        'add_on_slug' => \App\Models\StudentAddOn::SUMMER_STORAGE_SLUG,
+        'name' => 'Full-Service Summer Storage',
+        'price_cents' => 10000,
+        'squarespace_url' => 'https://example.com/add-on',
+        'status' => \App\Enums\AddOnStatus::ACTIVE,
+    ]);
+
+    $this->actingAs($user)
+        ->post(route('student.retail-packages.store'), [
+            'retailer' => 'Amazon',
+            'description' => 'Mini fridge',
+            'tracking_number' => 'TBA1234567890',
+            'estimated_arrival' => now()->addDays(7)->toDateString(),
+            'acknowledge' => '1',
+        ])
+        ->assertSessionHasNoErrors()
+        ->assertRedirect(route('student.retail-packages'));
+
+    expect(RetailPackage::query()->where('student_profile_id', $profile->id)->count())->toBe(1);
+});
+
+test('an add-on stacks extra retail slots on top of the legacy allowance', function () {
+    [, $profile] = makeRetailStudent();
+    $service = app(RetailPackageService::class);
+
+    expect($service->capFor($profile))->toBe(5);
+
+    \App\Models\StudentAddOn::query()->create([
+        'student_profile_id' => $profile->id,
+        'add_on_slug' => \App\Models\StudentAddOn::SUMMER_STORAGE_SLUG,
+        'name' => 'Full-Service Summer Storage',
+        'price_cents' => 10000,
+        'squarespace_url' => 'https://example.com/add-on',
+        'status' => \App\Enums\AddOnStatus::ACTIVE,
+    ]);
+
+    expect($service->capFor($profile->fresh()))->toBe(10);
 });
 
 test('student cannot edit a package once received at hub', function () {

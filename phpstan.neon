@@ -12,6 +12,3 @@ parameters:
     level: 5
 
     treatPhpDocTypesAsCertain: false
-
-    ignoreErrors:
-        - '#view-string\|null, string given#'

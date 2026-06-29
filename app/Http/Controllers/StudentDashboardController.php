@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\DeadlineStatus;
 use App\Models\Container;
+use App\Models\ContainerStatusHistory;
 use App\Models\User;
 use App\Services\DeadlineService;
 use App\Services\MoveProgressService;
@@ -54,14 +55,15 @@ class StudentDashboardController extends Controller
     private function recentUpdates(\App\Models\StudentProfile $profile): \Illuminate\Support\Collection
     {
         return $profile->containers
-            ->flatMap(fn (Container $container) => $container->statusHistories->map(fn ($history) => [
+            ->flatMap(fn (Container $container) => $container->statusHistories->map(fn (ContainerStatusHistory $history) => [
                 'label' => $history->toStatusLabel(),
                 'code' => $container->code,
                 'date' => $history->created_at,
             ]))
             ->sortByDesc('date')
             ->take(3)
-            ->values();
+            ->values()
+            ->toBase();
     }
 
     /**

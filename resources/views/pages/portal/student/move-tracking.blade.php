@@ -20,7 +20,7 @@
         </div>
 
         {{-- Package from Squarespace --}}
-        <x-portal.package-summary-card :package="$package" />
+        <x-portal.package-summary-card :package="$package" :profile="$profile" />
 
         @if (!$package)
             <p class="text-center text-sm text-gray-500">

@@ -1,0 +1,484 @@
+
+   PASS  Tests\Unit\EnumsTest
+  ✓ it AddOnStatus exposes labels and validity                           0.02s  
+  ✓ it DeadlineStatus exposes labels, tone and validity
+  ✓ it DeadlineType exposes the catalog and labels
+  ✓ it NotificationCategory exposes the catalog, labels and parent CC scope
+  ✓ it SquarespaceLogDirection labels both directions and falls back
+  ✓ it StoragePickupStatus exposes ordering, labels, validity and helpers
+  ✓ it SubscriptionStatus, UserRole and WebhookEventStatus expose their values
+  ✓ it UserStatus exposes values and validity
+  ✓ it PackageTier normalizes legacy aliases and unknown tiers
+  ✓ it RetailPackageStatus exposes ordering, labels, validity and index
+  ✓ it ContainerStatus labels every status and lists the ordered journey
+
+   PASS  Tests\Unit\ExampleTest
+  ✓ that true is true                                                    0.01s  
+
+   PASS  Tests\Unit\PasswordPolicyTest
+  ✓ it builds a strong password rule                                     0.01s  
+  ✓ it exposes the full requirement checklist
+  ✓ it exposes a compact requirement checklist for auth screens
+
+   PASS  Tests\Feature\AddOns\AddOnTest
+  ✓ it shows the available add-on catalog                                0.23s  
+  ✓ it shows a purchased add-on detail page to its owner                 0.06s  
+  ✓ it provisions a trackable container when buying the additional cont… 0.02s  
+  ✓ it does not provision a container for non-container add-ons          0.02s  
+  ✓ it add-on containers do not count against the package move shipment  0.02s  
+  ✓ it shows the 12-status move journey on the additional container det… 0.04s  
+  ✓ it buys an add-on for a student via the temporary command            0.03s  
+  ✓ it notifies the student and queues an email when an add-on is purch… 0.02s  
+  ✓ it shows purchased add-ons and stats on the admin add-ons page       0.03s  
+  ✓ it shows the admin add-on detail page with the container journey an… 0.03s  
+  ✓ it shows the add-ons section on the admin student detail page        0.04s  
+  ✓ it forbids viewing another student add-on                            0.03s  
+
+   PASS  Tests\Feature\Auth\PasswordPagesTest
+  ✓ it shows the reset password form                                     0.02s  
+  ✓ it redirects the reset success page to login without a success flag  0.01s  
+  ✓ it shows the reset success page with a success flag                  0.01s  
+  ✓ it shows the change password page for students and admins            0.03s  
+  ✓ it lets an admin change their password                               0.03s  
+  ✓ it rejects a student password change with the wrong current passwor… 0.02s  
+  ✓ it lets a complete student change their password and land on the da… 0.02s  
+
+   PASS  Tests\Feature\Auth\PasswordResetTest
+  ✓ forgot password page is accessible to guests                         0.02s  
+  ✓ forgot password sends reset mail for existing user                   0.23s  
+  ✓ forgot password does not send mail for suspended user but shows gen… 0.02s  
+  ✓ user can reset password with valid token                             0.03s  
+  ✓ reset password rejects weak passwords                                0.02s  
+
+   PASS  Tests\Feature\Auth\ProfileCompletionTest
+  ✓ profile completion percent reflects filled sections                  0.02s  
+  ✓ profile completion reaches one hundred percent when all sections fi… 0.02s  
+  ✓ incomplete student can access profile route                          0.03s  
+  ✓ profile respects section query param for direct navigation           0.03s  
+  ✓ profile hides progress steps when all sections are complete          0.02s  
+  ✓ profile next without changes advances without success message        0.02s  
+  ✓ profile next with changes saves and shows success message            0.02s  
+  ✓ profile save on complete section four stays on profile with success… 0.02s  
+  ✓ student information step requires mandatory fields                   0.02s  
+  ✓ home address step requires mandatory fields                          0.02s  
+  ✓ header shows profile completion badge for incomplete student         0.02s  
+
+   PASS  Tests\Feature\Auth\StudentGatesTest
+  ✓ student with must reset password is redirected to change password    0.02s  
+  ✓ student with incomplete profile is redirected to profile             0.02s  
+  ✓ login redirects new student to change password then onboarding       0.02s  
+  ✓ change password rejects weak passwords                               0.02s  
+  ✓ password change clears must reset and redirects to onboarding        0.02s  
+  ✓ profile page auto-creates profile and shows completion               0.03s  
+  ✓ demo student can access dashboard                                    0.05s  
+
+   PASS  Tests\Feature\Auth\UserStatusLifecycleTest
+  ✓ new account from contact provisioning starts as INVITED              0.02s  
+  ✓ first password reset transitions INVITED to INCOMPLETE and sends co… 0.02s  
+  ✓ subsequent password change keeps status INCOMPLETE or ACTIVE and em… 0.02s  
+  ✓ completing all onboarding sections transitions status to ACTIVE and… 0.02s  
+  ✓ suspended accounts cannot log in                                     0.02s  
+  ✓ suspended account active in middleware logs the user out mid-sessio… 0.02s  
+  ✓ login rate limiter blocks after repeated failures                    1.06s  
+
+   PASS  Tests\Feature\Console\CommandsTest
+  ✓ it invites a new student and assigns a package                       0.03s  
+  ✓ it fails to invite with an invalid email                             0.01s  
+  ✓ it warns when inviting an existing user and skips unknown packages   0.01s  
+  ✓ it buys an add-on for a student by email and provisions a container  0.02s  
+  ✓ it fails to buy an add-on for an unknown student                     0.02s  
+  ✓ it fails to buy an unknown add-on slug                               0.02s  
+  ✓ it fails squarespace webhook management when not connected           0.02s  
+  ✓ it fails to show a squarespace token when not connected              0.01s  
+  ✓ it simulates a contact webhook synchronously                         0.02s  
+  ✓ it simulates an order webhook synchronously                          0.03s  
+
+   PASS  Tests\Feature\Containers\ContainerWorkflowTest
+  ✓ onboarding completion creates a single move shipment regardless of…  0.02s  
+  ✓ move shipment provisioning is idempotent on repeated completion syn… 0.02s  
+  ✓ timeline includes reached dates from status history                  0.02s  
+  ✓ student move tracking shows assigned container timeline              0.04s  
+  ✓ student cannot reach removed shipment trigger route                  0.01s  
+  ✓ dashboard and my move show the same high-level stage                 0.05s  
+  ✓ invalid status transition is rejected without force                  0.01s  
+  ✓ admin advances container status and label generation sets ship-by d… 0.02s  
+  ✓ student can upload photos while customer packing                     0.04s  
+  ✓ student cannot upload photos when container is not packing           0.02s  
+  ✓ photo uploads are capped per container                               0.03s  
+  ✓ student can request pickup after uploading a photo and admins are n… 0.02s  
+  ✓ student can start packing from delivered to home and admins are not… 0.03s  
+  ✓ student cannot start packing before delivery to home                 0.02s  
+  ✓ student cannot request pickup without a photo                        0.02s  
+  ✓ student cannot request pickup outside the packing stage              0.02s  
+  ✓ student cannot upload photos to another students container           0.02s  
+
+   PASS  Tests\Feature\CoverageRoundupTest
+  ✓ it transitions user status through its lifecycle                     0.02s  
+  ✓ it enforces the retail package policy                                0.02s  
+  ✓ it formats squarespace order and item totals                         0.01s  
+  ✓ it labels a container status history entry                           0.02s  
+
+   PASS  Tests\Feature\Dashboard\AdminDashboardTest
+  ✓ admin dashboard renders live metrics and upcoming deliveries         0.03s  
+  ✓ admin dashboard works with no data                                   0.02s  
+
+   PASS  Tests\Feature\Deadlines\DeadlineTest
+  ✓ it case 01: opens a profile-completion deadline and completes it on… 0.02s  
+  ✓ it case 01: completing the profile via the completion service satis… 0.03s  
+  ✓ it case 02: opens a 3-day pickup deadline on home delivery and comp… 0.03s  
+  ✓ it case 04: add-on container pickup uses its own deadline type       0.02s  
+  ✓ it case 03: opens a retail-arrival deadline and completes it on rec… 0.03s  
+  ✓ it does not open a retail deadline without an estimated arrival      0.02s  
+  ✓ it marks past-due deadlines overdue and emails the student once      0.02s  
+  ✓ it sends a one-day reminder once                                     0.02s  
+  ✓ it evaluate command runs and reports a summary                       0.01s  
+  ✓ it student can view the deadline center                              0.03s  
+  ✓ it admin can view the deadline center with stats                     0.07s  
+
+   PASS  Tests\Feature\ExampleTest
+  ✓ the login page is accessible                                         0.03s  
+  ✓ the health endpoint is accessible                                    0.02s  
+
+   PASS  Tests\Feature\Mail\MailablesTest
+  ✓ it builds the onboarding complete mail                               0.02s  
+  ✓ it builds the reset password mail                                    0.01s  
+  ✓ it builds the password changed mail for a first reset and a routine… 0.01s  
+  ✓ it builds the student invitation mail                                0.01s  
+
+   PASS  Tests\Feature\Models\ModelRelationsTest
+  ✓ it exposes belongs-to relations across models                        0.02s  
+  ✓ it scopes unread portal notifications                                0.04s  
+  ✓ it treats a credential with no known expiry as expired               0.01s  
+  ✓ it shortens package labels and reports user role/status helpers      0.01s  
+
+   PASS  Tests\Feature\Models\ModelsTest
+  ✓ it relates a parent guardian back to its student profile             0.02s  
+  ✓ it casts the squarespace address entry payload and relates a shippi… 0.02s  
+  ✓ it builds a public url for a container photo and defaults the type   0.02s  
+  ✓ it labels a retail package status history entry                      0.02s  
+  ✓ it exposes retail package editability and active state               0.02s  
+  ✓ it exposes package helpers and labels                                0.01s  
+
+   PASS  Tests\Feature\Notifications\NotificationTest
+  ✓ container milestone transition creates an in-app notification and q… 0.03s  
+  ✓ non-milestone container transition does not notify                   0.02s  
+  ✓ email preference off skips email but still records in-app notificat… 0.02s  
+  ✓ parent guardian is cc-d on key events when enabled                   0.02s  
+  ✓ mark read and mark all read update unread count                      0.02s  
+  ✓ student can view notification center and mark all read               0.03s  
+  ✓ student can mark a single notification as read without leaving the…  0.02s  
+  ✓ student view action marks notification read and follows the link     0.02s  
+  ✓ admin can send a custom notification and email to a student          0.03s  
+  ✓ admin custom notification validates required fields                  0.01s  
+  ✓ admin resend re-queues email and increments attempts                 0.02s  
+
+   PASS  Tests\Feature\Onboarding\OnboardingFlowTest
+  ✓ it redirects an incomplete student from onboarding to the profile    0.02s  
+  ✓ it redirects a completed student from onboarding to the dashboard    0.02s  
+  ✓ it validates the first onboarding step                               0.02s  
+  ✓ it walks a student through all onboarding steps to completion        0.04s  
+
+   PASS  Tests\Feature\Packages\StudentPackageTest
+  ✓ three default packages are seeded                                    0.01s  
+  ✓ assign from tier links package and sets container allowance default  0.01s  
+
+   PASS  Tests\Feature\Portal\AdminProfileTest
+  ✓ it shows the admin profile page                                      0.02s  
+  ✓ it updates the admin name                                            0.02s  
+  ✓ it requires a name when updating the admin profile                   0.02s  
+  ✓ it uploads and replaces an admin avatar then removes it              0.02s  
+  ✓ it rejects a non-image avatar upload                                 0.02s  
+
+   PASS  Tests\Feature\Portal\AdminRetailNotificationPhotoTest
+  ✓ it shows the admin retail packages index with filters                0.03s  
+  ✓ it lets an admin log a package on behalf of a student                0.02s  
+  ✓ it lets an admin advance a package status and remove a package       0.02s  
+  ✓ it shows the student retail packages page for eligible and ineligib… 0.04s  
+  ✓ it shows the admin notifications index and compose pages             0.03s  
+  ✓ it lets an admin send and resend a custom notification               0.02s  
+  ✓ it validates the admin custom notification form                      0.02s  
+  ✓ it lets an admin upload and remove hub evidence photos               0.03s  
+  ✓ it forbids hub photo upload before the container is delivered to th… 0.02s  
+  ✓ it only allows removing hub evidence photos                          0.02s  
+
+   PASS  Tests\Feature\Portal\AdminStudentContainerTest
+  ✓ it shows the admin student listing with search                       0.03s  
+  ✓ it shows the admin container listing and edit drawer                 0.03s  
+  ✓ it lets an admin save container logistics fields alongside a status… 0.03s  
+
+   PASS  Tests\Feature\Portal\DevToolsTest
+  ✓ it returns 404 when developer tools are disabled                     0.02s  
+  ✓ it shows the developer tools page when enabled                       0.02s  
+  ✓ it invites a student through the developer tools                     0.02s  
+  ✓ it validates the invite-student form in developer tools              0.02s  
+  ✓ it buys an add-on through the developer tools                        0.02s  
+
+   PASS  Tests\Feature\Portal\StudentControllersCoverageTest
+  ✓ it renders the admin deadline center with search and status filters  0.04s  
+  ✓ it lets a legacy student log, edit and remove a retail package       0.04s  
+  ✓ it lets a student upload and remove container photos while packing   0.03s  
+  ✓ it rejects container photo uploads when the slot limit is exceeded   0.02s  
+  ✓ it exposes the student profile relation on housing and shipping rec… 0.02s  
+  ✓ it advances an incomplete profile section and saves changes          0.02s  
+  ✓ it keeps a profile section in place when nothing changed             0.02s  
+  ✓ it warns when the final dorm section is still incomplete             0.03s  
+  ✓ it completes the profile when the last change is saved               0.02s  
+  ✓ it replaces and removes a student avatar                             0.03s  
+
+   PASS  Tests\Feature\Portal\StudentProfileAvatarTest
+  ✓ it uploads a student avatar and returns json when requested          0.02s  
+  ✓ it removes a student avatar via a redirect request                   0.02s  
+  ✓ it saves a profile section change                                    0.02s  
+
+   PASS  Tests\Feature\Portal\StudentSettingsTest
+  ✓ it shows the student settings page with a preference                 0.03s  
+  ✓ it saves notification preferences                                    0.02s  
+  ✓ it treats unchecked toggles as disabled                              0.02s  
+
+   PASS  Tests\Feature\RetailPackages\RetailPackageTest
+  ✓ student can log a package and acknowledgement is recorded            0.03s  
+  ✓ acknowledgement is required on the first package but skipped afterw… 0.03s  
+  ✓ the retail package cap is enforced                                   0.03s  
+  ✓ students without a retail-enabled package cannot log packages        0.03s  
+  ✓ purchasing an add-on unlocks retail packages for non-legacy student… 0.02s  
+  ✓ an add-on stacks extra retail slots on top of the legacy allowance   0.02s  
+  ✓ student cannot edit a package once received at hub                   0.02s  
+  ✓ student cannot edit another students package                         0.02s  
+  ✓ backward transition is rejected without force                        0.02s  
+  ✓ admin force override moves status backward and writes audit history  0.02s  
+  ✓ reaching notifiable statuses queues the student email and records i… 0.03s  
+  ✓ carrier link builder maps known retailers and falls back             0.01s  
+  ✓ tracking number extractor pulls the number from carrier urls         0.01s  
+  ✓ logging a package with a tracking url extracts the number and store… 0.03s  
+
+   PASS  Tests\Feature\Services\RetailOnboardingServiceTest
+  ✓ it logs, updates, transitions and removes a retail package via the…  0.03s  
+  ✓ it rejects invalid retail package transitions                        0.02s  
+  ✓ it blocks editing a package once it is locked                        0.02s  
+  ✓ it detects onboarding section changes and saves steps                0.02s  
+  ✓ it marks onboarding complete through the service                     0.02s  
+
+   PASS  Tests\Feature\Services\StudentPackageServiceTest
+  ✓ it resolves a package from a loaded relation, id, tier, or returns…  0.02s  
+  ✓ it assigns a package from a tier and from a package model            0.03s  
+  ✓ it computes container allowance and remaining slots                  0.02s  
+  ✓ it falls back to an allowance of one without a package               0.02s  
+  ✓ it describes the move phases and phase progress                      0.01s  
+
+   PASS  Tests\Feature\Squarespace\AddressWebhookJobTest
+  ✓ it syncs a home address from an address webhook and marks the event… 0.02s  
+  ✓ it processes an address webhook with no matching contact as a no-op  0.01s  
+
+   PASS  Tests\Feature\Squarespace\ApiClientDispatcherTest
+  ✓ it authenticates the api client with a private key when oauth is ab… 0.04s  
+  ✓ it throws when the api responds with an error status                 0.01s  
+  ✓ it throws when the api connection fails                              0.01s  
+  ✓ it throws when no squarespace credentials are available              0.01s  
+  ✓ it dispatches webhook jobs by topic and guards malformed payloads    0.02s  
+  ✓ it returns the existing event when already processed                 0.01s  
+  ✓ it reports errors when squarespace webhook admin actions fail        0.03s  
+  ✓ it fails the token command when the access token cannot be refreshe… 0.01s  
+  ✓ it blocks dev-only routes outside local environments                 0.01s  
+  ✓ it guards portal routes by role                                      0.01s  
+
+   PASS  Tests\Feature\Squarespace\IntegrationTest
+  ✓ order importer persists the full purchase with line items            0.02s  
+  ✓ order importer activates an add-on mapped from a sku                 0.02s  
+  ✓ signature verifier accepts hex and base64 against a stored subscrip… 0.01s  
+  ✓ oauth service builds an authorization url with the required params   0.01s  
+
+   PASS  Tests\Feature\Squarespace\SquarespaceClusterTest
+  ✓ it prints the access token when squarespace is connected             0.03s  
+  ✓ it builds an authorization url and reports configuration state       0.01s  
+  ✓ it exchanges an authorization code for tokens and returns a valid a… 0.01s  
+  ✓ it refreshes an expired access token automatically                   0.02s  
+  ✓ it disconnects by clearing stored credentials                        0.01s  
+  ✓ it fetches orders and contacts through the api client                0.01s  
+  ✓ it manages webhook subscriptions through the subscription service    0.02s  
+  ✓ it maps package tiers from line items                                0.01s  
+  ✓ it runs the connected squarespace webhook management command action… 0.02s  
+  ✓ it prints the squarespace token when connected                       0.01s  
+  ✓ it shows the admin squarespace integration page                      0.02s  
+  ✓ it disconnects squarespace from the admin panel                      0.01s  
+  ✓ it registers a webhook subscription from the admin panel             0.02s  
+  ✓ it tests, rotates and deletes a webhook subscription from the admin… 0.02s  
+  ✓ it redirects to squarespace consent when configured                  0.02s  
+  ✓ it blocks the connect flow when credentials are missing              0.01s  
+  ✓ it completes the oauth callback successfully                         0.02s  
+  ✓ it rejects the oauth callback on state mismatch, denial and missing… 0.02s  
+
+   PASS  Tests\Feature\Squarespace\WebhookJobsTest
+  ✓ it processes and fails the address webhook job                       0.03s  
+  ✓ it processes and fails the contact webhook job                       0.02s  
+  ✓ it handles the order webhook via embedded order, api lookup and mis… 0.02s  
+
+   PASS  Tests\Feature\Squarespace\WebhookTest
+  ✓ squarespace webhook rejects invalid signature                        0.02s  
+  ✓ squarespace contact webhook provisions student account               0.02s  
+  ✓ duplicate squarespace notification is idempotent                     0.02s  
+  ✓ squarespace order webhook enriches package and subscription          0.03s  
+  ✓ simulation api requires bearer token                                 0.02s  
+  ✓ simulation api dispatches webhook with valid token                   0.01s  
+
+   PASS  Tests\Feature\StoragePickups\StoragePickupTest
+  ✓ it lets an eligible student request an end-of-year pickup and notif… 0.03s  
+  ✓ it blocks a student without storage from requesting a pickup         0.02s  
+  ✓ it blocks a pickup request before the container is delivered to the… 0.02s  
+  ✓ it rejects a second active pickup request                            0.02s  
+  ✓ it validates required fields and a future pickup date                0.02s  
+  ✓ it forbids requesting a pickup on another students container         0.02s  
+  ✓ it shows the admin storage pickups index with stats, search and edi… 0.04s  
+  ✓ it lets an admin advance a pickup, stamp confirmation and notify th… 0.02s  
+  ✓ it rejects a confirmed pickup date before the requested date         0.02s  
+  ✓ it exposes eligibility reason, active pickup and timeline via the s… 0.02s  
+  ✓ it reports no eligibility reason for an ineligible student           0.02s  
+
+   PASS  Tests\Feature\View\ViewComponentsTest
+  ✓ it renders the avatar component                                      0.02s  
+  ✓ it renders the preloader component                                   0.01s  
+  ✓ it renders the user dropdown for a guest with portal fallbacks       0.01s  
+  ✓ it renders the user dropdown for an authenticated user               0.02s  
+
+  Tests:    262 passed (932 assertions)
+  Duration: 7.10s
+
+  Console/Commands/BuyAddOnCommand .................................... 100.0%  
+  Console/Commands/EvaluateDeadlinesCommand ........................... 100.0%  
+  Console/Commands/InviteStudentCommand ............................... 100.0%  
+  Console/Commands/ManageSquarespaceWebhooks .......................... 100.0%  
+  Console/Commands/ShowSquarespaceToken ............................... 100.0%  
+  Console/Commands/SimulateSquarespaceWebhook ................. 62, 87 / 96.3%  
+  Enums/AddOnStatus ................................................... 100.0%  
+  Enums/ContainerStatus ............................................... 100.0%  
+  Enums/DeadlineStatus ................................................ 100.0%  
+  Enums/DeadlineType .................................................. 100.0%  
+  Enums/NotificationCategory .......................................... 100.0%  
+  Enums/PackageTier ................................................... 100.0%  
+  Enums/RetailPackageStatus ........................................... 100.0%  
+  Enums/SquarespaceLogDirection ....................................... 100.0%  
+  Enums/StoragePickupStatus ........................................... 100.0%  
+  Enums/SubscriptionStatus ............................................ 100.0%  
+  Enums/UserRole ...................................................... 100.0%  
+  Enums/UserStatus .................................................... 100.0%  
+  Enums/WebhookEventStatus ............................................ 100.0%  
+  Helpers/MenuHelper .............................................. 59 / 98.5%  
+  Http/Controllers/AdminAddOnController ....................... 28..33 / 84.3%  
+  Http/Controllers/AdminContainerController ........................... 100.0%  
+  Http/Controllers/AdminContainerPhotoController  43..44, 49..50, 45..51 / 85.4%  
+  Http/Controllers/AdminDashboardController ........................... 100.0%  
+  Http/Controllers/AdminDeadlineController ............................ 100.0%  
+  Http/Controllers/AdminDevToolsController .......... 50, 53, 121..123 / 92.2%  
+  Http/Controllers/AdminNotificationController ........................ 100.0%  
+  Http/Controllers/AdminProfileController ............................. 100.0%  
+  Http/Controllers/AdminRetailPackageController ....................... 100.0%  
+  Http/Controllers/AdminSquarespaceController ......................... 100.0%  
+  Http/Controllers/AdminSquarespaceOAuthController ............ 70..73 / 87.5%  
+  Http/Controllers/AdminStoragePickupController ....................... 100.0%  
+  Http/Controllers/AdminStudentController ............................. 100.0%  
+  Http/Controllers/Api/SquarespaceSimulationController ............ 43 / 96.0%  
+  Http/Controllers/Api/SquarespaceWebhookController ........... 39..42 / 80.0%  
+  Http/Controllers/AuthController ............... 84, 92..96, 108, 114 / 87.0%  
+  Http/Controllers/ChangePasswordController ................... 76..78 / 92.1%  
+  Http/Controllers/Controller ......................................... 100.0%  
+  Http/Controllers/ForgotPasswordController ........................... 100.0%  
+  Http/Controllers/OnboardingController ............................... 100.0%  
+  Http/Controllers/ResetPasswordController ............ 33..35, 58..60 / 82.9%  
+  Http/Controllers/StudentAddOnController ............................. 100.0%  
+  Http/Controllers/StudentContainerPhotoController ........ 30..31, 32 / 91.4%  
+  Http/Controllers/StudentDashboardController ......................... 100.0%  
+  Http/Controllers/StudentDeadlineController .......................... 100.0%  
+  Http/Controllers/StudentMoveTrackingController  50, 59, 164..176, 170..173 / 86.5%  
+  Http/Controllers/StudentNotificationController ...................... 100.0%  
+  Http/Controllers/StudentProfileController ....... 171..173, 177..185 / 90.2%  
+  Http/Controllers/StudentRetailPackageController ................. 43 / 97.6%  
+  Http/Controllers/StudentSettingsController .......................... 100.0%  
+  Http/Controllers/StudentStoragePickupController ..................... 100.0%  
+  Http/Middleware/EnsureAccountActive ................................. 100.0%  
+  Http/Middleware/EnsureLocalEnvironment .............................. 100.0%  
+  Http/Middleware/EnsureOnboardingComplete ........................ 37 / 91.7%  
+  Http/Middleware/EnsurePasswordChanged ............................... 100.0%  
+  Http/Middleware/EnsureUserHasRole ................................... 100.0%  
+  Http/Middleware/VerifySquarespaceSimulationToken .................... 100.0%  
+  Http/Requests/Admin/RemoveRetailPackageRequest ...................... 100.0%  
+  Http/Requests/Admin/StoreRetailPackageRequest ....................... 100.0%  
+  Http/Requests/Admin/UpdateContainerRequest .......................... 100.0%  
+  Http/Requests/Admin/UpdateRetailPackageStatusRequest ................ 100.0%  
+  Http/Requests/Admin/UpdateStoragePickupRequest ...................... 100.0%  
+  Http/Requests/Admin/UploadContainerHubPhotoRequest .................. 100.0%  
+  Http/Requests/ChangePasswordRequest ................................. 100.0%  
+  Http/Requests/Concerns/ResolvesTrackingNumber ................... 24 / 88.9%  
+  Http/Requests/ForgotPasswordRequest ................................. 100.0%  
+  Http/Requests/ResetPasswordRequest .................................. 100.0%  
+  Http/Requests/Student/StoreRetailPackageRequest ............. 22, 72 / 92.9%  
+  Http/Requests/Student/StoreStoragePickupRequest ..................... 100.0%  
+  Http/Requests/Student/UpdateProfileSectionRequest .... 125, 124..129 / 92.8%  
+  Http/Requests/Student/UpdateRetailPackageRequest .................... 100.0%  
+  Http/Requests/Student/UploadContainerPhotoRequest ................... 100.0%  
+  Http/View/Composers/StudentProfileCompletionComposer ................ 100.0%  
+  Jobs/Squarespace/ProcessSquarespaceAddressWebhook ............... 25 / 94.1%  
+  Jobs/Squarespace/ProcessSquarespaceContactWebhook ................... 100.0%  
+  Jobs/Squarespace/ProcessSquarespaceOrderWebhook ..................... 100.0%  
+  Mail/OnboardingCompleteMail ......................................... 100.0%  
+  Mail/PasswordChangedMail ............................................ 100.0%  
+  Mail/PortalNotificationMail ......................................... 100.0%  
+  Mail/ResetPasswordMail .............................................. 100.0%  
+  Mail/StudentInvitationMail .......................................... 100.0%  
+  Models/Container .................................................... 100.0%  
+  Models/ContainerPhoto ............................................... 100.0%  
+  Models/ContainerStatusHistory ....................................... 100.0%  
+  Models/Deadline ................................................. 95 / 95.5%  
+  Models/HousingInfo .................................................. 100.0%  
+  Models/NotificationPreference ....................................... 100.0%  
+  Models/Package ...................................................... 100.0%  
+  Models/ParentGuardian ............................................... 100.0%  
+  Models/PortalNotification ........................................... 100.0%  
+  Models/RetailPackage ................................................ 100.0%  
+  Models/RetailPackageStatusHistory ................................... 100.0%  
+  Models/ShippingAddress .............................................. 100.0%  
+  Models/SquarespaceAddressEntry ...................................... 100.0%  
+  Models/SquarespaceCredential ........................................ 100.0%  
+  Models/SquarespaceOrder ............................................. 100.0%  
+  Models/SquarespaceOrderItem ......................................... 100.0%  
+  Models/SquarespaceWebhookEvent ...................................... 100.0%  
+  Models/SquarespaceWebhookSubscription ............................... 100.0%  
+  Models/StoragePickup ................................................ 100.0%  
+  Models/StudentAddOn ................................................. 100.0%  
+  Models/StudentProfile .......................................... 105 / 95.7%  
+  Models/StudentSubscription .......................................... 100.0%  
+  Models/User ......................................................... 100.0%  
+  Policies/RetailPackagePolicy ........................................ 100.0%  
+  Providers/AppServiceProvider .................................... 35 / 87.5%  
+  Services/AccountProvisioningService  84..85, 161, 177, 203, 230, 240, 243, 255, 273, 279, 332 / 92.5%  
+  Services/AddOnService .......................................... 132 / 98.6%  
+  Services/AdminDashboardService ............. 253..275, 412, 260..276 / 94.2%  
+  Services/CarrierLinkBuilder ......................................... 100.0%  
+  Services/ContainerCodeGenerator ..................................... 100.0%  
+  Services/ContainerWorkflowService . 53, 67..68, 77..81, 128, 162, 69 / 87.3%  
+  Services/DeadlineService ........... 44, 67, 152..155, 238, 259, 271 / 94.1%  
+  Services/FedExLinkService ........................................... 100.0%  
+  Services/InvitationMailService ...................................... 100.0%  
+  Services/MoveProgressService ..................... 98, 105, 114, 141 / 91.7%  
+  Services/NewLifeIdGenerator ......................................... 100.0%  
+  Services/NotificationService  223, 230..235, 258, 305, 369, 454..456, 486..495, 505, 490 / 90.7%  
+  Services/OnboardingService ................... 53, 95, 201..207, 242 / 94.0%  
+  Services/ProfileCompletionService ........... 58, 129..137, 156, 346 / 96.3%  
+  Services/ProvisionedAccount ......................................... 100.0%  
+  Services/RetailEligibilityService ............................... 67 / 93.3%  
+  Services/RetailPackageService ........................... 31..32, 33 / 96.4%  
+  Services/Squarespace/PackageTierMapper .............................. 100.0%  
+  Services/Squarespace/SquarespaceApiClient ........................... 100.0%  
+  Services/Squarespace/SquarespaceLogger ............ 52, 97, 131, 181 / 93.8%  
+  Services/Squarespace/SquarespaceOAuthService  121, 136, 159, 174..176, 198 / 92.1%  
+  Services/Squarespace/SquarespaceOrderImporter  55, 100, 107, 113, 148, 162..163 / 90.9%  
+  Services/Squarespace/SquarespaceSignatureVerifier ....... 19, 23, 28 / 86.4%  
+  Services/Squarespace/SquarespaceWebhookDispatcher ................... 100.0%  
+  Services/Squarespace/SquarespaceWebhookSubscriptionService  74, 161..163, 169..170, 180, 185..186, 171 / 87.8%  
+  Services/StorageEligibilityService .............................. 48 / 92.3%  
+  Services/StoragePickupService ......................... 99..100, 101 / 95.1%  
+  Services/StudentPackageService ...................................... 100.0%  
+  Services/StudentProfileService ...................................... 100.0%  
+  Services/TrackingNumberExtractor ................... 55, 74, 94, 110 / 88.9%  
+  Services/UserStatusService .......................................... 100.0%  
+  Support/PasswordPolicy .............................................. 100.0%  
+  ────────────────────────────────────────────────────────────────────────────  
+                                                                 Total: 95.2 %  

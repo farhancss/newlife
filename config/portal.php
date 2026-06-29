@@ -33,6 +33,9 @@ return [
 
     'retail_packages' => [
         'active_cap' => (int) env('RETAIL_PACKAGE_ACTIVE_CAP', 10),
+        // Cap applied to students who unlocked the feature by purchasing an
+        // add-on (Legacy package students use their package's own max instead).
+        'addon_cap' => (int) env('RETAIL_PACKAGE_ADDON_CAP', 5),
         'edit_lock_status' => 'received_at_hub',
         'retailers' => ['Amazon', 'Walmart', 'Target', 'Wayfair', 'DHL', 'UPS', 'FedEx', 'Other'],
     ],

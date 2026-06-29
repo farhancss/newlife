@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<ruleset name="App">
+    <description>PSR-12 coding standard with a relaxed 200-character line length.</description>
+
+    <file>app</file>
+
+    <arg name="extensions" value="php"/>
+    <arg name="colors"/>
+    <arg value="p"/>
+
+    <rule ref="PSR12"/>
+
+    <!-- Raise the line-length limit from PSR-12's default 120 to 200. -->
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="200"/>
+            <property name="absoluteLineLimit" value="0"/>
+        </properties>
+        <!-- Holds inline SVG icon markup that must stay on a single line. -->
+        <exclude-pattern>app/Helpers/MenuHelper.php</exclude-pattern>
+    </rule>
+</ruleset>
