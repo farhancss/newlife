@@ -13,6 +13,7 @@
         visibleCount: {{ $visibleCount }},
         stepCount: {{ $stepCount }},
         stepWidth: 0,
+        isScrollMode: false,
         resolveLayout() {
             const viewport = this.$refs.viewport;
             if (!viewport) {
@@ -20,10 +21,6 @@
             }
 
             const width = viewport.clientWidth;
-
-            if (width < 480) {
-                return { visible: 2, stepWidth: width / 2 };
-            }
 
             if (width < 640) {
                 return { visible: 3, stepWidth: width / 3 };
@@ -43,17 +40,42 @@
 
             return { visible: 6, stepWidth: width / 6 };
         },
-        init() {
-            this.$nextTick(() => {
-                this.measure();
+        updateMode() {
+            const wasScrollMode = this.isScrollMode;
+            this.isScrollMode = window.innerWidth < 576;
+
+            if (this.isScrollMode) {
+                if (!wasScrollMode) {
+                    this.$nextTick(() => this.scrollActiveIntoView());
+                }
+
+                return;
+            }
+
+            this.measure();
+            this.clampStart();
+
+            if (wasScrollMode) {
                 this.scrollToActive();
+            }
+        },
+        init() {
+            this.updateMode();
+            this.$nextTick(() => {
+                if (this.isScrollMode) {
+                    this.scrollActiveIntoView();
+                } else {
+                    this.measure();
+                    this.scrollToActive();
+                }
             });
-            window.addEventListener('resize', () => {
-                this.measure();
-                this.clampStart();
-            });
+            window.addEventListener('resize', () => this.updateMode());
         },
         measure() {
+            if (this.isScrollMode) {
+                return;
+            }
+
             const layout = this.resolveLayout();
             this.visibleCount = layout.visible;
             this.stepWidth = layout.stepWidth;
@@ -76,6 +98,15 @@
             );
             this.startIndex = ideal;
         },
+        scrollActiveIntoView() {
+            const viewport = this.$refs.viewport;
+            if (!viewport) {
+                return;
+            }
+
+            const activeStep = viewport.querySelector('[aria-current=step]')?.closest('li');
+            activeStep?.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'auto' });
+        },
         clampStart() {
             this.startIndex = Math.min(this.startIndex, this.maxStartIndex);
         },
@@ -92,11 +123,31 @@
         },
         canNext() {
             return this.startIndex < this.maxStartIndex;
+        },
+        trackStyle() {
+            if (this.isScrollMode) {
+                return {};
+            }
+
+            return {
+                transform: `translateX(-${this.translateX}px)`,
+                width: `${this.stepWidth * this.stepCount}px`,
+            };
+        },
+        stepStyle() {
+            if (this.isScrollMode || this.stepWidth <= 0) {
+                return {};
+            }
+
+            return {
+                width: `${this.stepWidth}px`,
+                minWidth: `${this.stepWidth}px`,
+            };
         }
     }"
     aria-label="Move status timeline"
 >
-    <div class="mb-5 flex items-center justify-between gap-3">
+    <div class="mb-5 hidden items-center justify-between gap-3 min-[576px]:flex">
         <p class="text-xs text-gray-500" x-text="rangeLabel"></p>
         <div class="flex items-center gap-1.5">
             <button
@@ -120,10 +171,13 @@
         </div>
     </div>
 
-    <div class="overflow-hidden" x-ref="viewport">
+    <div
+        class="max-[575px]:move-timeline-scroll max-[575px]:-mx-1 max-[575px]:overflow-x-auto max-[575px]:px-1 min-[576px]:overflow-hidden"
+        x-ref="viewport"
+    >
         <ol
-            class="m-0 flex list-none p-0 transition-transform duration-300 ease-out"
-            x-bind:style="`transform: translateX(-${translateX}px); width: ${stepWidth * stepCount}px`"
+            class="m-0 flex list-none p-0 max-[575px]:w-max min-[576px]:transition-transform min-[576px]:duration-300 min-[576px]:ease-out"
+            x-bind:style="trackStyle()"
         >
             @foreach ($steps as $step)
                 @php
@@ -135,8 +189,8 @@
                     $stepNumber = $loop->iteration;
                 @endphp
                 <li
-                    class="relative flex shrink-0 flex-col items-center px-1 sm:px-2"
-                    x-bind:style="stepWidth > 0 ? { width: stepWidth + 'px', minWidth: stepWidth + 'px' } : {}"
+                    class="relative flex w-32 shrink-0 flex-col items-center px-1 max-[575px]:min-w-32 min-[576px]:w-auto sm:px-2"
+                    x-bind:style="stepStyle()"
                 >
                     @if (!$loop->first)
                         <span

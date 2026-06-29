@@ -31,27 +31,35 @@ class MenuHelper
             ];
         }
 
-        $adminItems = [
-            ['icon' => 'dashboard', 'name' => 'Dashboard', 'path' => $basePath . '/dashboard'],
-            ['icon' => 'user-profile', 'name' => 'Students', 'path' => $basePath . '/students'],
-            ['icon' => 'task', 'name' => 'Containers', 'path' => $basePath . '/containers'],
-            ['icon' => 'tables', 'name' => 'Retail Packages', 'path' => $basePath . '/retail-packages'],
-            ['icon' => 'clock', 'name' => 'Add-Ons', 'path' => $basePath . '/add-ons'],
-            ['icon' => 'storage', 'name' => 'Storage Pickups', 'path' => $basePath . '/storage-pickups'],
-            ['icon' => 'calendar', 'name' => 'Deadlines', 'path' => $basePath . '/deadlines'],
-            ['icon' => 'bell', 'name' => 'Notifications', 'path' => $basePath . '/notifications'],
+        $supportItems = [
+            ['icon' => 'plug', 'name' => 'Squarespace', 'path' => $basePath . '/squarespace'],
         ];
 
         if (config('devtools.enabled')) {
-            $adminItems[] = ['icon' => 'lock', 'name' => 'Dev Tools', 'path' => $basePath . '/dev-tools'];
+            $supportItems[] = ['icon' => 'lock', 'name' => 'Dev Tools', 'path' => $basePath . '/dev-tools'];
         }
 
-        return [
+        $adminItems = [
             [
-                'title' => '',
-                'items' => $adminItems,
+                'title' => 'Menu',
+                'items' => [
+                    ['icon' => 'dashboard', 'name' => 'Dashboard', 'path' => $basePath . '/dashboard'],
+                    ['icon' => 'user-profile', 'name' => 'Students', 'path' => $basePath . '/students'],
+                    ['icon' => 'task', 'name' => 'Containers', 'path' => $basePath . '/containers'],
+                    ['icon' => 'tables', 'name' => 'Retail Packages', 'path' => $basePath . '/retail-packages'],
+                    ['icon' => 'clock', 'name' => 'Add-Ons', 'path' => $basePath . '/add-ons'],
+                    ['icon' => 'storage', 'name' => 'Storage Pickups', 'path' => $basePath . '/storage-pickups'],
+                    ['icon' => 'calendar', 'name' => 'Deadlines', 'path' => $basePath . '/deadlines'],
+                    ['icon' => 'bell', 'name' => 'Notifications', 'path' => $basePath . '/notifications'],
+                ],
+            ],
+            [
+                'title' => 'Tools',
+                'items' => $supportItems,
             ],
         ];
+
+        return $adminItems;
     }
 
     public static function isActive($path)

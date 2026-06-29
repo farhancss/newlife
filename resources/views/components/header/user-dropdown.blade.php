@@ -11,17 +11,17 @@
         class="flex items-center gap-3 rounded-lg py-1 pl-1 pr-1 transition hover:bg-gray-50 sm:pr-2"
         @click.prevent="dropdownOpen = !dropdownOpen"
     >
-        @if ($avatarSrc)
+        <template x-if="$store.userAvatar.url">
             <img
-                src="{{ $avatarSrc }}"
-                alt="{{ $initials }}"
+                :src="$store.userAvatar.url"
+                :alt="$store.userAvatar.initials"
                 class="h-10 w-10 shrink-0 rounded-full object-cover"
             />
-        @else
-            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-50 text-sm font-semibold text-brand-700">
-                {{ $initials }}
-            </span>
-        @endif
+        </template>
+        <template x-if="!$store.userAvatar.url">
+            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-50 text-sm font-semibold text-brand-500"
+                x-text="$store.userAvatar.initials"></span>
+        </template>
         <span class="hidden min-w-0 flex-1 text-left sm:block">
             <span class="block truncate text-sm font-semibold text-gray-900">{{ $userName }}</span>
             <span class="block truncate text-xs text-gray-500">{{ ucfirst($portal) }} account</span>

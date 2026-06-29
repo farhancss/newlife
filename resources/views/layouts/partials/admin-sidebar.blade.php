@@ -33,36 +33,48 @@
 
     {{-- Navigation --}}
     <div class="flex flex-1 flex-col overflow-y-auto px-3 py-5 no-scrollbar">
-        <nav class="flex flex-1 flex-col">
-            <ul class="flex flex-col gap-1">
-                @foreach ($menuGroups as $menuGroup)
-                    @foreach ($menuGroup['items'] as $item)
-                        <li>
-                            <a href="{{ $item['path'] }}"
-                                class="portal-nav-item group"
-                                :class="[
-                                    isActive('{{ $item['path'] }}') ? 'portal-nav-item-active' : 'portal-nav-item-inactive',
-                                    (!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ? 'xl:justify-center xl:px-2' : ''
-                                ]">
-                                <span class="portal-nav-icon"
-                                    :class="isActive('{{ $item['path'] }}') ? 'portal-nav-icon-active' : 'portal-nav-icon-inactive'">
-                                    {!! MenuHelper::getIconSvg($item['icon']) !!}
-                                </span>
-                                <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"
-                                    class="flex min-w-0 flex-1 items-center justify-between gap-2">
-                                    <span class="truncate">{{ $item['name'] }}</span>
-                                    @if (!empty($item['badge']))
-                                        <span class="inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-brand-500 px-1.5 text-[10px] font-semibold text-white"
-                                            :class="isActive('{{ $item['path'] }}') ? 'bg-white/25 text-white' : ''">
-                                            {{ $item['badge'] }}
-                                        </span>
-                                    @endif
-                                </span>
-                            </a>
-                        </li>
-                    @endforeach
-                @endforeach
-            </ul>
+        <nav class="flex flex-1 flex-col gap-5">
+            @foreach ($menuGroups as $groupIndex => $menuGroup)
+                @if ($groupIndex > 0)
+                    <div class="border-t border-gray-200" x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"></div>
+                @endif
+
+                <div>
+                    @if ($menuGroup['title'] !== '')
+                        <p class="mb-2 px-2 text-[11px] font-semibold tracking-[0.08em] text-gray-400 uppercase"
+                            x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen">
+                            {{ $menuGroup['title'] }}
+                        </p>
+                    @endif
+
+                    <ul class="flex flex-col gap-1">
+                        @foreach ($menuGroup['items'] as $item)
+                            <li>
+                                <a href="{{ $item['path'] }}"
+                                    class="portal-nav-item group"
+                                    :class="[
+                                        isActive('{{ $item['path'] }}') ? 'portal-nav-item-active' : 'portal-nav-item-inactive',
+                                        (!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ? 'xl:justify-center xl:px-2' : ''
+                                    ]">
+                                    <span class="portal-nav-icon"
+                                        :class="isActive('{{ $item['path'] }}') ? 'portal-nav-icon-active' : 'portal-nav-icon-inactive'">
+                                        {!! MenuHelper::getIconSvg($item['icon']) !!}
+                                    </span>
+                                    <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"
+                                        class="flex min-w-0 flex-1 items-center justify-between gap-2">
+                                        <span class="truncate">{{ $item['name'] }}</span>
+                                        @if (!empty($item['badge']))
+                                            <span class="inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-brand-500 px-1.5 text-[10px] font-semibold text-white">
+                                                {{ $item['badge'] }}
+                                            </span>
+                                        @endif
+                                    </span>
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endforeach
         </nav>
     </div>
 
@@ -71,7 +83,7 @@
         :class="(!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ? 'xl:p-2' : ''">
         <div class="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-2.5 shadow-theme-xs"
             :class="(!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ? 'xl:justify-center xl:p-2' : ''">
-            <x-ui.avatar :src="$user?->avatarUrl()" :initials="$initials"
+            <x-ui.avatar reactive
                 class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-100 text-sm font-bold text-brand-500" />
             <div x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen" class="min-w-0 flex-1">
                 <p class="truncate text-sm font-semibold text-gray-900">{{ $userName }}</p>

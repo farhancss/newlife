@@ -55,6 +55,10 @@
 
 <body
     class="min-h-screen"
+    @auth
+        data-user-avatar-url="{{ auth()->user()->avatarUrl() ?? '' }}"
+        data-user-initials="{{ auth()->user()->initials() }}"
+    @endauth
     x-data="{ 'loaded': true}"
     x-init="$store.sidebar.isExpanded = window.innerWidth >= 1280;
     const checkMobile = () => {

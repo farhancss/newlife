@@ -37,15 +37,15 @@
         <div class="flex flex-row gap-3">
             <div class="min-w-0 flex-1 rounded-2xl border border-gray-200 bg-white px-4 py-4 sm:px-5 sm:py-5">
                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Packages</p>
-                <p class="mt-1 text-2xl font-bold text-gray-900 sm:text-3xl">{{ $totalPackages }}</p>
+                <p class="mt-1 text-2xl font-bold text-brand-500 sm:text-3xl">{{ $totalPackages }}</p>
             </div>
             <div class="min-w-0 flex-1 rounded-2xl border border-gray-200 bg-white px-4 py-4 sm:px-5 sm:py-5">
                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Active</p>
-                <p class="mt-1 text-2xl font-bold text-brand-700 sm:text-3xl">{{ $activePackages }}</p>
+                <p class="mt-1 text-2xl font-bold text-brand-500 sm:text-3xl">{{ $activePackages }}</p>
             </div>
             <div class="min-w-0 flex-1 rounded-2xl border border-gray-200 bg-white px-4 py-4 sm:px-5 sm:py-5">
                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Delivered</p>
-                <p class="mt-1 text-2xl font-bold text-emerald-600 sm:text-3xl">{{ $deliveredPackages }}</p>
+                <p class="mt-1 text-2xl font-bold text-brand-500 sm:text-3xl">{{ $deliveredPackages }}</p>
             </div>
         </div>
 

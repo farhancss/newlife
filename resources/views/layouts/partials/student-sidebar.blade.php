@@ -117,7 +117,7 @@
         :class="(!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ? 'xl:px-2 xl:pb-4' : ''">
         <div class="flex items-center gap-3 rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-xs"
             :class="(!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ? 'xl:justify-center xl:p-2' : ''">
-            <x-ui.avatar :src="$user->avatarUrl()" :initials="$user->initials()"
+            <x-ui.avatar reactive
                 class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-50 text-sm font-semibold text-brand-700" />
             <div x-show="{{ $sidebarExpanded }}" class="min-w-0 flex-1">
                 <p class="truncate text-sm font-semibold text-gray-900">{{ $userName }}</p>

@@ -25,15 +25,24 @@
                 <p class="mt-1 text-2xl font-semibold text-gray-900">{{ $stats['total'] }}</p>
             </div>
             <div class="rounded-xl border border-brand-200 bg-brand-50 p-4 shadow-theme-xs">
-                <p class="text-xs font-medium text-brand-700">Upcoming</p>
+                <div class="flex items-center gap-2.5">
+                    <img src="{{ asset('images/dashboard/clock.svg') }}" alt="" class="h-5 w-5 shrink-0" aria-hidden="true" />
+                    <span class="text-sm font-semibold text-brand-700">Upcoming</span>
+                </div>
                 <p class="mt-1 text-2xl font-semibold text-brand-700">{{ $stats['upcoming'] }}</p>
             </div>
             <div class="rounded-xl border border-amber-200 bg-amber-50 p-4 shadow-theme-xs">
-                <p class="text-xs font-medium text-amber-800">Overdue</p>
+                <div class="flex items-center gap-2.5">
+                    <img src="{{ asset('images/dashboard/alert-circle.svg') }}" alt="" class="h-5 w-5 shrink-0" aria-hidden="true" />
+                    <span class="text-sm font-semibold text-amber-800">Overdue</span>
+                </div>
                 <p class="mt-1 text-2xl font-semibold text-amber-800">{{ $stats['overdue'] }}</p>
             </div>
             <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4 shadow-theme-xs">
-                <p class="text-xs font-medium text-emerald-700">Completed</p>
+                <div class="flex items-center gap-2.5">
+                    <img src="{{ asset('images/dashboard/check-circle.svg') }}" alt="" class="h-5 w-5 shrink-0" aria-hidden="true" />
+                    <span class="text-sm font-semibold text-emerald-700">Completed</span>
+                </div>
                 <p class="mt-1 text-2xl font-semibold text-emerald-700">{{ $stats['completed'] }}</p>
             </div>
         </div>

@@ -29,7 +29,7 @@
                     <div class="flex items-start justify-between gap-3">
                         <div>
                             <p class="text-sm font-medium text-gray-500">{{ $stat['label'] }}</p>
-                            <p class="mt-2 text-3xl font-semibold tracking-tight text-gray-900">{{ number_format($stat['value']) }}</p>
+                            <p class="mt-2 text-3xl font-semibold tracking-tight text-brand-500">{{ number_format($stat['value']) }}</p>
                         </div>
                         <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full {{ $toneClasses }}">
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor" aria-hidden="true">{!! $iconPath !!}</svg>
@@ -105,7 +105,7 @@
                                 <td>
                                     @php
                                         $typeStyles = match ($row['type']) {
-                                            'Student' => 'bg-brand-50 text-brand-700',
+                                            'Student' => 'bg-brand-50 text-brand-500',
                                             'Package' => 'bg-blue-light-50 text-blue-light-700',
                                             'Container' => 'bg-warning-50 text-warning-700',
                                             'Delivery' => 'bg-success-50 text-success-700',

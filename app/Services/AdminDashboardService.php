@@ -189,7 +189,7 @@ class AdminDashboardService
             ->all();
 
         $buckets = [
-            ['label' => 'In Progress', 'color' => '#0827be', 'statuses' => [
+            ['label' => 'In Progress', 'color' => '#0112EF', 'statuses' => [
                 ContainerStatus::CONTAINER_PREPARED,
                 ContainerStatus::LABEL_GENERATED,
             ]],
