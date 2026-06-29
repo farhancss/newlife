@@ -66,7 +66,7 @@
             <div class="flex flex-wrap gap-3">
                 @foreach ($exteriorPhotos as $photo)
                     <div class="group relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-gray-100">
-                        <a href="{{ $photo->url() }}" target="_blank" rel="noopener noreferrer" class="block h-full w-full">
+                        <a href="{{ $photo->url() }}" class="glightbox block h-full w-full" data-gallery="container-{{ $container->id }}">
                             <img
                                 src="{{ $photo->url() }}"
                                 alt="{{ $photo->original_name ?? 'Container photo' }}"
@@ -175,7 +175,7 @@
             <div class="mt-5 flex flex-wrap gap-3">
                 @foreach ($exteriorPhotos as $photo)
                     <div class="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-gray-100">
-                        <a href="{{ $photo->url() }}" target="_blank" rel="noopener noreferrer" class="block h-full w-full">
+                        <a href="{{ $photo->url() }}" class="glightbox block h-full w-full" data-gallery="container-{{ $container->id }}">
                             <img
                                 src="{{ $photo->url() }}"
                                 alt="{{ $photo->original_name ?? 'Container photo' }}"
@@ -202,7 +202,7 @@
             <div class="mt-4 flex flex-wrap gap-3">
                 @foreach ($hubPhotos as $photo)
                     <div class="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-gray-100">
-                        <a href="{{ $photo->url() }}" target="_blank" rel="noopener noreferrer" class="block h-full w-full">
+                        <a href="{{ $photo->url() }}" class="glightbox block h-full w-full" data-gallery="container-{{ $container->id }}">
                             <img
                                 src="{{ $photo->url() }}"
                                 alt="{{ $photo->original_name ?? 'Hub evidence photo' }}"

@@ -29,7 +29,7 @@
         <div class="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-5">
             @foreach ($hubPhotos as $photo)
                 <div class="group relative aspect-square overflow-hidden rounded-lg border border-gray-200 bg-gray-100">
-                    <a href="{{ $photo->url() }}" target="_blank" rel="noopener noreferrer" class="block h-full w-full">
+                    <a href="{{ $photo->url() }}" data-gallery="hub-container-{{ $container->id }}" class="glightbox block h-full w-full">
                         <img src="{{ $photo->url() }}" alt="{{ $photo->original_name ?: 'Hub evidence photo' }}"
                             class="h-full w-full object-cover transition group-hover:scale-105" loading="lazy" />
                     </a>

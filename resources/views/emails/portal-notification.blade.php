@@ -15,7 +15,7 @@
 
     @if ($actionUrl)
         <x-email.button :href="$actionUrl">
-            {{ $actionLabel }}
+            {{ $actionLabel ?: 'View in portal' }}
         </x-email.button>
     @endif
 </x-email.layout>

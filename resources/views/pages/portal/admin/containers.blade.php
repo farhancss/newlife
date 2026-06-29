@@ -261,8 +261,8 @@
                             @if ($studentPhotos->isNotEmpty())
                                 <div class="mt-3 grid grid-cols-3 gap-2">
                                     @foreach ($studentPhotos as $photo)
-                                        <a href="{{ $photo->url() }}" target="_blank" rel="noopener noreferrer"
-                                            class="group relative block overflow-hidden rounded-lg border border-gray-200">
+                                        <a href="{{ $photo->url() }}" data-gallery="admin-container-{{ $editing->id }}"
+                                            class="glightbox group relative block overflow-hidden rounded-lg border border-gray-200">
                                             <img src="{{ $photo->url() }}" alt="Container photo"
                                                 class="h-24 w-full object-cover transition group-hover:scale-105" loading="lazy" />
                                         </a>

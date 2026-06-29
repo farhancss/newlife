@@ -112,7 +112,7 @@
                     @if ($packingPhotos->isNotEmpty())
                         <div class="grid grid-cols-3 gap-2 sm:grid-cols-5">
                             @foreach ($packingPhotos as $photo)
-                                <a href="{{ $photo->url() }}" target="_blank" rel="noopener noreferrer" class="group relative block aspect-square overflow-hidden rounded-lg border border-gray-200">
+                                <a href="{{ $photo->url() }}" data-gallery="addon-container-{{ $container->id }}" class="glightbox group relative block aspect-square overflow-hidden rounded-lg border border-gray-200">
                                     <img src="{{ $photo->url() }}" alt="{{ $photo->original_name ?: 'Container photo' }}" class="h-full w-full object-cover transition group-hover:scale-105" loading="lazy" />
                                 </a>
                             @endforeach
