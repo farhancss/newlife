@@ -24,9 +24,22 @@ class PortalUsersSeeder extends Seeder
 {
     public function run(): void
     {
+        // Set default password
         $password = Hash::make('Admin@123');
+        // Use stronger password for production and seed production-only admin user
         if (app()->isProduction()) {
-            $passowrd = Hash::make('@Portal@123!');
+            $password = Hash::make('@Portal@123!');
+            // Add production admin user campus@newlifelogistix.com
+            User::updateOrCreate(
+                ['email' => 'campus@newlifelogistix.com'],
+                [
+                    'name' => 'Production Admin',
+                    'role' => UserRole::ADMIN,
+                    'status' => UserStatus::ACTIVE,
+                    'password' => $password,
+                    'must_reset_password' => true,
+                ]
+            );
         }
 
         $idGenerator = app(NewLifeIdGenerator::class);

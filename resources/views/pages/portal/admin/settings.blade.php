@@ -17,7 +17,7 @@
                     </div>
                     <div>
                         <label class="mb-1 block text-sm font-medium text-gray-700">Support Email</label>
-                        <input type="email" value="support@newlifecampus.com" class="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm" />
+                        <input type="email" value="campus@newlifelogistix.com" class="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm" />
                     </div>
                     <button type="button" class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white">Save Changes</button>
                 </form>

@@ -19,7 +19,7 @@ return [
     ],
 
     'support' => [
-        'email' => env('BRAND_SUPPORT_EMAIL', 'support@newlifecampus.com'),
+        'email' => env('BRAND_SUPPORT_EMAIL', 'campus@newlifelogistix.com'),
         'phone' => env('BRAND_SUPPORT_PHONE'),
     ],
 
