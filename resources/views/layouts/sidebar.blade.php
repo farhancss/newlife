@@ -7,7 +7,7 @@
 @endphp
 
 <aside id="sidebar"
-    class="portal-sidebar fixed top-0 z-99999 flex h-dvh max-h-dvh min-h-0 w-[min(290px,100vw)] flex-col overflow-hidden border-r border-gray-200 bg-white shadow-theme-md transition-[left,width] duration-300 ease-in-out {{ $isStudentPortal ? 'student-portal-sidebar' : 'admin-portal-sidebar' }}"
+    class="portal-sidebar fixed left-0 top-0 z-99999 flex h-dvh max-h-dvh min-h-0 w-[min(290px,100vw)] flex-col overflow-hidden border-r border-gray-200 bg-white shadow-theme-md xl:transition-[width] xl:duration-300 xl:ease-in-out {{ $isStudentPortal ? 'student-portal-sidebar' : 'admin-portal-sidebar' }}"
     x-data="{
         openSubmenus: {},
         init() {
@@ -45,8 +45,7 @@
         }
     }"
     :class="{
-        'left-0': $store.sidebar.isMobileOpen,
-        '-left-full xl:left-0': ! $store.sidebar.isMobileOpen,
+        'portal-sidebar-mobile-open': $store.sidebar.isMobileOpen,
         'xl:w-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered,
         'xl:w-[90px]': ! $store.sidebar.isExpanded && ! $store.sidebar.isHovered,
     }"
@@ -64,5 +63,11 @@
     x-show="$store.sidebar.isMobileOpen"
     x-cloak
     @click="$store.sidebar.setMobileOpen(false)"
-    class="fixed inset-0 z-[99998] bg-gray-900/50 backdrop-blur-sm xl:hidden"
+    x-transition:enter="transition-opacity ease-out duration-[600ms]"
+    x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100"
+    x-transition:leave="transition-opacity ease-in duration-[600ms]"
+    x-transition:leave-start="opacity-100"
+    x-transition:leave-end="opacity-0"
+    class="portal-sidebar-backdrop fixed inset-0 z-[99998] bg-gray-900/50 xl:hidden"
 ></div>
