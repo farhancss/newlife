@@ -12,9 +12,9 @@
     $sidebarExpanded = '$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen';
 @endphp
 
-<div class="flex h-full min-h-0 flex-col">
+<div class="flex min-h-0 flex-1 flex-col overflow-hidden">
     {{-- Logo --}}
-    <div class="px-5 pt-6 pb-4"
+    <div class="shrink-0 px-5 pt-6 pb-4"
         :class="(!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ? 'xl:px-3 xl:pb-3' : ''">
         <a href="{{ route('student.dashboard') }}" class="block">
             <div x-show="{{ $sidebarExpanded }}">
@@ -60,8 +60,8 @@
     @endif
 
     {{-- Navigation --}}
-    <div class="flex flex-1 flex-col overflow-y-auto px-4 py-5 no-scrollbar">
-        <nav class="flex flex-1 flex-col gap-5">
+    <div class="portal-sidebar-nav min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-4 py-5 no-scrollbar">
+        <nav class="flex flex-col gap-5">
             @foreach ($menuGroups as $groupIndex => $menuGroup)
                 @if ($groupIndex > 0)
                     <div class="border-t border-gray-200" x-show="{{ $sidebarExpanded }}"></div>
@@ -113,7 +113,7 @@
     </div>
 
     {{-- User footer --}}
-    <div class="mt-auto px-4 pb-5 pt-3"
+    <div class="shrink-0 px-4 pt-3 pb-5 max-xl:pb-[max(1.25rem,env(safe-area-inset-bottom))]"
         :class="(!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ? 'xl:px-2 xl:pb-4' : ''">
         <div class="flex items-center gap-3 rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-xs"
             :class="(!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ? 'xl:justify-center xl:p-2' : ''">

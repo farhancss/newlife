@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ $title ?? 'Dashboard' }} | New Life Campus</title>
@@ -33,8 +33,10 @@
                 },
 
                 toggleMobileOpen() {
-                    this.isMobileOpen = !this.isMobileOpen;
-                    // Don't modify isExpanded when toggling mobile menu
+                    this.isMobileOpen = ! this.isMobileOpen;
+                    if (this.isMobileOpen) {
+                        this.isHovered = false;
+                    }
                 },
 
                 setMobileOpen(val) {
@@ -55,6 +57,7 @@
 
 <body
     class="min-h-screen"
+    :class="$store.sidebar.isMobileOpen ? 'overflow-hidden' : ''"
     @auth
         data-user-avatar-url="{{ auth()->user()->avatarUrl() ?? '' }}"
         data-user-initials="{{ auth()->user()->initials() }}"

@@ -943,6 +943,41 @@ pre[class*='language-'] {
   @apply h-[22px] w-[22px];
 }
 
+.portal-sidebar-nav {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+
+/* Mobile drawer slide — plain CSS classes (Alpine :class can't rely on Tailwind responsive utilities) */
+@media (max-width: 1279px) {
+  #sidebar.portal-sidebar {
+    left: 0;
+    width: min(290px, 100vw);
+    transform: translate3d(-100%, 0, 0);
+    pointer-events: none;
+    transition: transform 0.6s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  #sidebar.portal-sidebar.portal-sidebar-mobile-open {
+    transform: translate3d(0, 0, 0);
+    pointer-events: auto;
+    box-shadow: 0 4px 24px rgba(16, 24, 40, 0.12);
+  }
+}
+
+@media (min-width: 1280px) {
+  #sidebar.portal-sidebar {
+    transform: none;
+    pointer-events: auto;
+  }
+}
+
+.portal-sidebar-backdrop {
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
 /* Portal navigation (sidebar) */
 @utility portal-nav-item {
   @apply relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200;
