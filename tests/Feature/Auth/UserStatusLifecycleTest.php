@@ -32,7 +32,7 @@ test('new account from contact provisioning starts as INVITED', function () {
     expect($profile->user->status)->toBe(UserStatus::INVITED)
         ->and($profile->user->must_reset_password)->toBeTrue();
 
-    Mail::assertQueued(StudentInvitationMail::class);
+    Mail::assertSent(StudentInvitationMail::class);
 });
 
 test('first password reset transitions INVITED to INCOMPLETE and sends confirmation email', function () {

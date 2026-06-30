@@ -12,6 +12,7 @@ final class ProvisionedAccount
         public readonly User $user,
         public readonly bool $isNewUser,
         public readonly ?string $temporaryPassword,
+        public readonly bool $invitationSent = false,
     ) {
     }
 }

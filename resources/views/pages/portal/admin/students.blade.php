@@ -25,6 +25,9 @@
                             <a href="{{ route('admin.students.show', $student) }}" class="font-medium text-gray-900 hover:text-brand-700 hover:underline">
                                 {{ $student->fullName() ?: $student->user?->name }}
                             </a>
+                            @if ($student->user?->email)
+                                <span class="mt-0.5 block text-xs text-gray-500">{{ $student->user->email }}</span>
+                            @endif
                         </td>
                         <td>{{ $student->new_life_id }}</td>
                         <td>{{ $student->housingInfo?->university ?: $student->school ?: '—' }}</td>

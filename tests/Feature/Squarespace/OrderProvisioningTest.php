@@ -115,14 +115,16 @@ it('provisions a brand-new student from a single order and emails the invite', f
     $account = app(AccountProvisioningService::class)->provisionFromOrder(realOrderPayload());
 
     expect($account->isNewUser)->toBeTrue()
-        ->and($account->temporaryPassword)->not->toBeNull();
+        ->and($account->temporaryPassword)->not->toBeNull()
+        ->and($account->invitationSent)->toBeTrue();
 
     $user = User::query()->where('email', 'test@yopmail.com')->firstOrFail();
     expect($user->status)->toBe(\App\Enums\UserStatus::INVITED)
         ->and($user->must_reset_password)->toBeTrue()
         ->and($user->squarespace_contact_id)->toBe('6a42928246c96a756367575e');
 
-    Mail::assertQueued(StudentInvitationMail::class);
+    Mail::assertSent(StudentInvitationMail::class);
+    Mail::assertNothingQueued();
 
     $profile = $user->studentProfile;
     expect($profile->first_name)->toBe('Farhan')
@@ -152,7 +154,7 @@ it('does not re-send the invite or clobber edits for an existing student', funct
     Mail::fake();
 
     app(AccountProvisioningService::class)->provisionFromOrder(realOrderPayload());
-    Mail::assertQueued(StudentInvitationMail::class, 1);
+    Mail::assertSent(StudentInvitationMail::class, 1);
 
     // Student edits their phone during onboarding.
     $profile = StudentProfile::query()->firstOrFail();

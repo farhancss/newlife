@@ -25,6 +25,10 @@ class PortalUsersSeeder extends Seeder
     public function run(): void
     {
         $password = Hash::make('Admin@123');
+        if (app()->isProduction()) {
+            $passowrd = Hash::make('@Portal@123!');
+        }
+
         $idGenerator = app(NewLifeIdGenerator::class);
 
         $student = User::updateOrCreate(

@@ -53,7 +53,7 @@ class ProcessSquarespaceOrderWebhook implements ShouldQueue, ShouldBeUnique
                 throw new \RuntimeException('Order webhook missing orderId and order payload.');
             }
 
-            $profile = $provisioning->enrichFromOrder($order);
+            $account = $provisioning->provisionFromOrder($order);
             $event->update([
                 'status' => WebhookEventStatus::PROCESSED,
                 'processed_at' => now(),
@@ -63,9 +63,11 @@ class ProcessSquarespaceOrderWebhook implements ShouldQueue, ShouldBeUnique
             $logger->logProcessing('order.provisioned', 'order ' . $orderId, [
                 'order_id' => $orderId,
                 'order_number' => $order['orderNumber'] ?? null,
-                'student_email' => $profile->user?->email,
-                'package_tier' => $profile->package_tier,
-                'package_price_cents' => $profile->package_price_cents,
+                'student_email' => $account->user->email,
+                'new_student' => $account->isNewUser,
+                'invite_sent' => $account->invitationSent,
+                'package_tier' => $account->profile->package_tier,
+                'package_price_cents' => $account->profile->package_price_cents,
             ]);
         } catch (Throwable $e) {
             $event->update([

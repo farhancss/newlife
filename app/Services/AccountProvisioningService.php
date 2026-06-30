@@ -64,7 +64,7 @@ class AccountProvisioningService
         $firstName = (string) ($contact['firstName'] ?? '');
         $lastName = (string) ($contact['lastName'] ?? '');
 
-        return DB::transaction(function () use ($contact, $contactId, $email, $firstName, $lastName, $sendInvitationIfNew): ProvisionedAccount {
+        $account = DB::transaction(function () use ($contact, $contactId, $email, $firstName, $lastName): ProvisionedAccount {
             $user = User::query()->where('email', $email)->first();
             $isNewUser = $user === null;
             $tempPassword = null;
@@ -110,10 +110,6 @@ class AccountProvisioningService
                 $this->deadlineService->openProfileCompletion($profile);
             }
 
-            if ($isNewUser && $sendInvitationIfNew && $tempPassword !== null) {
-                $this->invitationMailService->send($user, $tempPassword);
-            }
-
             $profile->load(['user', 'shippingAddress']);
 
             return new ProvisionedAccount(
@@ -123,6 +119,20 @@ class AccountProvisioningService
                 temporaryPassword: $tempPassword,
             );
         });
+
+        if ($account->isNewUser && $sendInvitationIfNew && $account->temporaryPassword !== null) {
+            $invitationSent = $this->invitationMailService->send($account->user, $account->temporaryPassword);
+
+            return new ProvisionedAccount(
+                profile: $account->profile,
+                user: $account->user,
+                isNewUser: $account->isNewUser,
+                temporaryPassword: $account->temporaryPassword,
+                invitationSent: $invitationSent,
+            );
+        }
+
+        return $account;
     }
 
     /**
@@ -155,7 +165,7 @@ class AccountProvisioningService
             throw new \RuntimeException('Order ' . $orderId . ' is missing a customer email; cannot provision a student.');
         }
 
-        return DB::transaction(function () use ($order, $mapped, $email, $orderId): ProvisionedAccount {
+        $account = DB::transaction(function () use ($order, $mapped, $email, $orderId): ProvisionedAccount {
             $contactId = (string) $mapped['contact_id'];
             /** @var array<string, mixed> $student */
             $student = $mapped['student'];
@@ -237,10 +247,6 @@ class AccountProvisioningService
 
                 // Case 01: start the 7-day profile-completion countdown.
                 $this->deadlineService->openProfileCompletion($profile);
-
-                if ($tempPassword !== null) {
-                    $this->invitationMailService->send($user, $tempPassword);
-                }
             }
 
             $fresh = $profile->fresh(['user', 'parentGuardian', 'shippingAddress', 'housingInfo', 'subscriptions']);
@@ -256,6 +262,20 @@ class AccountProvisioningService
                 temporaryPassword: $tempPassword,
             );
         });
+
+        if ($account->isNewUser && $account->temporaryPassword !== null) {
+            $invitationSent = $this->invitationMailService->send($account->user, $account->temporaryPassword);
+
+            return new ProvisionedAccount(
+                profile: $account->profile,
+                user: $account->user,
+                isNewUser: $account->isNewUser,
+                temporaryPassword: $account->temporaryPassword,
+                invitationSent: $invitationSent,
+            );
+        }
+
+        return $account;
     }
 
     /**

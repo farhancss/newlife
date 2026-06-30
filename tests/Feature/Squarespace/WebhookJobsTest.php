@@ -6,7 +6,9 @@ use App\Jobs\Squarespace\ProcessSquarespaceContactWebhook;
 use App\Jobs\Squarespace\ProcessSquarespaceOrderWebhook;
 use App\Models\SquarespaceWebhookEvent;
 use App\Models\StudentProfile;
+use App\Models\User;
 use App\Services\AccountProvisioningService;
+use App\Services\ProvisionedAccount;
 use App\Services\Squarespace\SquarespaceApiClient;
 use App\Services\Squarespace\SquarespaceLogger;
 
@@ -62,7 +64,12 @@ it('handles the order webhook via embedded order, api lookup and missing data', 
     // Embedded order payload: no API call.
     $embedded = makeWebhookEvent(['data' => ['order' => ['id' => 'o-1']]]);
     $prov1 = Mockery::mock(AccountProvisioningService::class);
-    $prov1->shouldReceive('enrichFromOrder')->once()->andReturn(new StudentProfile());
+    $prov1->shouldReceive('provisionFromOrder')->once()->andReturn(new ProvisionedAccount(
+        profile: new StudentProfile(),
+        user: new User(['email' => 'test@example.com']),
+        isNewUser: false,
+        temporaryPassword: null,
+    ));
     (new ProcessSquarespaceOrderWebhook($embedded->id))->handle($prov1, $apiClient, app(SquarespaceLogger::class));
     expect($embedded->fresh()->status)->toBe(WebhookEventStatus::PROCESSED);
 
@@ -70,14 +77,19 @@ it('handles the order webhook via embedded order, api lookup and missing data', 
     $byId = makeWebhookEvent(['data' => ['orderId' => 'o-2']]);
     $apiClient->shouldReceive('getOrder')->with('o-2')->once()->andReturn(['id' => 'o-2']);
     $prov2 = Mockery::mock(AccountProvisioningService::class);
-    $prov2->shouldReceive('enrichFromOrder')->once()->andReturn(new StudentProfile());
+    $prov2->shouldReceive('provisionFromOrder')->once()->andReturn(new ProvisionedAccount(
+        profile: new StudentProfile(),
+        user: new User(['email' => 'test@example.com']),
+        isNewUser: false,
+        temporaryPassword: null,
+    ));
     (new ProcessSquarespaceOrderWebhook($byId->id))->handle($prov2, $apiClient, app(SquarespaceLogger::class));
     expect($byId->fresh()->status)->toBe(WebhookEventStatus::PROCESSED);
 
     // Missing both: fails.
     $empty = makeWebhookEvent(['data' => []]);
     $prov3 = Mockery::mock(AccountProvisioningService::class);
-    $prov3->shouldNotReceive('enrichFromOrder');
+    $prov3->shouldNotReceive('provisionFromOrder');
     expect(fn () => (new ProcessSquarespaceOrderWebhook($empty->id))->handle($prov3, $apiClient, app(SquarespaceLogger::class)))
         ->toThrow(RuntimeException::class);
     expect($empty->fresh()->status)->toBe(WebhookEventStatus::FAILED);
