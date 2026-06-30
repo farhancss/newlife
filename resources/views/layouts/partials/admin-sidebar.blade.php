@@ -12,9 +12,9 @@
         ->join('') ?: 'AD';
 @endphp
 
-<div class="flex h-full min-h-0 flex-col">
+<div class="flex min-h-0 flex-1 flex-col overflow-hidden">
     {{-- Brand block --}}
-    <div class="border-b border-gray-200/80 px-4 pb-5 pt-6"
+    <div class="shrink-0 border-b border-gray-200/80 px-4 pb-5 pt-6"
         :class="(!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ? 'xl:px-3' : ''">
         <a href="{{ route('admin.dashboard') }}" class="block">
             <div x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen">
@@ -31,9 +31,9 @@
         </a>
     </div>
 
-    {{-- Navigation --}}
-    <div class="flex flex-1 flex-col overflow-y-auto px-3 py-5 no-scrollbar">
-        <nav class="flex flex-1 flex-col gap-5">
+    {{-- Navigation (scrollable) --}}
+    <div class="portal-sidebar-nav min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-3 py-5 no-scrollbar">
+        <nav class="flex flex-col gap-5">
             @foreach ($menuGroups as $groupIndex => $menuGroup)
                 @if ($groupIndex > 0)
                     <div class="border-t border-gray-200" x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"></div>
@@ -78,8 +78,8 @@
         </nav>
     </div>
 
-    {{-- User footer --}}
-    <div class="mt-auto border-t border-gray-200 bg-gray-50/80 p-3"
+    {{-- User footer (pinned below nav, never inside scroll area) --}}
+    <div class="shrink-0 border-t border-gray-200 bg-gray-50/80 p-3 max-xl:pb-[max(0.75rem,env(safe-area-inset-bottom))]"
         :class="(!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ? 'xl:p-2' : ''">
         <div class="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-2.5 shadow-theme-xs"
             :class="(!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ? 'xl:justify-center xl:p-2' : ''">

@@ -943,6 +943,19 @@ pre[class*='language-'] {
   @apply h-[22px] w-[22px];
 }
 
+.portal-sidebar-nav {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+
+/* Mobile drawer is always full-width labels; desktop-only collapse */
+@media (max-width: 1279px) {
+  #sidebar.portal-sidebar {
+    width: min(290px, 100vw) !important;
+  }
+}
+
 /* Portal navigation (sidebar) */
 @utility portal-nav-item {
   @apply relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200;
