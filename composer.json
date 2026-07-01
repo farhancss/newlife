@@ -61,7 +61,12 @@
         ],
         "test": [
             "@php artisan config:clear --ansi",
-            "@php artisan test"
+            "composer test:coverage"
+        ],
+        "test:coverage": [
+            "@php artisan config:clear --ansi",
+            "@php -r \"is_dir('build/coverage') || mkdir('build/coverage', 0777, true);\"",
+            "@php artisan test --coverage-clover=build/coverage/clover.xml --log-junit=build/coverage/junit.xml"
         ],
         "lint": "phpcs --standard=phpcs.xml.dist",
         "lint:fix": "phpcbf --standard=phpcs.xml.dist",

@@ -25,3 +25,4 @@ Thumbs.db
 
 # PHPUnit coverage reports
 /public/coverage
+/build/coverage
