@@ -35,10 +35,10 @@ jobs:
           php-version: '8.4'
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite
           coverage: pcov
-          ini-values: pcov.enabled=1, pcov.directory=.
+          ini-values: 'pcov.enabled=1, pcov.directory=.'
 
       - name: Verify PCOV coverage driver
-        run: php -r "exit(extension_loaded('pcov') ? 0 : 1);"
+        run: php --ri pcov
 
       - name: Get Composer cache directory
         id: composer-cache
