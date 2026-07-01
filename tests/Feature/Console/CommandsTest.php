@@ -94,3 +94,12 @@ it('simulates an order webhook synchronously', function () {
 
     expect(SquarespaceWebhookEvent::query()->where('topic', 'order.create')->exists())->toBeTrue();
 });
+
+it('queues a simulated webhook when sync is not requested', function () {
+    $this->artisan('squarespace:simulate', [
+        'topic' => 'order.create',
+        '--email' => 'queued-order@example.com',
+    ])
+        ->assertExitCode(0)
+        ->expectsOutputToContain('Queued');
+});

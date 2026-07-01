@@ -28,6 +28,9 @@ function makeWebhookEvent(array $payload, string $topic = 'order.create'): Squar
 it('processes and fails the address webhook job', function () {
     $event = makeWebhookEvent(['data' => ['contactId' => 'c-1']], 'address.updated');
 
+    expect((new ProcessSquarespaceAddressWebhook($event->id))->uniqueId())
+        ->toBe('squarespace-address-' . $event->id);
+
     $ok = Mockery::mock(AccountProvisioningService::class);
     $ok->shouldReceive('syncFromAddressNotification')->once();
     (new ProcessSquarespaceAddressWebhook($event->id))->handle($ok);

@@ -66,6 +66,37 @@ test('user can reset password with valid token', function () {
     expect(Hash::check('NewSecure123!', $user->password))->toBeTrue();
 });
 
+test('reset password rejects invalid tokens', function () {
+    $this->from(route('password.reset', ['token' => 'bad-token', 'email' => 'missing@example.com']))
+        ->post(route('password.update'), [
+            'token' => 'bad-token',
+            'email' => 'missing@example.com',
+            'password' => 'NewSecure123!',
+            'password_confirmation' => 'NewSecure123!',
+        ])
+        ->assertRedirect()
+        ->assertSessionHasErrors('email');
+});
+
+test('reset password blocks suspended accounts', function () {
+    $user = User::factory()->suspended()->create([
+        'email' => 'suspended-reset@example.com',
+    ]);
+    $token = Password::createToken($user);
+
+    expect($user->isSuspended())->toBeTrue();
+
+    $this->from(route('password.reset', ['token' => $token, 'email' => $user->email]))
+        ->post(route('password.update'), [
+            'token' => $token,
+            'email' => $user->email,
+            'password' => 'NewSecure123!',
+            'password_confirmation' => 'NewSecure123!',
+        ])
+        ->assertRedirect()
+        ->assertSessionHasErrors('email');
+});
+
 test('reset password rejects weak passwords', function () {
     $user = User::factory()->create(['email' => 'weak@example.com']);
     $token = Password::createToken($user);

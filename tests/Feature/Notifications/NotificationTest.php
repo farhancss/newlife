@@ -12,58 +12,7 @@ use App\Models\StudentProfile;
 use App\Models\User;
 use App\Services\ContainerWorkflowService;
 use App\Services\NotificationService;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-
-/**
- * @return array{0: User, 1: StudentProfile}
- */
-function makeNotifiableStudent(array $userOverrides = []): array
-{
-    $user = User::factory()->create(array_merge([
-        'role' => UserRole::STUDENT,
-        'password' => Hash::make('SecurePass123!'),
-        'must_reset_password' => false,
-    ], $userOverrides));
-
-    $profile = StudentProfile::query()->create([
-        'user_id' => $user->id,
-        'new_life_id' => app(\App\Services\NewLifeIdGenerator::class)->generate(),
-        'first_name' => 'Jordan',
-        'last_name' => 'Lee',
-        'phone' => '757-555-0142',
-        'school' => 'ODU',
-        'incoming_year' => '2026',
-        'onboarding_completed_at' => now(),
-    ]);
-
-    ParentGuardian::query()->create([
-        'student_profile_id' => $profile->id,
-        'name' => 'Pat Lee',
-        'email' => 'pat.lee@example.com',
-        'phone' => '757-555-0143',
-        'relationship' => 'Parent',
-    ]);
-
-    \App\Models\ShippingAddress::query()->create([
-        'student_profile_id' => $profile->id,
-        'type' => 'home',
-        'line1' => '100 Main St',
-        'city' => 'Norfolk',
-        'region' => 'VA',
-        'postal_code' => '23510',
-        'country_code' => 'US',
-    ]);
-
-    \App\Models\HousingInfo::query()->create([
-        'student_profile_id' => $profile->id,
-        'university' => 'ODU',
-        'residence_hall' => 'Gresham',
-        'move_in_date' => now()->addDays(30)->toDateString(),
-    ]);
-
-    return [$user, $profile];
-}
 
 test('container milestone transition creates an in-app notification and queues email', function () {
     Mail::fake();

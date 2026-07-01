@@ -27,6 +27,8 @@ it('invites a student through the developer tools', function () {
     $this->actingAs(makeAdmin())
         ->post(route('admin.dev-tools.invite-student'), [
             'email' => 'devtool@example.com',
+            'first_name' => 'Dev',
+            'last_name' => 'Tool',
             'package' => Package::query()->value('slug'),
         ])
         ->assertRedirect(route('admin.dev-tools.index'))
