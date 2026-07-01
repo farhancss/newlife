@@ -103,7 +103,11 @@ jobs:
         with:
           php-version: '8.4'
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite
-          coverage: none
+          coverage: pcov
+          ini-values: pcov.enabled=1, pcov.directory=.
+
+      - name: Verify PCOV coverage driver
+        run: php -r "exit(extension_loaded('pcov') ? 0 : 1);"
 
       - name: Get Composer cache directory
         id: composer-cache
@@ -139,5 +143,12 @@ jobs:
           cp .env.example .env
           php artisan key:generate --ansi
 
-      - name: Run tests
-        run: composer test
+      - name: Run tests with coverage
+        run: composer test:coverage
+
+      - name: Upload coverage artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: build/coverage/
+          retention-days: 7

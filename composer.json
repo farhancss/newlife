@@ -61,7 +61,7 @@
         ],
         "test": [
             "@php artisan config:clear --ansi",
-            "composer test:coverage"
+            "@php artisan test"
         ],
         "test:coverage": [
             "@php artisan config:clear --ansi",
