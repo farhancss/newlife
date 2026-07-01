@@ -22,8 +22,8 @@ final class ContainerPhotoUploadRules
     public static function studentPhotosRules(): array
     {
         return [
-            'photos' => ['required', 'array', 'min:1', 'max:'.self::MAX_PHOTOS_PER_CONTAINER],
-            'photos.*' => ['file', 'image', 'mimes:'.implode(',', self::ALLOWED_MIME_TYPES), 'max:'.self::MAX_FILE_SIZE_KB],
+            'photos' => ['required', 'array', 'min:1', 'max:' . self::MAX_PHOTOS_PER_CONTAINER],
+            'photos.*' => ['file', 'image', 'mimes:' . implode(',', self::ALLOWED_MIME_TYPES), 'max:' . self::MAX_FILE_SIZE_KB],
         ];
     }
 
@@ -33,8 +33,8 @@ final class ContainerPhotoUploadRules
     public static function hubPhotosRules(): array
     {
         return [
-            'photos' => ['required', 'array', 'min:1', 'max:'.self::MAX_HUB_PHOTOS_PER_CONTAINER],
-            'photos.*' => ['file', 'image', 'mimes:'.implode(',', self::ALLOWED_MIME_TYPES), 'max:'.self::MAX_FILE_SIZE_KB],
+            'photos' => ['required', 'array', 'min:1', 'max:' . self::MAX_HUB_PHOTOS_PER_CONTAINER],
+            'photos.*' => ['file', 'image', 'mimes:' . implode(',', self::ALLOWED_MIME_TYPES), 'max:' . self::MAX_FILE_SIZE_KB],
         ];
     }
 }
