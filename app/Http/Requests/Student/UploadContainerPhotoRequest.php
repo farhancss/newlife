@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Student;
 
+use App\Support\ContainerPhotoUploadRules;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UploadContainerPhotoRequest extends FormRequest
@@ -16,12 +17,8 @@ class UploadContainerPhotoRequest extends FormRequest
      */
     public function rules(): array
     {
-        $mimes = implode(',', (array) config('portal.container_photos.allowed_mimes', ['jpeg', 'png']));
-        $maxKb = (int) config('portal.container_photos.max_size_kb', 5120);
-
         return [
-            'photos' => ['required', 'array', 'min:1'],
-            'photos.*' => ['file', 'image', "mimes:{$mimes}", "max:{$maxKb}"],
+            ...ContainerPhotoUploadRules::studentPhotosRules(),
             'acknowledge' => ['accepted'],
         ];
     }
